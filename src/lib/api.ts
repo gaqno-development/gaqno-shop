@@ -1,10 +1,13 @@
-// API configuration
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4017/v1";
+// API configuration - ensure /v1 suffix
+const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4017";
+export const API_URL = rawApiUrl.endsWith("/v1") ? rawApiUrl : `${rawApiUrl.replace(/\/$/, "")}/v1`;
 export const R2_PUBLIC_URL = process.env.NEXT_PUBLIC_R2_PUBLIC_URL || "";
 
 // API client
 export async function fetchApi(endpoint: string, options: RequestInit = {}) {
-  const url = `${API_URL}${endpoint}`;
+  // Ensure endpoint starts with / and prepend /v1
+  const normalizedEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  const url = `${API_URL}${normalizedEndpoint}`;
   
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
