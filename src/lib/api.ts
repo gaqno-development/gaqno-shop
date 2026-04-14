@@ -22,7 +22,8 @@ export async function fetchApi(endpoint: string, options: RequestInit = {}) {
   });
 
   if (!response.ok) {
-    throw new Error(`API error: ${response.status}`);
+    const error = await response.json().catch(() => ({ message: `HTTP ${response.status}` }));
+    throw new Error(error.message || `API error: ${response.status}`);
   }
 
   return response.json();
@@ -35,6 +36,11 @@ export async function resolveTenant(domain: string) {
       "X-Tenant-Domain": domain,
     },
   });
+}
+
+// Categories API
+export async function getCategories() {
+  return fetchApi(`/categories`);
 }
 
 // Product API
@@ -52,6 +58,11 @@ export async function getFeaturedProducts(limit?: number) {
   return fetchApi(`/products/featured${queryString}`);
 }
 
+export async function getProductsByCategory(categorySlug: string, params?: Record<string, string>) {
+  const queryParams = new URLSearchParams({ category: categorySlug, ...params });
+  return fetchApi(`/products?${queryParams}`);
+}
+
 // Cart API
 export async function getCart(sessionId: string) {
   return fetchApi(`/cart`, {
@@ -61,12 +72,124 @@ export async function getCart(sessionId: string) {
   });
 }
 
-export async function addToCart(sessionId: string, item: any) {
+export async function addToCart(sessionId: string, item: { productId: string; variationId?: string; quantity: number }) {
   return fetchApi(`/cart/items`, {
     method: "POST",
     headers: {
       "X-Session-Id": sessionId,
     },
     body: JSON.stringify(item),
+  });
+}
+
+export async function updateCartItem(sessionId: string, itemId: string, quantity: number) {
+  return fetchApi(`/cart/items/${itemId}`, {
+    method: "PATCH",
+    headers: {
+      "X-Session-Id": sessionId,
+    },
+    body: JSON.stringify({ quantity }),
+  });
+}
+
+export async function removeCartItem(sessionId: string, itemId: string) {
+  return fetchApi(`/cart/items/${itemId}`, {
+    method: "DELETE",
+    headers: {
+      "X-Session-Id": sessionId,
+    },
+  });
+}
+
+export async function clearCart(sessionId: string) {
+  return fetchApi(`/cart`, {
+    method: "DELETE",
+    headers: {
+      "X-Session-Id": sessionId,
+    },
+  });
+}
+
+// Checkout API
+export interface CheckoutData {
+  customer: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    phone: string;
+    document?: string;
+  };
+  shippingAddress: {
+    firstName: string;
+    lastName: string;
+    address1: string;
+    address2?: string;
+    city: string;
+    province: string;
+    zip: string;
+    country: string;
+    phone?: string;
+  };
+  billingAddress?: {
+    firstName: string;
+    lastName: string;
+    address1: string;
+    address2?: string;
+    city: string;
+    province: string;
+    zip: string;
+    country: string;
+    phone?: string;
+  };
+  paymentMethod: "credit_card" | "pix" | "boleto";
+  paymentToken?: string;
+  installments?: number;
+  couponCode?: string;
+  notes?: string;
+}
+
+export async function createCheckout(sessionId: string, data: CheckoutData) {
+  return fetchApi(`/checkout`, {
+    method: "POST",
+    headers: {
+      "X-Session-Id": sessionId,
+    },
+    body: JSON.stringify(data),
+  });
+}
+
+export async function getPaymentMethods() {
+  return fetchApi(`/payments/methods`);
+}
+
+export async function processPayment(orderId: string, paymentData: { paymentMethod: string; token?: string; installments?: number }) {
+  return fetchApi(`/payments/process`, {
+    method: "POST",
+    body: JSON.stringify({ orderId, ...paymentData }),
+  });
+}
+
+// Orders API
+export async function getOrders(email: string) {
+  return fetchApi(`/orders?email=${encodeURIComponent(email)}`);
+}
+
+export async function getOrder(orderNumber: string, email: string) {
+  return fetchApi(`/orders/${orderNumber}?email=${encodeURIComponent(email)}`);
+}
+
+// Shipping API
+export async function calculateShipping(zipCode: string, items: { productId: string; quantity: number }[]) {
+  return fetchApi(`/shipping/calculate`, {
+    method: "POST",
+    body: JSON.stringify({ zipCode, items }),
+  });
+}
+
+// Coupon API
+export async function validateCoupon(code: string, subtotal: number) {
+  return fetchApi(`/coupons/validate`, {
+    method: "POST",
+    body: JSON.stringify({ code, subtotal }),
   });
 }
