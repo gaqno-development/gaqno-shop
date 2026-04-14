@@ -6,9 +6,9 @@ export const R2_PUBLIC_URL = process.env.NEXT_PUBLIC_R2_PUBLIC_URL || "";
 export async function fetchApi(endpoint: string, options: RequestInit = {}) {
   const url = `${API_URL}${endpoint}`;
   
-  const headers: HeadersInit = {
+  const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    ...options.headers,
+    ...(options.headers as Record<string, string> || {}),
   };
 
   // Add tenant domain header
