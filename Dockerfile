@@ -7,6 +7,10 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
+# Add npmrc for GitHub Packages
+RUN echo '@gaqno-development:registry=https://npm.pkg.github.com/' > .npmrc && \
+    echo '//npm.pkg.github.com/:_authToken=${NPM_TOKEN}' >> .npmrc
+
 # Install dependencies based on the preferred package manager
 COPY package.json ./
 RUN npm install
