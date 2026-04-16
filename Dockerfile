@@ -7,9 +7,12 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
+# Accept NPM_TOKEN as build argument
+ARG NPM_TOKEN
+
 # Add npmrc for GitHub Packages
 RUN echo '@gaqno-development:registry=https://npm.pkg.github.com/' > .npmrc && \
-    echo '//npm.pkg.github.com/:_authToken=${NPM_TOKEN}' >> .npmrc
+    echo "//npm.pkg.github.com/:_authToken=${NPM_TOKEN}" >> .npmrc
 
 # Install dependencies based on the preferred package manager
 COPY package.json ./
@@ -17,8 +20,10 @@ RUN npm install
 
 # Rebuild the source code only when needed
 FROM base AS builder
+ARG NPM_TOKEN
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/.npmrc ./.npmrc
 COPY . .
 
 # Next.js collects completely anonymous telemetry data about general usage.
