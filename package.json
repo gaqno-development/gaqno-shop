@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@gaqno-development/frontcore": "^1.10.86",
     "@mercadopago/sdk-react": "^1.0.0",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.468.0",
