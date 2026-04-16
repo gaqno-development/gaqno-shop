@@ -18,6 +18,7 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  transpilePackages: ['@gaqno-development/frontcore'],
 };
 
 export default nextConfig;
