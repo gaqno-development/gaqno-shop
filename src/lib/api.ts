@@ -173,10 +173,6 @@ export async function processPayment(orderId: string, paymentData: { paymentMeth
 }
 
 // Orders API
-export async function getOrders(email: string) {
-  return fetchApi(`/orders?email=${encodeURIComponent(email)}`);
-}
-
 export async function getOrder(orderNumber: string, email: string) {
   return fetchApi(`/orders/${orderNumber}?email=${encodeURIComponent(email)}`);
 }

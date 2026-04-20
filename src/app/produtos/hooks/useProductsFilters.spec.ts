@@ -2,7 +2,7 @@ import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const searchParamsMock = {
-  get: vi.fn<[string], string | null>(),
+  get: vi.fn<(key: string) => string | null>(),
 };
 
 vi.mock("next/navigation", () => ({
