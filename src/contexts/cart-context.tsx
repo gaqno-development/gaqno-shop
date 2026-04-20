@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { getCart, addToCart as apiAddToCart } from "@/lib/api";
 
-interface CartItem {
+export interface CartItem {
   productId: string;
   variationId?: string;
   name: string;
@@ -14,7 +14,7 @@ interface CartItem {
   total: number;
 }
 
-interface CartSummary {
+export interface CartSummary {
   itemCount: number;
   uniqueItems: number;
   subtotal: number;
