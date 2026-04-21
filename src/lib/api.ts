@@ -192,3 +192,39 @@ export async function validateCoupon(code: string, subtotal: number) {
     body: JSON.stringify({ code, subtotal }),
   });
 }
+
+// Bakery — public site settings
+export async function getBakerySiteSettings() {
+  return fetchApi(`/bakery/site-settings`);
+}
+
+// Bakery — decorations catalog (public read)
+export async function getBakeryDecorations() {
+  return fetchApi(`/bakery/decorations`);
+}
+
+// Bakery — reference-image upload (returns { url })
+export async function uploadBakeryReferenceImage(
+  file: File,
+): Promise<{ url: string }> {
+  const normalizedEndpoint = "/bakery/assets/upload";
+  const url = `${API_URL}${normalizedEndpoint}`;
+  const form = new FormData();
+  form.append("file", file);
+  const headers: Record<string, string> = {};
+  if (typeof window !== "undefined") {
+    headers["X-Tenant-Domain"] = window.location.host;
+  }
+  const response = await fetch(url, {
+    method: "POST",
+    body: form,
+    headers,
+  });
+  if (!response.ok) {
+    const error = await response
+      .json()
+      .catch(() => ({ message: `HTTP ${response.status}` }));
+    throw new Error(error.message || `Upload failed: ${response.status}`);
+  }
+  return response.json();
+}

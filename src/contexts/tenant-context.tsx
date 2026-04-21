@@ -12,6 +12,7 @@ interface FeatureFlags {
   featureCheckoutPro: boolean;
   featurePix: boolean;
   featureDropshipping: boolean;
+  featureBakery?: boolean;
 }
 
 interface Tenant {

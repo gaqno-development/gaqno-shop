@@ -4,3 +4,4 @@ export { OrderCompleteScreen } from "./OrderCompleteScreen";
 export { OrderSummary } from "./OrderSummary";
 export { PaymentSection } from "./PaymentSection";
 export { ShippingSection } from "./ShippingSection";
+export { DeliveryScheduleSection } from "./DeliveryScheduleSection";

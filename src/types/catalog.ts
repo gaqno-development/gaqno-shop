@@ -26,6 +26,9 @@ export interface Product extends ProductSummary {
   readonly category: ProductCategoryRef | null;
   readonly seoTitle: string | null;
   readonly seoDescription: string | null;
+  readonly allowsReferenceImage?: boolean;
+  readonly leadDays?: number | null;
+  readonly recipeId?: string | null;
 }
 
 export interface Category {

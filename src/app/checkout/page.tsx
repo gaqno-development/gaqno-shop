@@ -6,6 +6,7 @@ import { motion } from "motion/react";
 import { ArrowLeft } from "lucide-react";
 import {
   ContactSection,
+  DeliveryScheduleSection,
   NotesSection,
   OrderCompleteScreen,
   OrderSummary,
@@ -73,6 +74,19 @@ function CheckoutContent() {
             selectedOption={page.shipping.selected}
             onSelectOption={page.shipping.setSelected}
           />
+          {page.isBakery ? (
+            <DeliveryScheduleSection
+              deliveryDate={page.delivery.deliveryDate}
+              deliveryTime={page.delivery.deliveryTime}
+              isPickup={page.delivery.isPickup}
+              minDate={page.delivery.minDate}
+              minLeadDays={page.delivery.minLeadDays}
+              error={page.delivery.error}
+              onChangeDate={page.delivery.setDeliveryDate}
+              onChangeTime={page.delivery.setDeliveryTime}
+              onChangeIsPickup={page.delivery.setIsPickup}
+            />
+          ) : null}
           <PaymentSection
             selected={page.paymentMethod}
             onSelect={page.setPaymentMethod}
@@ -89,7 +103,12 @@ function CheckoutContent() {
           onCouponChange={page.coupon.setCode}
           onApplyCoupon={page.coupon.apply}
           isSubmitting={page.isSubmitting}
-          canSubmit={!!page.shipping.selected}
+          canSubmit={
+            !!page.shipping.selected &&
+            (!page.isBakery ||
+              page.delivery.minLeadDays === 0 ||
+              page.delivery.isValid)
+          }
           onSubmit={page.handleSubmit}
         />
       </div>

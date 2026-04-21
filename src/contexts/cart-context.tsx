@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { getCart, addToCart as apiAddToCart } from "@/lib/api";
+import type { OrderItemBakeryMeta } from "@/types/bakery";
 
 export interface CartItem {
   productId: string;
@@ -12,6 +13,7 @@ export interface CartItem {
   imageUrl?: string;
   attributes?: Record<string, string>;
   total: number;
+  bakeryMeta?: OrderItemBakeryMeta;
 }
 
 export interface CartSummary {
@@ -24,7 +26,12 @@ export interface CartSummary {
 interface CartContextType {
   cart: CartSummary | null;
   isLoading: boolean;
-  addItem: (product: any, quantity: number, variation?: any) => Promise<void>;
+  addItem: (
+    product: any,
+    quantity: number,
+    variation?: any,
+    bakeryMeta?: OrderItemBakeryMeta,
+  ) => Promise<void>;
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
@@ -82,11 +89,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     refreshCart();
   }, [refreshCart]);
 
-  const addItem = async (product: any, quantity: number, variation?: any) => {
+  const addItem = async (
+    product: any,
+    quantity: number,
+    variation?: any,
+    bakeryMeta?: OrderItemBakeryMeta,
+  ) => {
     const item = {
       productId: product.id,
       variationId: variation?.id,
       quantity,
+      ...(bakeryMeta ? { bakeryMeta } : {}),
     };
 
     await apiAddToCart(sessionId, item);

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import type { Product } from "@/types/catalog";
 import type { ProductPricing } from "@/lib/pricing";
 import { ProductPrice } from "./ProductPrice";
@@ -17,6 +18,7 @@ interface Props {
   readonly isLowStock: boolean;
   readonly isAddingToCart: boolean;
   readonly onAddToCart: () => void;
+  readonly bakerySlot?: ReactNode;
 }
 
 export function ProductInfo({
@@ -30,6 +32,7 @@ export function ProductInfo({
   isLowStock,
   isAddingToCart,
   onAddToCart,
+  bakerySlot,
 }: Props) {
   return (
     <div className="flex flex-col gap-8">
@@ -70,6 +73,8 @@ export function ProductInfo({
         isLowStock={isLowStock}
         quantity={product.quantity}
       />
+
+      {bakerySlot}
 
       <ProductPurchaseControls
         quantity={quantity}

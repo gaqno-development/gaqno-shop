@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  BakeryProductOptions,
   ProductBreadcrumb,
   ProductDescription,
   ProductGallery,
@@ -22,7 +23,15 @@ export default function ProductPage() {
     return <ProductNotFound />;
   }
 
-  const { product, pricing, stock, quantityControls } = page;
+  const { product, pricing, stock, quantityControls, isBakery, bakeryOptions, decorations } = page;
+
+  const bakerySlot = isBakery ? (
+    <BakeryProductOptions
+      options={bakeryOptions}
+      decorations={decorations}
+      leadDays={product.leadDays}
+    />
+  ) : null;
 
   return (
     <div className="mx-auto max-w-7xl px-6 lg:px-10 py-10 md:py-16">
@@ -46,6 +55,7 @@ export default function ProductPage() {
           isLowStock={stock.isLowStock}
           isAddingToCart={page.isAddingToCart}
           onAddToCart={page.handleAddToCart}
+          bakerySlot={bakerySlot}
         />
       </div>
 
