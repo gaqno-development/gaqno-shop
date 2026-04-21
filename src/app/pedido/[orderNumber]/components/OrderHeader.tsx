@@ -1,11 +1,8 @@
 import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
-import { formatDateTime } from "@/lib/utils";
-import {
-  ORDER_STATUS_COLORS,
-  ORDER_STATUS_LABELS,
-  type OrderDetail,
-} from "@/types/order";
+import { ArrowLeft } from "lucide-react";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { ORDER_STATUS_LABELS, type OrderDetail } from "@/types/order";
 
 interface Props {
   readonly order: OrderDetail;
@@ -13,29 +10,47 @@ interface Props {
 }
 
 export function OrderHeader({ order, email }: Props) {
+  const statusLabel = ORDER_STATUS_LABELS[order.status] ?? order.status;
+  const backHref = email
+    ? `/pedidos?email=${encodeURIComponent(email)}`
+    : "/";
   return (
-    <>
+    <header className="border-b border-[var(--mist)] pb-10">
       <Link
-        href={`/pedidos?email=${encodeURIComponent(email)}`}
-        className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6"
+        href={backHref}
+        className="link-underline inline-flex items-center gap-2 font-mono text-[0.68rem] uppercase tracking-[0.24em] text-[var(--muted)] hover:text-[var(--ink)]"
       >
-        <ChevronLeft className="h-4 w-4" />
-        Voltar aos pedidos
+        <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
+        Voltar
       </Link>
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+      <div className="mt-8 flex flex-wrap items-end justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-bold">Pedido #{order.orderNumber}</h1>
-          <p className="text-gray-500">
-            Realizado em {formatDateTime(order.createdAt)}
+          <span className="eyebrow">Pedido · {order.orderNumber}</span>
+          <h1
+            className="mt-4 font-display text-[clamp(2.4rem,6vw,4rem)] leading-[0.95] tracking-[-0.03em] text-[var(--ink)]"
+            style={{ fontVariationSettings: '"opsz" 144, "SOFT" 80' }}
+          >
+            <em className="italic">
+              {format(new Date(order.createdAt), "dd 'de' MMMM", {
+                locale: ptBR,
+              })}
+            </em>
+            <span className="ml-2 text-[var(--muted)]">
+              · {format(new Date(order.createdAt), "yyyy")}
+            </span>
+          </h1>
+          <p className="mt-3 font-mono text-[0.7rem] uppercase tracking-[0.22em] text-[var(--muted)]">
+            {format(new Date(order.createdAt), "HH:mm")} · {order.items.length}{" "}
+            {order.items.length === 1 ? "item" : "itens"}
           </p>
         </div>
-        <span
-          className={`px-4 py-2 rounded-full font-medium ${ORDER_STATUS_COLORS[order.status] ?? ""}`}
-        >
-          {ORDER_STATUS_LABELS[order.status] ?? order.status}
+
+        <span className="inline-flex items-center gap-2 border border-[var(--ink)] px-4 py-2 font-mono text-[0.68rem] uppercase tracking-[0.24em] text-[var(--ink)]">
+          <span className="h-1.5 w-1.5 rounded-full bg-[var(--ink)]" aria-hidden />
+          {statusLabel}
         </span>
       </div>
-    </>
+    </header>
   );
 }

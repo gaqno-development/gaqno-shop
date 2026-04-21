@@ -1,176 +1,222 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { useTenant } from '@/contexts/tenant-context';
-import { Button } from '@gaqno-development/frontcore/components/ui/button';
-import { Badge } from '@gaqno-development/frontcore/components/ui/badge';
-import { Loader2, Package, Eye } from 'lucide-react';
+import Link from "next/link";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { AnimatePresence, motion } from "motion/react";
+import { ArrowRight, Loader2, Package } from "lucide-react";
+import { formatBRL } from "@/lib/formatters";
+import { useMyOrders, type MyOrderRow } from "./hooks/useMyOrders";
 
-interface Order {
-  id: string;
-  orderNumber: string;
-  status: string;
-  paymentStatus: string;
-  total: string;
-  createdAt: string;
-  items: number;
-}
+const EASE = [0.19, 1, 0.22, 1] as const;
 
-const statusLabels: Record<string, { label: string; variant: any }> = {
-  pending: { label: 'Pendente', variant: 'secondary' },
-  confirmed: { label: 'Confirmado', variant: 'default' },
-  processing: { label: 'Em Processamento', variant: 'default' },
-  shipped: { label: 'Enviado', variant: 'default' },
-  delivered: { label: 'Entregue', variant: 'success' },
-  cancelled: { label: 'Cancelado', variant: 'destructive' },
-  refunded: { label: 'Reembolsado', variant: 'destructive' },
+const STATUS_LABELS: Record<string, string> = {
+  pending: "Pendente",
+  confirmed: "Confirmado",
+  processing: "Em processamento",
+  shipped: "Enviado",
+  delivered: "Entregue",
+  cancelled: "Cancelado",
+  refunded: "Reembolsado",
+};
+
+const STATUS_TONE: Record<string, string> = {
+  pending: "text-amber-700",
+  confirmed: "text-[var(--ink)]",
+  processing: "text-[var(--ink)]",
+  shipped: "text-[var(--ink)]",
+  delivered: "text-emerald-700",
+  cancelled: "text-red-700",
+  refunded: "text-red-700",
 };
 
 export default function OrdersPage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
-  const { tenant } = useTenant();
-  
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [pagination, setPagination] = useState({
-    page: 1,
-    totalPages: 1,
-    total: 0,
-  });
+  const { orders, isLoading, pagination, setPage } = useMyOrders();
 
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/login?callbackUrl=/conta/pedidos');
-      return;
-    }
-
-    if (status === 'authenticated') {
-      fetchOrders();
-    }
-  }, [status, pagination.page]);
-
-  const fetchOrders = async () => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/orders/my-orders?page=${pagination.page}&limit=10`,
-        {
-          headers: {
-            Authorization: `Bearer ${session?.accessToken}`,
-            'X-Tenant-Slug': process.env.NEXT_PUBLIC_TENANT_SLUG || 'default',
-          },
-        }
-      );
-
-      if (!response.ok) throw new Error('Failed to fetch orders');
-
-      const data = await response.json();
-      setOrders(data.items);
-      setPagination({
-        page: data.page,
-        totalPages: data.totalPages,
-        total: data.total,
-      });
-    } catch (error) {
-      console.error('Error fetching orders:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  if (status === 'loading' || isLoading) {
+  if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="flex min-h-[40vh] items-center justify-center">
+        <Loader2 className="h-6 w-6 animate-spin text-[var(--ink)]" aria-hidden />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Meus Pedidos</h1>
-        <p className="text-gray-500">
-          Total: {pagination.total} pedido{pagination.total !== 1 ? 's' : ''}
-        </p>
-      </div>
+    <div className="space-y-12">
+      <OrdersHeader total={pagination.total} />
 
       {orders.length === 0 ? (
-        <div className="text-center py-12 bg-gray-50 rounded-lg">
-          <Package className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-          <h3 className="text-lg font-medium text-gray-900">Nenhum pedido encontrado</h3>
-          <p className="text-gray-500 mt-2">Você ainda não fez nenhum pedido.</p>
-          <Link href="/produtos">
-            <Button className="mt-4" style={{ backgroundColor: tenant?.primaryColor }}>
-              Começar a comprar
-            </Button>
-          </Link>
-        </div>
+        <EmptyOrders />
       ) : (
-        <div className="space-y-4">
-          {orders.map((order) => (
-            <div
-              key={order.id}
-              className="bg-white border rounded-lg p-6 hover:shadow-md transition-shadow"
-            >
-              <div className="flex items-start justify-between">
-                <div>
-                  <div className="flex items-center gap-3">
-                    <h3 className="font-semibold text-lg">{order.orderNumber}</h3>
-                    <Badge variant={statusLabels[order.status]?.variant || 'secondary'}>
-                      {statusLabels[order.status]?.label || order.status}
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-gray-500 mt-1">
-                    {format(new Date(order.createdAt), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    {order.items} item{order.items !== 1 ? 's' : ''}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="font-semibold text-lg">
-                    R$ {parseFloat(order.total).toFixed(2)}
-                  </p>
-                  <Link href={`/conta/pedidos/${order.id}`}>
-                    <Button variant="outline" size="sm" className="mt-2">
-                      <Eye className="h-4 w-4 mr-2" />
-                      Ver detalhes
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            </div>
-          ))}
-
-          {pagination.totalPages > 1 && (
-            <div className="flex justify-center gap-2 pt-4">
-              <Button
-                variant="outline"
-                onClick={() => setPagination(p => ({ ...p, page: p.page - 1 }))}
-                disabled={pagination.page === 1}
-              >
-                Anterior
-              </Button>
-              <span className="flex items-center px-4">
-                Página {pagination.page} de {pagination.totalPages}
-              </span>
-              <Button
-                variant="outline"
-                onClick={() => setPagination(p => ({ ...p, page: p.page + 1 }))}
-                disabled={pagination.page === pagination.totalPages}
-              >
-                Próxima
-              </Button>
-            </div>
-          )}
-        </div>
+        <>
+          <ul className="divide-y divide-[var(--mist)] border-y border-[var(--mist)]">
+            <AnimatePresence initial={false}>
+              {orders.map((order, index) => (
+                <OrderRow key={order.id} order={order} delay={index * 0.04} />
+              ))}
+            </AnimatePresence>
+          </ul>
+          {pagination.totalPages > 1 ? (
+            <Pagination
+              page={pagination.page}
+              totalPages={pagination.totalPages}
+              onChange={setPage}
+            />
+          ) : null}
+        </>
       )}
     </div>
+  );
+}
+
+function OrdersHeader({ total }: { readonly total: number }) {
+  return (
+    <header className="border-b border-[var(--mist)] pb-10">
+      <div className="flex items-end justify-between gap-6">
+        <div>
+          <span className="eyebrow">Meus · pedidos</span>
+          <h1
+            className="mt-4 font-display text-[clamp(2.4rem,5vw,3.6rem)] leading-[0.95] tracking-[-0.03em] text-[var(--ink)]"
+            style={{ fontVariationSettings: '"opsz" 144, "SOFT" 80' }}
+          >
+            Seu <em className="italic">histórico</em>.
+          </h1>
+        </div>
+        <span className="font-mono tabular text-sm text-[var(--muted)]">
+          {total.toString().padStart(2, "0")}{" "}
+          {total === 1 ? "pedido" : "pedidos"}
+        </span>
+      </div>
+    </header>
+  );
+}
+
+function OrderRow({
+  order,
+  delay,
+}: {
+  readonly order: MyOrderRow;
+  readonly delay: number;
+}) {
+  const statusLabel = STATUS_LABELS[order.status] ?? order.status;
+  const statusTone = STATUS_TONE[order.status] ?? "text-[var(--ink)]";
+  return (
+    <motion.li
+      layout
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, x: -24 }}
+      transition={{ duration: 0.5, ease: EASE, delay }}
+      className="py-8"
+    >
+      <Link
+        href={`/conta/pedidos/${order.id}`}
+        className="group grid grid-cols-1 items-start gap-6 md:grid-cols-[1.6fr_1fr_auto] md:items-center md:gap-10"
+      >
+        <div className="min-w-0">
+          <div className="flex items-baseline gap-4">
+            <span className="font-mono tabular text-[0.68rem] uppercase tracking-[0.24em] text-[var(--muted)]">
+              {order.orderNumber}
+            </span>
+            <span
+              className={`font-mono text-[0.66rem] uppercase tracking-[0.22em] ${statusTone}`}
+            >
+              · {statusLabel}
+            </span>
+          </div>
+          <p
+            className="mt-3 font-display text-[1.5rem] leading-tight tracking-[-0.02em] text-[var(--ink)] transition-colors group-hover:text-[var(--tenant-primary)]"
+            style={{ fontVariationSettings: '"opsz" 144, "SOFT" 80' }}
+          >
+            <em className="italic">
+              {format(new Date(order.createdAt), "dd 'de' MMMM", {
+                locale: ptBR,
+              })}
+            </em>
+            <span className="ml-2 text-[var(--muted)]">
+              · {format(new Date(order.createdAt), "yyyy")}
+            </span>
+          </p>
+          <p className="mt-1 font-mono text-[0.7rem] uppercase tracking-[0.22em] text-[var(--muted)]">
+            {order.items} {order.items === 1 ? "item" : "itens"}
+          </p>
+        </div>
+
+        <div className="md:text-right">
+          <span className="eyebrow">Total</span>
+          <p className="mt-2 font-mono tabular text-xl text-[var(--ink)]">
+            {formatBRL(Number.parseFloat(order.total))}
+          </p>
+        </div>
+
+        <span className="link-underline font-mono text-[0.66rem] uppercase tracking-[0.22em] text-[var(--ink)]">
+          Ver detalhes
+          <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+        </span>
+      </Link>
+    </motion.li>
+  );
+}
+
+function Pagination({
+  page,
+  totalPages,
+  onChange,
+}: {
+  readonly page: number;
+  readonly totalPages: number;
+  readonly onChange: (next: number) => void;
+}) {
+  return (
+    <nav className="flex items-center justify-between border-t border-[var(--mist)] pt-8">
+      <button
+        type="button"
+        onClick={() => onChange(page - 1)}
+        disabled={page === 1}
+        className="link-underline font-mono text-[0.68rem] uppercase tracking-[0.22em] text-[var(--muted)] hover:text-[var(--ink)] disabled:cursor-not-allowed disabled:opacity-40"
+      >
+        ← Anterior
+      </button>
+      <span className="font-mono tabular text-[0.68rem] uppercase tracking-[0.24em] text-[var(--muted)]">
+        {page.toString().padStart(2, "0")} / {totalPages.toString().padStart(2, "0")}
+      </span>
+      <button
+        type="button"
+        onClick={() => onChange(page + 1)}
+        disabled={page === totalPages}
+        className="link-underline font-mono text-[0.68rem] uppercase tracking-[0.22em] text-[var(--muted)] hover:text-[var(--ink)] disabled:cursor-not-allowed disabled:opacity-40"
+      >
+        Próxima →
+      </button>
+    </nav>
+  );
+}
+
+function EmptyOrders() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.7, ease: EASE }}
+      className="flex flex-col items-center gap-6 px-6 py-20 text-center"
+    >
+      <div className="flex h-16 w-16 items-center justify-center rounded-full ring-1 ring-[var(--mist)]">
+        <Package className="h-6 w-6 text-[var(--muted)]" strokeWidth={1.2} />
+      </div>
+      <h3
+        className="font-display text-3xl italic leading-tight tracking-[-0.02em] text-[var(--ink)]"
+        style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}
+      >
+        Nenhum pedido ainda.
+      </h3>
+      <p className="max-w-sm text-[0.98rem] leading-relaxed text-[var(--muted)]">
+        Quando você finalizar sua primeira compra, ela aparecerá aqui com todo
+        o histórico e status.
+      </p>
+      <Link href="/produtos" className="btn-ink group mt-2">
+        Começar a comprar
+        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+      </Link>
+    </motion.div>
   );
 }

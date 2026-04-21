@@ -1,4 +1,3 @@
-import { CheckCircle, CreditCard, Package, Truck } from "lucide-react";
 import {
   ORDER_STATUS_LABELS,
   TIMELINE_ACTIVE_STATUSES,
@@ -6,19 +5,14 @@ import {
   type OrderStatus,
 } from "@/types/order";
 
-const TIMELINE_ICONS: Record<OrderStatus, typeof CheckCircle> = {
-  pending: CheckCircle,
-  confirmed: CreditCard,
-  processing: Package,
-  shipped: Truck,
-  delivered: CheckCircle,
-  cancelled: CheckCircle,
-  refunded: CheckCircle,
-};
-
-function isStepActive(currentStatus: string, step: OrderStatus): boolean {
-  if (step === "pending" && currentStatus === "pending") return true;
-  return TIMELINE_ACTIVE_STATUSES.includes(currentStatus);
+function isStepReached(currentStatus: string, step: OrderStatus): boolean {
+  if (step === "pending") return true;
+  const currentIndex = TIMELINE_STATUSES.indexOf(currentStatus as OrderStatus);
+  const stepIndex = TIMELINE_STATUSES.indexOf(step);
+  if (currentIndex === -1) {
+    return TIMELINE_ACTIVE_STATUSES.includes(currentStatus) && stepIndex <= 1;
+  }
+  return stepIndex <= currentIndex;
 }
 
 interface Props {
@@ -27,39 +21,62 @@ interface Props {
 
 export function OrderTimeline({ currentStatus }: Props) {
   return (
-    <div className="bg-white p-6 rounded-lg border mb-8">
-      <div className="flex items-center justify-between">
-        {TIMELINE_STATUSES.map((step, index) => {
-          const isActive = isStepActive(currentStatus, step);
-          const isCurrent = currentStatus === step;
-          const Icon = TIMELINE_ICONS[step];
-          const isLast = index === TIMELINE_STATUSES.length - 1;
+    <section className="mt-14">
+      <div className="flex items-baseline justify-between border-b border-[var(--mist)] pb-5">
+        <span className="eyebrow">Progresso · entrega</span>
+        <span className="font-mono tabular text-[0.66rem] uppercase tracking-[0.22em] text-[var(--ink)]">
+          {ORDER_STATUS_LABELS[currentStatus] ?? currentStatus}
+        </span>
+      </div>
 
+      <ol className="mt-10 grid grid-cols-5 gap-3">
+        {TIMELINE_STATUSES.map((step, index) => {
+          const reached = isStepReached(currentStatus, step);
+          const isCurrent = currentStatus === step;
           return (
-            <div key={step} className="flex items-center">
-              <div className={`flex flex-col items-center ${isActive ? "text-blue-600" : "text-gray-300"}`}>
-                <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
+            <li key={step} className="relative flex flex-col gap-4">
+              <div className="flex items-center">
+                <span
+                  aria-hidden
+                  className={`inline-block h-2 w-2 rounded-full transition-colors ${
                     isCurrent
-                      ? "border-blue-600 bg-blue-50"
-                      : isActive
-                        ? "border-blue-600"
-                        : "border-gray-300"
+                      ? "ring-2 ring-[var(--ink)] ring-offset-2 ring-offset-[var(--paper)] bg-[var(--ink)]"
+                      : reached
+                        ? "bg-[var(--ink)]"
+                        : "bg-[var(--mist)]"
+                  }`}
+                />
+                {index < TIMELINE_STATUSES.length - 1 ? (
+                  <span
+                    aria-hidden
+                    className="ml-2 h-px flex-1"
+                    style={{
+                      background: reached
+                        ? "var(--ink)"
+                        : "var(--mist)",
+                      opacity: reached ? 0.35 : 1,
+                    }}
+                  />
+                ) : null}
+              </div>
+              <div>
+                <span className="font-mono tabular text-[0.6rem] uppercase tracking-[0.24em] text-[var(--muted)]">
+                  {(index + 1).toString().padStart(2, "0")}
+                </span>
+                <p
+                  className={`mt-1 font-display text-[0.95rem] italic leading-tight ${
+                    reached
+                      ? "text-[var(--ink)]"
+                      : "text-[var(--muted)]"
                   }`}
                 >
-                  <Icon className="h-5 w-5" />
-                </div>
-                <span className="text-xs mt-2 hidden sm:block">
                   {ORDER_STATUS_LABELS[step]}
-                </span>
+                </p>
               </div>
-              {!isLast && (
-                <div className={`w-8 sm:w-16 h-0.5 mx-2 ${isActive ? "bg-blue-600" : "bg-gray-300"}`} />
-              )}
-            </div>
+            </li>
           );
         })}
-      </div>
-    </div>
+      </ol>
+    </section>
   );
 }

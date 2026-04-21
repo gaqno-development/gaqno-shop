@@ -1,87 +1,81 @@
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import {
-  CheckCircle,
-  Clock,
-  Package,
-  type LucideIcon,
-} from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@gaqno-development/frontcore/components/ui/card";
-import { useTenant } from "@/contexts/tenant-context";
 import type { AccountOrderStatusHistoryEntry } from "../types";
 
-const STATUS_ICONS: Record<string, LucideIcon> = {
-  pending: Clock,
-  confirmed: CheckCircle,
-  processing: Package,
-  shipped: Package,
-  delivered: CheckCircle,
+const STATUS_LABELS: Record<string, string> = {
+  pending: "Pendente",
+  confirmed: "Confirmado",
+  processing: "Em processamento",
+  shipped: "Enviado",
+  delivered: "Entregue",
+  cancelled: "Cancelado",
+  refunded: "Reembolsado",
 };
-
-function resolveIcon(status: string): LucideIcon {
-  return STATUS_ICONS[status] ?? Clock;
-}
 
 interface Props {
   readonly history: readonly AccountOrderStatusHistoryEntry[];
 }
 
 export function AccountOrderStatusTimeline({ history }: Props) {
-  const { tenant } = useTenant();
+  if (history.length === 0) return null;
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Status do Pedido</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="relative">
-          <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200" />
-          <div className="space-y-6">
-            {history.map((entry, index) => (
-              <TimelineEntry
-                key={index}
-                entry={entry}
-                primaryColor={tenant?.primaryColor}
-              />
-            ))}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+    <section>
+      <div className="flex items-baseline justify-between border-b border-[var(--mist)] pb-5">
+        <span className="eyebrow">Status · histórico</span>
+      </div>
+
+      <ol className="relative mt-8 space-y-8 pl-6">
+        <span
+          aria-hidden
+          className="absolute left-[3px] top-2 bottom-2 w-px"
+          style={{
+            background:
+              "repeating-linear-gradient(180deg, var(--ink) 0 3px, transparent 3px 8px)",
+            opacity: 0.35,
+          }}
+        />
+        {history.map((entry, index) => (
+          <TimelineEntry key={index} entry={entry} isLatest={index === 0} />
+        ))}
+      </ol>
+    </section>
   );
 }
 
-interface EntryProps {
+function TimelineEntry({
+  entry,
+  isLatest,
+}: {
   readonly entry: AccountOrderStatusHistoryEntry;
-  readonly primaryColor: string | undefined;
-}
-
-function TimelineEntry({ entry, primaryColor }: EntryProps) {
-  const Icon = resolveIcon(entry.status);
+  readonly isLatest: boolean;
+}) {
+  const label = STATUS_LABELS[entry.status] ?? entry.status;
   return (
-    <div className="relative flex items-start gap-4">
-      <div
-        className="relative z-10 w-8 h-8 rounded-full flex items-center justify-center text-white"
-        style={{ backgroundColor: primaryColor }}
-      >
-        <Icon className="w-4 h-4" />
-      </div>
-      <div>
-        <p className="font-medium capitalize">{entry.status}</p>
-        <p className="text-sm text-gray-500">
-          {format(new Date(entry.createdAt), "dd/MM/yyyy 'às' HH:mm", {
+    <li className="relative">
+      <span
+        aria-hidden
+        className={`absolute left-[-26px] top-1.5 inline-block h-2 w-2 rounded-full ${
+          isLatest ? "bg-[var(--ink)]" : "bg-[var(--mist)] ring-1 ring-[var(--ink)]/30"
+        }`}
+      />
+      <div className="flex items-baseline justify-between gap-4">
+        <span
+          className="font-display text-[1.1rem] italic leading-tight text-[var(--ink)]"
+          style={{ fontVariationSettings: '"opsz" 144, "SOFT" 80' }}
+        >
+          {label}
+        </span>
+        <span className="font-mono tabular text-[0.66rem] uppercase tracking-[0.22em] text-[var(--muted)]">
+          {format(new Date(entry.createdAt), "dd MMM · HH:mm", {
             locale: ptBR,
           })}
-        </p>
-        {entry.notes && (
-          <p className="text-sm text-gray-600 mt-1">{entry.notes}</p>
-        )}
+        </span>
       </div>
-    </div>
+      {entry.notes ? (
+        <p className="mt-2 text-[0.92rem] leading-relaxed text-[var(--ink)]/70">
+          {entry.notes}
+        </p>
+      ) : null}
+    </li>
   );
 }

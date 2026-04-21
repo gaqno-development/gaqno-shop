@@ -1,10 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@gaqno-development/frontcore/components/ui/card";
-import { formatBRL } from "@/lib/formatters";
+import { formatBRL, formatFreightOrFree } from "@/lib/formatters";
 import type { AccountOrderDetail } from "../types";
 
 interface Props {
@@ -12,47 +6,69 @@ interface Props {
 }
 
 export function AccountOrderSummaryCard({ order }: Props) {
-  const subtotal = parseFloat(order.subtotal);
-  const shipping = parseFloat(order.shippingAmount);
-  const discount = parseFloat(order.discountAmount);
-  const total = parseFloat(order.total);
+  const subtotal = Number.parseFloat(order.subtotal);
+  const shipping = Number.parseFloat(order.shippingAmount);
+  const discount = Number.parseFloat(order.discountAmount);
+  const total = Number.parseFloat(order.total);
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Resumo do Pedido</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-2">
-          <Row label="Subtotal" value={formatBRL(subtotal)} />
-          <Row label="Frete" value={formatBRL(shipping)} />
-          {discount > 0 && (
-            <Row
-              label="Desconto"
-              value={`-${formatBRL(discount)}`}
-              valueClassName="text-green-600"
-            />
-          )}
-          <div className="border-t pt-2 flex justify-between font-semibold text-lg">
-            <span>Total</span>
-            <span>{formatBRL(total)}</span>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+    <section className="border border-[var(--mist)] bg-[var(--paper)] p-8">
+      <span className="eyebrow">Resumo · recibo</span>
+      <h2
+        className="mt-4 font-display text-3xl leading-tight tracking-[-0.02em] text-[var(--ink)]"
+        style={{ fontVariationSettings: '"opsz" 144, "SOFT" 80' }}
+      >
+        <em className="italic font-[430]">Pedido.</em>
+      </h2>
+
+      <div className="mt-8 space-y-3 font-mono text-[0.85rem] text-[var(--ink)]">
+        <Row label="Subtotal" value={formatBRL(subtotal)} />
+        <Row label="Frete" value={formatFreightOrFree(shipping)} />
+        {discount > 0 ? (
+          <Row
+            label="Desconto"
+            value={`− ${formatBRL(discount)}`}
+            tone="text-emerald-700"
+          />
+        ) : null}
+      </div>
+
+      <div
+        aria-hidden
+        className="my-8 h-px w-full"
+        style={{
+          background:
+            "repeating-linear-gradient(90deg, var(--ink) 0 4px, transparent 4px 10px)",
+        }}
+      />
+
+      <div className="flex items-baseline justify-between">
+        <span className="eyebrow">Total</span>
+        <span className="font-mono tabular text-3xl text-[var(--ink)]">
+          {formatBRL(total)}
+        </span>
+      </div>
+
+      <p className="mt-8 font-mono text-[0.64rem] uppercase tracking-[0.22em] text-[var(--muted)]">
+        Pagamento · {order.paymentMethod || "—"}
+      </p>
+    </section>
   );
 }
 
 interface RowProps {
   readonly label: string;
   readonly value: string;
-  readonly valueClassName?: string;
+  readonly tone?: string;
 }
 
-function Row({ label, value, valueClassName = "" }: RowProps) {
+function Row({ label, value, tone }: RowProps) {
   return (
-    <div className="flex justify-between text-sm">
-      <span className="text-gray-500">{label}</span>
-      <span className={valueClassName}>{value}</span>
+    <div className="flex items-baseline justify-between">
+      <span className="text-[0.65rem] uppercase tracking-[0.18em] text-[var(--muted)]">
+        {label}
+      </span>
+      <span className={`tabular ${tone ?? "text-[var(--ink)]"}`}>{value}</span>
     </div>
   );
 }

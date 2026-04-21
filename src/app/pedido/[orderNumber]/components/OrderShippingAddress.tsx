@@ -1,4 +1,3 @@
-import { Truck } from "lucide-react";
 import type { OrderAddress } from "@/types/order";
 
 interface Props {
@@ -7,22 +6,26 @@ interface Props {
 
 export function OrderShippingAddress({ address }: Props) {
   return (
-    <div className="bg-white p-6 rounded-lg border">
-      <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-        <Truck className="h-5 w-5" />
-        Endereço de Entrega
-      </h2>
-      <div className="text-gray-700">
-        <p className="font-medium">
+    <section>
+      <div className="flex items-baseline justify-between border-b border-[var(--mist)] pb-5">
+        <span className="eyebrow">Endereço · entrega</span>
+      </div>
+      <address className="mt-8 space-y-1 text-[1rem] not-italic leading-relaxed text-[var(--ink)]/80">
+        <p
+          className="font-display text-[1.2rem] italic text-[var(--ink)]"
+          style={{ fontVariationSettings: '"opsz" 144, "SOFT" 80' }}
+        >
           {address.firstName} {address.lastName}
         </p>
         <p>{address.address1}</p>
-        {address.address2 && <p>{address.address2}</p>}
+        {address.address2 ? <p>{address.address2}</p> : null}
         <p>
-          {address.city}, {address.province} {address.zip}
+          {address.city}, {address.province} · {address.zip}
         </p>
-        <p>{address.country}</p>
-      </div>
-    </div>
+        <p className="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-[var(--muted)]">
+          {address.country}
+        </p>
+      </address>
+    </section>
   );
 }

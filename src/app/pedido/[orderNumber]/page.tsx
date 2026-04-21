@@ -34,22 +34,27 @@ function OrderDetailContent() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <OrderHeader order={order} email={email} />
-      <OrderTimeline currentStatus={order.status} />
+    <section className="relative min-h-[calc(100vh-var(--header-height,0px))] overflow-hidden bg-[var(--paper)]">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-40 right-[-15%] h-[420px] w-[420px] rounded-full opacity-[0.12] blur-3xl"
+        style={{ background: "var(--tenant-primary)" }}
+      />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-6">
-          <OrderItemsList items={order.items} />
-          <OrderShippingAddress address={order.shippingAddress} />
-          <OrderNotes notes={order.notes} />
-        </div>
+      <div className="relative mx-auto max-w-6xl px-6 py-16 md:py-20 lg:px-10">
+        <OrderHeader order={order} email={email} />
+        <OrderTimeline currentStatus={order.status} />
 
-        <div className="lg:col-span-1">
+        <div className="mt-14 grid grid-cols-1 gap-14 lg:grid-cols-[1.6fr_1fr] lg:gap-20">
+          <div className="space-y-14">
+            <OrderItemsList items={order.items} />
+            <OrderShippingAddress address={order.shippingAddress} />
+            <OrderNotes notes={order.notes} />
+          </div>
           <OrderSummaryCard order={order} />
         </div>
       </div>
-    </div>
+    </section>
   );
 }
 

@@ -17,19 +17,35 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12">
-      <div className="max-w-md w-full space-y-8">
+    <section className="relative min-h-[calc(100vh-var(--header-height,0px))] overflow-hidden bg-[var(--paper)]">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-40 -right-40 h-[520px] w-[520px] rounded-full opacity-[0.18] blur-3xl"
+        style={{ background: "var(--tenant-primary)" }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-20 left-[10%] h-[340px] w-[340px] rounded-full opacity-[0.12] blur-3xl"
+        style={{ background: "var(--tenant-secondary)" }}
+      />
+
+      <div className="relative mx-auto grid max-w-5xl grid-cols-1 gap-12 px-6 pt-20 pb-24 md:pt-28 md:pb-32 lg:grid-cols-[1.1fr_1fr] lg:gap-20 lg:px-10">
         <SignupHeader />
-        <SignupErrorBanner message={error} />
-        <SignupForm
-          data={form.formData}
-          errors={form.formErrors}
-          isLoading={isLoading}
-          onChange={form.patch}
-          onSubmit={handleSubmit}
-        />
-        <SignupFooter />
+
+        <div className="relative flex flex-col justify-center">
+          <SignupErrorBanner message={error} />
+          <div className={error ? "mt-6" : undefined}>
+            <SignupForm
+              data={form.formData}
+              errors={form.formErrors}
+              isLoading={isLoading}
+              onChange={form.patch}
+              onSubmit={handleSubmit}
+            />
+          </div>
+          <SignupFooter />
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

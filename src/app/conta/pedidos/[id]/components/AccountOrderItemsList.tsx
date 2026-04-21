@@ -1,10 +1,5 @@
 import { Package } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@gaqno-development/frontcore/components/ui/card";
+import { R2_PUBLIC_URL } from "@/lib/api";
 import { formatBRL } from "@/lib/formatters";
 import type { AccountOrderItem } from "../types";
 
@@ -14,42 +9,66 @@ interface Props {
 
 export function AccountOrderItemsList({ items }: Props) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Itens do Pedido</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {items.map((item) => (
-            <OrderItemRow key={item.id} item={item} />
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+    <section>
+      <div className="flex items-baseline justify-between border-b border-[var(--mist)] pb-5">
+        <span className="eyebrow">Itens · do pedido</span>
+        <span className="font-mono tabular text-[0.68rem] uppercase tracking-[0.22em] text-[var(--muted)]">
+          {items.length.toString().padStart(2, "0")}
+        </span>
+      </div>
+      <ul className="divide-y divide-[var(--mist)]">
+        {items.map((item) => (
+          <OrderItemRow key={item.id} item={item} />
+        ))}
+      </ul>
+    </section>
   );
 }
 
 function OrderItemRow({ item }: { readonly item: AccountOrderItem }) {
+  const src = item.imageUrl
+    ? item.imageUrl.startsWith("http")
+      ? item.imageUrl
+      : `${R2_PUBLIC_URL}/${item.imageUrl}`
+    : null;
   return (
-    <div className="flex items-center gap-4">
-      <div className="w-20 h-20 bg-gray-100 rounded-lg overflow-hidden">
-        {item.imageUrl ? (
+    <li className="grid grid-cols-[80px_1fr_auto] items-center gap-6 py-6 md:grid-cols-[96px_1fr_auto_auto] md:gap-8">
+      <div
+        className="overflow-hidden ring-1 ring-[var(--mist)]"
+        style={{ aspectRatio: "4 / 5" }}
+      >
+        {src ? (
           <img
-            src={item.imageUrl}
+            src={src}
             alt={item.name}
-            className="w-full h-full object-cover"
+            className="h-full w-full object-cover"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-400">
-            <Package className="w-8 h-8" />
+          <div className="flex h-full w-full items-center justify-center bg-[var(--mist)]/30">
+            <Package className="h-6 w-6 text-[var(--muted)]" strokeWidth={1.2} />
           </div>
         )}
       </div>
-      <div className="flex-1">
-        <p className="font-medium">{item.name}</p>
-        <p className="text-sm text-gray-500">Qtd: {item.quantity}</p>
+
+      <div className="min-w-0">
+        <p
+          className="font-display text-[1.2rem] leading-tight tracking-[-0.01em] text-[var(--ink)]"
+          style={{ fontVariationSettings: '"opsz" 144, "SOFT" 80' }}
+        >
+          {item.name}
+        </p>
+        <p className="mt-1 font-mono text-[0.66rem] uppercase tracking-[0.22em] text-[var(--muted)]">
+          Qtd · {item.quantity.toString().padStart(2, "0")}
+        </p>
       </div>
-      <p className="font-medium">{formatBRL(parseFloat(item.price))}</p>
-    </div>
+
+      <span className="hidden font-mono tabular text-sm text-[var(--muted)] md:inline">
+        {formatBRL(Number.parseFloat(item.price))}
+      </span>
+
+      <span className="font-mono tabular text-[1rem] text-[var(--ink)]">
+        {formatBRL(Number.parseFloat(item.price) * item.quantity)}
+      </span>
+    </li>
   );
 }

@@ -8,12 +8,23 @@ interface Props {
 
 export function OrderItemsList({ items }: Props) {
   return (
-    <div className="bg-white p-6 rounded-lg border">
-      <h2 className="text-lg font-semibold mb-4">Itens do Pedido</h2>
-      <div className="space-y-4">
+    <section>
+      <div className="flex items-baseline justify-between border-b border-[var(--mist)] pb-5">
+        <span className="eyebrow">Itens · do pedido</span>
+        <span className="font-mono tabular text-[0.68rem] uppercase tracking-[0.22em] text-[var(--muted)]">
+          {items.length.toString().padStart(2, "0")}
+        </span>
+      </div>
+      <ul className="divide-y divide-[var(--mist)]">
         {items.map((item, index) => (
-          <div key={index} className="flex gap-4 py-4 border-b last:border-0">
-            <div className="h-20 w-20 bg-gray-100 rounded-lg overflow-hidden">
+          <li
+            key={index}
+            className="grid grid-cols-[80px_1fr_auto] items-center gap-6 py-6 md:grid-cols-[96px_1fr_auto_auto] md:gap-8"
+          >
+            <div
+              className="overflow-hidden ring-1 ring-[var(--mist)]"
+              style={{ aspectRatio: "4 / 5" }}
+            >
               {item.productImage ? (
                 <img
                   src={item.productImage}
@@ -21,17 +32,37 @@ export function OrderItemsList({ items }: Props) {
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <Package className="h-full w-full p-4 text-gray-300" />
+                <div className="flex h-full w-full items-center justify-center bg-[var(--mist)]/30">
+                  <Package
+                    className="h-6 w-6 text-[var(--muted)]"
+                    strokeWidth={1.2}
+                  />
+                </div>
               )}
             </div>
-            <div className="flex-1">
-              <h3 className="font-medium">{item.productName}</h3>
-              <p className="text-sm text-gray-500">Quantidade: {item.quantity}</p>
-              <p className="font-semibold mt-1">{formatCurrency(item.total)}</p>
+
+            <div className="min-w-0">
+              <p
+                className="font-display text-[1.2rem] leading-tight tracking-[-0.01em] text-[var(--ink)]"
+                style={{ fontVariationSettings: '"opsz" 144, "SOFT" 80' }}
+              >
+                {item.productName}
+              </p>
+              <p className="mt-1 font-mono text-[0.66rem] uppercase tracking-[0.22em] text-[var(--muted)]">
+                Qtd · {item.quantity.toString().padStart(2, "0")}
+              </p>
             </div>
-          </div>
+
+            <span className="hidden font-mono tabular text-sm text-[var(--muted)] md:inline">
+              {formatCurrency(item.total / Math.max(1, item.quantity))}
+            </span>
+
+            <span className="font-mono tabular text-[1rem] text-[var(--ink)]">
+              {formatCurrency(item.total)}
+            </span>
+          </li>
         ))}
-      </div>
-    </div>
+      </ul>
+    </section>
   );
 }
