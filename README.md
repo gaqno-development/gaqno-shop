@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# gaqno-shop
 
-## Getting Started
+Storefront multi-tenant (Next.js 16 App Router) para a plataforma gaqno. Consome
+`gaqno-shop-service` como backend.
 
-First, run the development server:
+## Setup
 
 ```bash
+npm install
+cp .env.example .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Variáveis de ambiente
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Nome | Obrigatória | Descrição |
+| --- | --- | --- |
+| `NEXT_PUBLIC_API_URL` | sim | URL do `gaqno-shop-service` (ex: `https://api.gaqno.com.br/shop/v1`) |
+| `NEXT_PUBLIC_TENANT_SLUG` | sim | Slug do tenant padrão para ambiente local |
+| `NEXT_PUBLIC_R2_PUBLIC_URL` | não | CDN pública para imagens de produto |
+| `NEXTAUTH_URL` | sim | URL pública do app (NextAuth). Ex: `http://localhost:3000` ou `https://shop.gaqno.com.br` |
+| `NEXTAUTH_SECRET` | sim | Segredo usado para assinar cookies do NextAuth. Gere com `openssl rand -base64 32` |
+| `GOOGLE_CLIENT_ID` | sim (p/ login Google) | Client ID do OAuth 2.0 (Google Cloud Console) |
+| `GOOGLE_CLIENT_SECRET` | sim (p/ login Google) | Client Secret do OAuth 2.0 |
 
-## Learn More
+### Configurando Google OAuth
 
-To learn more about Next.js, take a look at the following resources:
+1. Acesse [Google Cloud Console → Credentials](https://console.cloud.google.com/apis/credentials).
+2. Crie um OAuth 2.0 Client ID (Web application).
+3. **Authorized redirect URIs**: adicione
+   `https://shop.gaqno.com.br/api/auth/callback/google`
+   (e `http://localhost:3000/api/auth/callback/google` para dev).
+4. Copie Client ID e Secret para as envs.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+O fluxo:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Usuário clica "Continuar com Google" → NextAuth inicia OAuth.
+2. Após callback, o `signIn` callback pega o `access_token` do Google e envia
+   para `POST /auth/oauth/google` do `gaqno-shop-service`.
+3. Backend valida o token via Google UserInfo, faz upsert do `customer` (link
+   se email já existir), registra em `customer_oauth_accounts` e emite JWT
+   próprio.
+4. Tokens do backend ficam na sessão do NextAuth para chamadas autenticadas.
 
-## Deploy on Vercel
+## Scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `npm run dev` — dev server
+- `npm run build` — produção
+- `npm test` — Vitest
+- `npm run lint` — ESLint
