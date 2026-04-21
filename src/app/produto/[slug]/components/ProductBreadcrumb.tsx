@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
 import type { ProductCategoryRef } from "@/types/catalog";
 
 interface Props {
@@ -9,27 +8,30 @@ interface Props {
 
 export function ProductBreadcrumb({ productName, category }: Props) {
   return (
-    <nav className="flex items-center gap-2 text-sm text-gray-500 mb-8">
-      <Link href="/" className="hover:text-gray-900">
+    <nav
+      aria-label="Breadcrumb"
+      className="mb-10 font-mono text-[0.68rem] uppercase tracking-[0.26em] text-[var(--muted)]"
+    >
+      <Link href="/" className="hover:text-[var(--ink)]">
         Início
       </Link>
-      <ChevronRight className="h-4 w-4" />
-      <Link href="/produtos" className="hover:text-gray-900">
+      <span className="mx-2">/</span>
+      <Link href="/produtos" className="hover:text-[var(--ink)]">
         Produtos
       </Link>
       {category && (
         <>
-          <ChevronRight className="h-4 w-4" />
+          <span className="mx-2">/</span>
           <Link
             href={`/produtos?category=${category.slug}`}
-            className="hover:text-gray-900"
+            className="hover:text-[var(--ink)]"
           >
             {category.name}
           </Link>
         </>
       )}
-      <ChevronRight className="h-4 w-4" />
-      <span className="text-gray-900 truncate">{productName}</span>
+      <span className="mx-2">/</span>
+      <span className="truncate text-[var(--ink)]">{productName}</span>
     </nav>
   );
 }

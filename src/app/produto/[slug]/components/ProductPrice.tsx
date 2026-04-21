@@ -1,4 +1,3 @@
-import { useTenant } from "@/contexts/tenant-context";
 import { formatBRL } from "@/lib/formatters";
 import type { ProductPricing } from "@/lib/pricing";
 
@@ -7,22 +6,18 @@ interface Props {
 }
 
 export function ProductPrice({ pricing }: Props) {
-  const { tenant } = useTenant();
   return (
-    <div className="flex items-baseline gap-3">
-      <span
-        className="text-3xl font-bold"
-        style={{ color: tenant?.primaryColor || "#111827" }}
-      >
+    <div className="flex items-baseline gap-5">
+      <span className="font-mono tabular text-[clamp(2.5rem,4vw,3.2rem)] leading-none text-[var(--ink)]">
         {formatBRL(pricing.price)}
       </span>
       {pricing.hasDiscount && pricing.compareAtPrice !== null && (
         <>
-          <span className="text-xl text-gray-400 line-through">
+          <span className="font-mono tabular text-lg text-[var(--muted)] line-through">
             {formatBRL(pricing.compareAtPrice)}
           </span>
-          <span className="px-2 py-1 bg-red-100 text-red-700 text-sm font-medium rounded">
-            -{pricing.discountPercentage}%
+          <span className="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-[var(--tenant-primary)]">
+            −{pricing.discountPercentage}% off
           </span>
         </>
       )}

@@ -1,5 +1,7 @@
-import { Minus, Plus, ShoppingCart } from "lucide-react";
-import { useTenant } from "@/contexts/tenant-context";
+"use client";
+
+import { motion } from "motion/react";
+import { Minus, Plus, ShoppingBag } from "lucide-react";
 
 interface Props {
   readonly quantity: number;
@@ -20,40 +22,62 @@ export function ProductPurchaseControls({
   isAddingToCart,
   onAddToCart,
 }: Props) {
-  const { tenant } = useTenant();
   const buttonLabel = isAddingToCart
-    ? "Adicionando..."
+    ? "Adicionando…"
     : isOutOfStock
       ? "Indisponível"
-      : "Adicionar ao Carrinho";
+      : "Adicionar ao carrinho";
+
   return (
-    <div className="flex items-center gap-4 pt-4 border-t">
-      <div className="flex items-center border rounded-lg">
-        <button
-          onClick={onDecrement}
-          className="p-3 hover:bg-gray-100"
-          disabled={isOutOfStock}
-        >
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-stretch">
+      <div className="flex items-center rounded-full border border-[var(--mist)]">
+        <IconBtn onClick={onDecrement} disabled={isOutOfStock} aria="Diminuir">
           <Minus className="h-4 w-4" />
-        </button>
-        <span className="w-12 text-center font-medium">{quantity}</span>
-        <button
+        </IconBtn>
+        <span className="font-mono tabular w-10 text-center text-sm text-[var(--ink)]">
+          {quantity}
+        </span>
+        <IconBtn
           onClick={onIncrement}
-          className="p-3 hover:bg-gray-100"
           disabled={isOutOfStock || !canIncrement}
+          aria="Aumentar"
         >
           <Plus className="h-4 w-4" />
-        </button>
+        </IconBtn>
       </div>
-      <button
+
+      <motion.button
         onClick={onAddToCart}
         disabled={isOutOfStock || isAddingToCart}
-        className="flex-1 py-3 px-6 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-        style={{ backgroundColor: tenant?.primaryColor || "#111827" }}
+        whileTap={{ scale: 0.98 }}
+        className="group flex-1 inline-flex items-center justify-center gap-3 rounded-full bg-[var(--ink)] px-8 py-4 text-[var(--paper)] font-mono text-[0.72rem] uppercase tracking-[0.24em] transition-all hover:bg-[var(--tenant-primary)] disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        <ShoppingCart className="h-5 w-5" />
+        <ShoppingBag className="h-4 w-4 transition-transform group-hover:-rotate-6" />
         {buttonLabel}
-      </button>
+      </motion.button>
     </div>
+  );
+}
+
+function IconBtn({
+  onClick,
+  disabled,
+  aria,
+  children,
+}: {
+  readonly onClick: () => void;
+  readonly disabled?: boolean;
+  readonly aria: string;
+  readonly children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={aria}
+      className="flex h-12 w-12 items-center justify-center rounded-full text-[var(--ink)] transition-colors hover:bg-[var(--ink)] hover:text-[var(--paper)] disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-[var(--ink)]"
+    >
+      {children}
+    </button>
   );
 }

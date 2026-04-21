@@ -1,35 +1,41 @@
-import { ShoppingCart } from "lucide-react";
-import { DEFAULT_CART_BADGE_COLOR } from "./constants";
+"use client";
+
+import { AnimatePresence, motion } from "motion/react";
+import { ShoppingBag } from "lucide-react";
 
 interface HeaderCartButtonProps {
   readonly itemCount: number;
-  readonly badgeColor?: string | null;
   readonly onOpen: () => void;
 }
 
-export function HeaderCartButton({
-  itemCount,
-  badgeColor,
-  onOpen,
-}: HeaderCartButtonProps) {
+export function HeaderCartButton({ itemCount, onOpen }: HeaderCartButtonProps) {
   const showBadge = itemCount > 0;
   const displayCount = itemCount > 9 ? "9+" : String(itemCount);
 
   return (
     <button
       onClick={onOpen}
-      className="relative p-2 text-gray-700 hover:text-gray-900 transition-colors"
+      className="group relative flex h-11 w-11 items-center justify-center rounded-full border border-[var(--mist)] text-[var(--ink)] transition-colors hover:border-[var(--ink)] hover:bg-[var(--ink)] hover:text-[var(--paper)]"
       aria-label="Abrir carrinho"
     >
-      <ShoppingCart className="h-6 w-6" />
-      {showBadge && (
-        <span
-          className="absolute -top-1 -right-1 h-5 w-5 rounded-full text-white text-xs flex items-center justify-center font-bold"
-          style={{ backgroundColor: badgeColor ?? DEFAULT_CART_BADGE_COLOR }}
-        >
-          {displayCount}
-        </span>
-      )}
+      <ShoppingBag
+        className="h-[1.1rem] w-[1.1rem] transition-transform group-hover:-rotate-6"
+        aria-hidden
+      />
+      <AnimatePresence mode="wait">
+        {showBadge && (
+          <motion.span
+            key={displayCount}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: [0, 1.3, 1], opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            transition={{ duration: 0.45, ease: [0.34, 1.56, 0.64, 1] }}
+            className="font-mono tabular absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--tenant-primary)] px-1 text-[0.65rem] font-medium text-white"
+          >
+            {displayCount}
+          </motion.span>
+        )}
+      </AnimatePresence>
     </button>
   );
 }

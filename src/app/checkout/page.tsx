@@ -2,7 +2,8 @@
 
 import { Suspense } from "react";
 import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
+import { motion } from "motion/react";
+import { ArrowLeft } from "lucide-react";
 import {
   ContactSection,
   NotesSection,
@@ -12,6 +13,8 @@ import {
   ShippingSection,
 } from "./components";
 import { useCheckoutPage } from "./hooks/useCheckoutPage";
+
+const EASE = [0.19, 1, 0.22, 1] as const;
 
 function CheckoutContent() {
   const page = useCheckoutPage();
@@ -28,19 +31,37 @@ function CheckoutContent() {
   if (!page.cart) return null;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="flex items-center gap-4 mb-8">
+    <div className="mx-auto max-w-7xl px-6 lg:px-10 py-14 md:py-20">
+      <div className="mb-10 flex items-center justify-between">
         <Link
           href="/carrinho"
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+          className="link-underline inline-flex items-center gap-2 font-mono text-[0.68rem] uppercase tracking-[0.24em] text-[var(--muted)] hover:text-[var(--ink)]"
         >
-          <ChevronLeft className="h-5 w-5" />
+          <ArrowLeft className="h-3.5 w-3.5" />
           Voltar ao carrinho
         </Link>
+        <span className="font-mono text-[0.68rem] uppercase tracking-[0.24em] text-[var(--muted)]">
+          Checkout · seguro
+        </span>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-6">
+      <motion.header
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: EASE }}
+        className="mb-16 border-b border-[var(--mist)] pb-10"
+      >
+        <span className="eyebrow">Finalizar compra</span>
+        <h1
+          className="mt-4 font-display text-[clamp(2.8rem,7vw,5rem)] leading-[0.92] tracking-[-0.035em] text-[var(--ink)]"
+          style={{ fontVariationSettings: '"opsz" 144, "SOFT" 80' }}
+        >
+          Quase <em className="italic">lá</em>.
+        </h1>
+      </motion.header>
+
+      <div className="grid grid-cols-1 gap-14 lg:grid-cols-[1.6fr_1fr] lg:gap-20">
+        <div className="space-y-16">
           <ContactSection
             customer={page.form.customer}
             onChange={page.form.patchCustomer}
@@ -59,20 +80,18 @@ function CheckoutContent() {
           <NotesSection value={page.form.notes} onChange={page.form.setNotes} />
         </div>
 
-        <div className="lg:col-span-1">
-          <OrderSummary
-            cart={page.cart}
-            shippingCost={page.shippingCost}
-            discount={page.coupon.discount}
-            total={page.total}
-            couponCode={page.coupon.code}
-            onCouponChange={page.coupon.setCode}
-            onApplyCoupon={page.coupon.apply}
-            isSubmitting={page.isSubmitting}
-            canSubmit={!!page.shipping.selected}
-            onSubmit={page.handleSubmit}
-          />
-        </div>
+        <OrderSummary
+          cart={page.cart}
+          shippingCost={page.shippingCost}
+          discount={page.coupon.discount}
+          total={page.total}
+          couponCode={page.coupon.code}
+          onCouponChange={page.coupon.setCode}
+          onApplyCoupon={page.coupon.apply}
+          isSubmitting={page.isSubmitting}
+          canSubmit={!!page.shipping.selected}
+          onSubmit={page.handleSubmit}
+        />
       </div>
     </div>
   );
@@ -82,8 +101,8 @@ export default function CheckoutPage() {
   return (
     <Suspense
       fallback={
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto" />
+        <div className="mx-auto max-w-7xl px-6 py-24 text-center font-mono text-[0.72rem] uppercase tracking-[0.26em] text-[var(--muted)]">
+          Preparando seu checkout<span className="ml-1">…</span>
         </div>
       }
     >

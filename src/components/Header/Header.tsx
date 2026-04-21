@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTenant } from "@/contexts/tenant-context";
 import { useCart } from "@/contexts/cart-context";
 import { CartDrawer } from "../cart-drawer";
@@ -12,7 +13,21 @@ import { HeaderMobileToggle } from "./HeaderMobileToggle";
 import { useAuthNav } from "@/hooks/useAuthNav";
 import { useHeaderSearch } from "./hooks/useHeaderSearch";
 import { useHeaderMenus } from "./hooks/useHeaderMenus";
-import { DEFAULT_BG_COLOR } from "./constants";
+
+const SCROLL_TRIGGER_PX = 16;
+
+function useScrolled(): boolean {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handle = () => setScrolled(window.scrollY > SCROLL_TRIGGER_PX);
+    handle();
+    window.addEventListener("scroll", handle, { passive: true });
+    return () => window.removeEventListener("scroll", handle);
+  }, []);
+
+  return scrolled;
+}
 
 export function Header() {
   const { tenant } = useTenant();
@@ -20,25 +35,30 @@ export function Header() {
   const nav = useAuthNav();
   const search = useHeaderSearch();
   const menus = useHeaderMenus();
+  const scrolled = useScrolled();
 
   return (
     <>
       <header
-        className="sticky top-0 z-40 shadow-sm"
-        style={{ backgroundColor: tenant?.bgColor ?? DEFAULT_BG_COLOR }}
+        data-scrolled={scrolled}
+        className="sticky top-0 z-40 border-b border-[var(--mist)] bg-[var(--paper)]/80 backdrop-blur-xl transition-[padding,background] duration-500 data-[scrolled=true]:bg-[var(--paper)]/95"
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div
+            className="flex items-center justify-between transition-[height] duration-500 ease-out"
+            style={{ height: scrolled ? "64px" : "88px" }}
+          >
             <HeaderLogo
               name={tenant?.name}
               logoUrl={tenant?.logoUrl}
               primaryColor={tenant?.primaryColor}
+              compact={scrolled}
             />
             <HeaderSearch
               query={search.query}
               onChange={search.setQuery}
               onSubmit={search.submit}
-              className="hidden md:flex flex-1 max-w-md mx-8"
+              className="hidden md:flex flex-1 max-w-sm mx-10"
             />
             <HeaderDesktopNav
               showOrdersLink={nav.showOrdersLink}
@@ -46,10 +66,9 @@ export function Header() {
               ordersHref={nav.ordersHref}
               loginHref={nav.loginHref}
             />
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 md:gap-4">
               <HeaderCartButton
                 itemCount={cart?.itemCount ?? 0}
-                badgeColor={tenant?.primaryColor}
                 onOpen={menus.openCart}
               />
               <HeaderMobileToggle

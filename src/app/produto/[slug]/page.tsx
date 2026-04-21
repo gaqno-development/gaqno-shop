@@ -25,10 +25,10 @@ export default function ProductPage() {
   const { product, pricing, stock, quantityControls } = page;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="mx-auto max-w-7xl px-6 lg:px-10 py-10 md:py-16">
       <ProductBreadcrumb productName={product.name} category={product.category} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <div className="grid grid-cols-1 gap-14 lg:grid-cols-[1.1fr_1fr] lg:gap-20 xl:gap-28">
         <ProductGallery
           productName={product.name}
           images={product.images}

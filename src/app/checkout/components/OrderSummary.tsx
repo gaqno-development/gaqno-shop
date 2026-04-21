@@ -1,8 +1,10 @@
+"use client";
+
+import { motion } from "motion/react";
+import { Lock, Tag } from "lucide-react";
 import { R2_PUBLIC_URL } from "@/lib/api";
 import { formatBRL, formatFreightOrFree } from "@/lib/formatters";
 import type { CartSummary } from "@/contexts/cart-context";
-import { Lock } from "lucide-react";
-import { useTenant } from "@/contexts/tenant-context";
 
 interface Props {
   readonly cart: CartSummary;
@@ -29,88 +31,135 @@ export function OrderSummary({
   canSubmit,
   onSubmit,
 }: Props) {
-  const { tenant } = useTenant();
   return (
-    <div className="bg-gray-50 p-6 rounded-lg sticky top-24">
-      <h2 className="text-lg font-semibold mb-4">Resumo do Pedido</h2>
-      <div className="space-y-3 mb-6 max-h-64 overflow-y-auto">
-        {cart.items.map((item) => (
-          <div key={item.productId} className="flex gap-3">
-            <div className="h-16 w-16 bg-white rounded overflow-hidden flex-shrink-0">
-              <img
-                src={item.imageUrl ? `${R2_PUBLIC_URL}/${item.imageUrl}` : "/placeholder-product.png"}
-                alt={item.name}
-                className="h-full w-full object-cover"
-              />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{item.name}</p>
-              <p className="text-xs text-gray-500">Qtd: {item.quantity}</p>
-              <p className="text-sm font-semibold">{formatBRL(item.total)}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="flex gap-2 mb-6">
-        <input
-          type="text"
-          value={couponCode}
-          onChange={(e) => onCouponChange(e.target.value)}
-          placeholder="Cupom de desconto"
-          className="flex-1 px-3 py-2 border rounded-lg text-sm"
-        />
-        <button
-          onClick={onApplyCoupon}
-          className="px-4 py-2 bg-gray-800 text-white rounded-lg text-sm hover:bg-gray-700"
+    <aside className="lg:sticky lg:top-28 lg:self-start">
+      <div className="border border-[var(--mist)] bg-[var(--paper)] p-8">
+        <span className="eyebrow">Resumo</span>
+        <h2
+          className="mt-4 font-display text-3xl leading-tight tracking-[-0.02em] text-[var(--ink)]"
+          style={{ fontVariationSettings: '"opsz" 144, "SOFT" 80' }}
         >
-          Aplicar
-        </button>
-      </div>
+          <em className="italic font-[430]">Seu pedido.</em>
+        </h2>
 
-      <div className="space-y-2 mb-6">
-        <TotalRow label="Subtotal" value={formatBRL(cart.subtotal)} />
-        <TotalRow label="Frete" value={formatFreightOrFree(shippingCost)} />
-        {discount > 0 && (
-          <TotalRow
-            label="Desconto"
-            value={`-${formatBRL(discount)}`}
-            className="text-green-600"
+        <ul className="mt-8 max-h-72 space-y-5 overflow-y-auto pr-1">
+          {cart.items.map((item) => (
+            <li key={item.productId} className="flex gap-4">
+              <div
+                className="flex-shrink-0 overflow-hidden ring-1 ring-[var(--mist)]"
+                style={{ width: 56, aspectRatio: "4 / 5" }}
+              >
+                <img
+                  src={
+                    item.imageUrl
+                      ? `${R2_PUBLIC_URL}/${item.imageUrl}`
+                      : "/placeholder-product.png"
+                  }
+                  alt={item.name}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-display text-[0.95rem] leading-snug text-[var(--ink)]">
+                  {item.name}
+                </p>
+                <p className="font-mono text-[0.62rem] uppercase tracking-[0.22em] text-[var(--muted)]">
+                  Qtd · {item.quantity}
+                </p>
+                <p className="font-mono tabular mt-1 text-[0.82rem] text-[var(--ink)]">
+                  {formatBRL(item.total)}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        <div className="mt-8 flex items-center gap-2 rounded-full border border-[var(--mist)] px-4 py-2">
+          <Tag className="h-3.5 w-3.5 text-[var(--muted)]" strokeWidth={1.5} />
+          <input
+            type="text"
+            value={couponCode}
+            onChange={(e) => onCouponChange(e.target.value)}
+            placeholder="Código do cupom"
+            className="flex-1 bg-transparent font-mono text-[0.75rem] uppercase tracking-[0.2em] text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none"
           />
-        )}
-        <div className="pt-4 border-t flex justify-between text-xl font-bold">
-          <span>Total</span>
-          <span>{formatBRL(total)}</span>
+          <button
+            onClick={onApplyCoupon}
+            className="link-underline font-mono text-[0.65rem] uppercase tracking-[0.22em] text-[var(--ink)]"
+          >
+            Aplicar
+          </button>
         </div>
-      </div>
 
-      <button
-        onClick={onSubmit}
-        disabled={isSubmitting || !canSubmit}
-        className="w-full py-4 text-white font-medium rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-        style={{ backgroundColor: tenant?.primaryColor || "#111827" }}
-      >
-        <Lock className="h-4 w-4" />
-        {isSubmitting ? "Processando..." : "Finalizar Compra"}
-      </button>
-      <p className="mt-4 text-center text-xs text-gray-500">
-        Pagamento processado com segurança
-      </p>
-    </div>
+        <div className="mt-8 space-y-3 font-mono text-[0.85rem]">
+          <Row label="Subtotal" value={formatBRL(cart.subtotal)} />
+          <Row label="Frete" value={formatFreightOrFree(shippingCost)} />
+          {discount > 0 && (
+            <Row
+              label="Desconto"
+              value={`− ${formatBRL(discount)}`}
+              emphasize
+            />
+          )}
+        </div>
+
+        <div
+          aria-hidden
+          className="my-8 h-px w-full"
+          style={{
+            background:
+              "repeating-linear-gradient(90deg, var(--ink) 0 4px, transparent 4px 10px)",
+          }}
+        />
+
+        <div className="flex items-baseline justify-between">
+          <span className="eyebrow">Total</span>
+          <motion.span
+            key={total}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="font-mono tabular text-3xl text-[var(--ink)]"
+          >
+            {formatBRL(total)}
+          </motion.span>
+        </div>
+
+        <motion.button
+          onClick={onSubmit}
+          disabled={isSubmitting || !canSubmit}
+          whileTap={{ scale: 0.98 }}
+          className="group mt-8 flex w-full items-center justify-center gap-3 rounded-full bg-[var(--ink)] px-6 py-4 font-mono text-[0.72rem] uppercase tracking-[0.24em] text-[var(--paper)] transition-all hover:bg-[var(--tenant-primary)] disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <Lock className="h-3.5 w-3.5" strokeWidth={1.5} />
+          {isSubmitting ? "Processando…" : "Finalizar compra"}
+        </motion.button>
+        <p className="mt-4 text-center font-mono text-[0.62rem] uppercase tracking-[0.22em] text-[var(--muted)]">
+          Pagamento criptografado · SSL
+        </p>
+      </div>
+    </aside>
   );
 }
 
-interface TotalRowProps {
+function Row({
+  label,
+  value,
+  emphasize,
+}: {
   readonly label: string;
   readonly value: string;
-  readonly className?: string;
-}
-
-function TotalRow({ label, value, className = "text-gray-600" }: TotalRowProps) {
+  readonly emphasize?: boolean;
+}) {
   return (
-    <div className={`flex justify-between ${className}`}>
-      <span>{label}</span>
-      <span>{value}</span>
+    <div className="flex items-baseline justify-between">
+      <span className="text-[var(--muted)] uppercase tracking-[0.18em] text-[0.65rem]">
+        {label}
+      </span>
+      <span
+        className={`tabular ${emphasize ? "text-emerald-700" : "text-[var(--ink)]"}`}
+      >
+        {value}
+      </span>
     </div>
   );
 }

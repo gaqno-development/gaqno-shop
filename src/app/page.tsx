@@ -31,12 +31,17 @@ export default function Home() {
       <HomeFeatures />
       <HomeCategoriesSection categories={categories} />
       <HomeProductSection
-        title="Produtos em Destaque"
+        title="Em destaque"
+        eyebrow="Curadoria · a dedo"
         products={featuredProducts}
-        backgroundClassName="bg-gray-50"
         hideWhenEmpty
       />
-      <HomeProductSection title="Todos os Produtos" products={products} />
+      <HomeProductSection
+        title="Todos os produtos"
+        eyebrow="Catálogo completo"
+        products={products}
+        backgroundClassName="bg-[var(--mist)]/30"
+      />
       <HomeNewsletter />
     </div>
   );

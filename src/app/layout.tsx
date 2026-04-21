@@ -1,14 +1,33 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Fraunces, Geist, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 
-const inter = Inter({ subsets: ["latin"] });
+const geist = Geist({
+  subsets: ["latin"],
+  variable: "--font-geist-sans",
+  display: "swap",
+});
+
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-fraunces",
+  axes: ["SOFT", "opsz"],
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Gaqno Shop",
-  description: "Multi-tenant e-commerce platform",
+  description: "An everyday ritual, delivered.",
 };
+
+const FONT_VARIABLES = [geist.variable, fraunces.variable, jetbrainsMono.variable].join(" ");
 
 export default function RootLayout({
   children,
@@ -16,11 +35,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR">
-      <body className={inter.className}>
-        <Providers>
-          {children}
-        </Providers>
+    <html lang="pt-BR" className={FONT_VARIABLES}>
+      <body className="font-sans antialiased">
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

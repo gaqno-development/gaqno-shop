@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import type { FormEvent } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { HeaderSearch } from "./HeaderSearch";
 import { PUBLIC_NAV_ITEMS } from "./constants";
 
@@ -15,6 +18,9 @@ interface HeaderMobileMenuProps {
   readonly loginHref: string;
 }
 
+const LINK_CLASS =
+  "font-display text-3xl italic tracking-[-0.02em] text-[var(--ink)] py-2 transition-all hover:translate-x-2 hover:text-[var(--tenant-primary)]";
+
 export function HeaderMobileMenu({
   open,
   onClose,
@@ -26,48 +32,49 @@ export function HeaderMobileMenu({
   ordersHref,
   loginHref,
 }: HeaderMobileMenuProps) {
-  if (!open) return null;
-
   return (
-    <div className="md:hidden border-t bg-white">
-      <div className="px-4 py-4 space-y-4">
-        <HeaderSearch
-          query={query}
-          onChange={onQueryChange}
-          onSubmit={onSubmitSearch}
-          compact
-        />
-        <nav className="flex flex-col gap-2">
-          {PUBLIC_NAV_ITEMS.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
-              onClick={onClose}
-            >
-              {item.label}
-            </Link>
-          ))}
-          {showOrdersLink && (
-            <Link
-              href={ordersHref}
-              className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
-              onClick={onClose}
-            >
-              Meus Pedidos
-            </Link>
-          )}
-          {showLoginLink && (
-            <Link
-              href={loginHref}
-              className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
-              onClick={onClose}
-            >
-              Entrar
-            </Link>
-          )}
-        </nav>
-      </div>
-    </div>
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          key="mobile-menu"
+          initial={{ opacity: 0, y: -12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -12 }}
+          transition={{ duration: 0.35, ease: [0.19, 1, 0.22, 1] }}
+          className="md:hidden border-t border-[var(--mist)] bg-[var(--paper)]"
+        >
+          <div className="px-6 py-8 space-y-8">
+            <HeaderSearch
+              query={query}
+              onChange={onQueryChange}
+              onSubmit={onSubmitSearch}
+              compact
+            />
+            <nav className="flex flex-col">
+              {PUBLIC_NAV_ITEMS.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={LINK_CLASS}
+                  onClick={onClose}
+                >
+                  {item.label}
+                </Link>
+              ))}
+              {showOrdersLink && (
+                <Link href={ordersHref} className={LINK_CLASS} onClick={onClose}>
+                  Meus pedidos
+                </Link>
+              )}
+              {showLoginLink && (
+                <Link href={loginHref} className={LINK_CLASS} onClick={onClose}>
+                  Entrar
+                </Link>
+              )}
+            </nav>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

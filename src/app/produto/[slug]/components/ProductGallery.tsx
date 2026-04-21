@@ -1,3 +1,6 @@
+"use client";
+
+import { motion, AnimatePresence } from "motion/react";
 import { R2_PUBLIC_URL } from "@/lib/api";
 
 interface Props {
@@ -18,35 +21,51 @@ export function ProductGallery({
   onSelect,
 }: Props) {
   const current = images[selectedImage];
+
   return (
-    <div className="space-y-4">
-      <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
-        <img
-          src={toImageUrl(current)}
-          alt={productName}
-          className="w-full h-full object-cover"
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = "/placeholder-product.png";
-          }}
-        />
+    <div className="lg:sticky lg:top-28 lg:self-start">
+      <div
+        className="relative w-full overflow-hidden bg-[var(--mist)]/40 ring-1 ring-[var(--mist)]"
+        style={{ aspectRatio: "4 / 5" }}
+      >
+        <AnimatePresence mode="wait">
+          <motion.img
+            key={selectedImage}
+            src={toImageUrl(current)}
+            alt={productName}
+            initial={{ opacity: 0, scale: 1.02 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
+            className="absolute inset-0 h-full w-full object-cover"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = "/placeholder-product.png";
+            }}
+          />
+        </AnimatePresence>
       </div>
+
       {images.length > 1 && (
-        <div className="flex gap-2 overflow-x-auto">
-          {images.map((image, index) => (
-            <button
-              key={index}
-              onClick={() => onSelect(index)}
-              className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${
-                selectedImage === index ? "border-blue-500" : "border-transparent"
-              }`}
-            >
-              <img
-                src={toImageUrl(image)}
-                alt={`${productName} - ${index + 1}`}
-                className="w-full h-full object-cover"
-              />
-            </button>
-          ))}
+        <div className="mt-4 flex gap-3 overflow-x-auto pb-2">
+          {images.map((image, index) => {
+            const active = selectedImage === index;
+            return (
+              <button
+                key={index}
+                onClick={() => onSelect(index)}
+                aria-label={`Ver imagem ${index + 1}`}
+                aria-current={active}
+                className={`relative flex-shrink-0 overflow-hidden transition-all ${active ? "ring-1 ring-[var(--ink)]" : "ring-1 ring-[var(--mist)] opacity-70 hover:opacity-100"}`}
+                style={{ width: 72, aspectRatio: "4 / 5" }}
+              >
+                <img
+                  src={toImageUrl(image)}
+                  alt={`${productName} — ${index + 1}`}
+                  className="h-full w-full object-cover"
+                />
+              </button>
+            );
+          })}
         </div>
       )}
     </div>

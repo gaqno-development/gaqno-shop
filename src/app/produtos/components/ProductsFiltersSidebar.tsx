@@ -25,16 +25,16 @@ export function ProductsFiltersSidebar({
 }: Props) {
   return (
     <aside className={`lg:w-64 ${visible ? "block" : "hidden lg:block"}`}>
-      <div className="bg-white p-6 rounded-lg border sticky top-24">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-semibold flex items-center gap-2">
-            <Filter className="h-4 w-4" />
+      <div className="sticky top-28 space-y-10 pb-10">
+        <div className="flex items-center justify-between">
+          <h2 className="flex items-center gap-2 font-mono text-[0.68rem] uppercase tracking-[0.26em] text-[var(--ink)]">
+            <Filter className="h-3 w-3" strokeWidth={1.5} />
             Filtros
           </h2>
           {hasActiveFilters && (
             <button
               onClick={onClear}
-              className="text-sm text-red-500 hover:text-red-600"
+              className="link-underline font-mono text-[0.65rem] uppercase tracking-[0.24em] text-[var(--muted)] hover:text-[var(--ink)]"
             >
               Limpar
             </button>
@@ -61,10 +61,14 @@ interface CategoriesProps {
 
 function CategoriesFilter({ categories, selected, onSelect }: CategoriesProps) {
   return (
-    <div className="mb-6">
-      <h3 className="font-medium mb-3">Categorias</h3>
-      <div className="space-y-2">
-        <CategoryOption checked={!selected} onSelect={() => onSelect("")} label="Todas" />
+    <div className="space-y-4 border-t border-[var(--mist)] pt-6">
+      <h3 className="eyebrow">Categorias</h3>
+      <ul className="space-y-1.5">
+        <CategoryOption
+          checked={!selected}
+          onSelect={() => onSelect("")}
+          label="Todas"
+        />
         {categories.map((category) => (
           <CategoryOption
             key={category.id}
@@ -73,7 +77,7 @@ function CategoriesFilter({ categories, selected, onSelect }: CategoriesProps) {
             label={category.name}
           />
         ))}
-      </div>
+      </ul>
     </div>
   );
 }
@@ -86,16 +90,22 @@ interface OptionProps {
 
 function CategoryOption({ checked, onSelect, label }: OptionProps) {
   return (
-    <label className="flex items-center gap-2 cursor-pointer">
-      <input
-        type="radio"
-        name="category"
-        checked={checked}
-        onChange={onSelect}
-        className="rounded border-gray-300"
-      />
-      <span className="text-sm">{label}</span>
-    </label>
+    <li>
+      <button
+        onClick={onSelect}
+        className="group flex w-full items-center gap-3 py-1.5 text-left"
+      >
+        <span
+          aria-hidden
+          className={`h-1.5 w-1.5 rounded-full transition-all ${checked ? "bg-[var(--tenant-primary)] scale-125" : "bg-[var(--mist)] group-hover:bg-[var(--ink)]"}`}
+        />
+        <span
+          className={`text-[0.95rem] transition-colors ${checked ? "text-[var(--ink)]" : "text-[var(--muted)] group-hover:text-[var(--ink)]"}`}
+        >
+          {label}
+        </span>
+      </button>
+    </li>
   );
 }
 
@@ -106,23 +116,23 @@ interface PriceProps {
 
 function PriceRangeFilter({ range, onChange }: PriceProps) {
   return (
-    <div className="mb-6">
-      <h3 className="font-medium mb-3">Preço</h3>
+    <div className="space-y-4 border-t border-[var(--mist)] pt-6">
+      <h3 className="eyebrow">Preço</h3>
       <div className="flex items-center gap-2">
         <input
           type="number"
           placeholder="Min"
           value={range.min}
           onChange={(e) => onChange({ ...range, min: e.target.value })}
-          className="w-full px-3 py-2 border rounded-lg text-sm"
+          className="w-full border-b border-[var(--mist)] bg-transparent px-0 py-2 font-mono text-sm text-[var(--ink)] placeholder:text-[var(--muted)] focus:border-[var(--ink)] focus:outline-none"
         />
-        <span className="text-gray-400">-</span>
+        <span aria-hidden className="h-[1px] w-4 bg-[var(--mist)]" />
         <input
           type="number"
           placeholder="Max"
           value={range.max}
           onChange={(e) => onChange({ ...range, max: e.target.value })}
-          className="w-full px-3 py-2 border rounded-lg text-sm"
+          className="w-full border-b border-[var(--mist)] bg-transparent px-0 py-2 font-mono text-sm text-[var(--ink)] placeholder:text-[var(--muted)] focus:border-[var(--ink)] focus:outline-none"
         />
       </div>
     </div>

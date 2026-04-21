@@ -17,14 +17,14 @@ function ProductsContent() {
     page;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="mx-auto max-w-7xl px-6 lg:px-10 py-16 md:py-20">
       <ProductsHeader
         searchQuery={filters.searchQuery}
         isLoading={isLoading}
         productsCount={products.length}
       />
 
-      <div className="flex flex-col lg:flex-row gap-8">
+      <div className="flex flex-col lg:flex-row gap-14">
         <ProductsFiltersSidebar
           visible={showFilters}
           categories={categories}
@@ -63,8 +63,8 @@ export default function ProductsPage() {
   return (
     <Suspense
       fallback={
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto" />
+        <div className="mx-auto max-w-7xl px-6 py-24 text-center font-mono text-[0.72rem] uppercase tracking-[0.26em] text-[var(--muted)]">
+          Carregando seleção<span className="ml-1 inline-flex">…</span>
         </div>
       }
     >

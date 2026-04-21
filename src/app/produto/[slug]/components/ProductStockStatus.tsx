@@ -1,9 +1,24 @@
-import { Check } from "lucide-react";
-
 interface Props {
   readonly isOutOfStock: boolean;
   readonly isLowStock: boolean;
   readonly quantity: number;
+}
+
+function StockDot({ tone }: { readonly tone: "ok" | "warn" | "error" }) {
+  const color =
+    tone === "ok"
+      ? "bg-emerald-500"
+      : tone === "warn"
+        ? "bg-amber-500"
+        : "bg-rose-500";
+  return (
+    <span className="relative flex h-2 w-2" aria-hidden>
+      <span
+        className={`absolute inset-0 animate-ping rounded-full ${color} opacity-60`}
+      />
+      <span className={`relative inline-flex h-2 w-2 rounded-full ${color}`} />
+    </span>
+  );
 }
 
 export function ProductStockStatus({
@@ -13,26 +28,24 @@ export function ProductStockStatus({
 }: Props) {
   if (isOutOfStock) {
     return (
-      <div className="flex items-center gap-2">
-        <span className="text-red-600 font-medium">Fora de estoque</span>
-      </div>
+      <p className="flex items-center gap-3 font-mono text-[0.72rem] uppercase tracking-[0.24em] text-rose-600">
+        <StockDot tone="error" />
+        Esgotado por enquanto
+      </p>
     );
   }
   if (isLowStock) {
     return (
-      <div className="flex items-center gap-2">
-        <span className="text-orange-600 font-medium">
-          Apenas {quantity} unidades em estoque
-        </span>
-      </div>
+      <p className="flex items-center gap-3 font-mono text-[0.72rem] uppercase tracking-[0.24em] text-amber-700">
+        <StockDot tone="warn" />
+        Apenas {quantity} {quantity === 1 ? "peça" : "peças"} disponíveis
+      </p>
     );
   }
   return (
-    <div className="flex items-center gap-2">
-      <span className="text-green-600 font-medium flex items-center gap-1">
-        <Check className="h-4 w-4" />
-        Em estoque
-      </span>
-    </div>
+    <p className="flex items-center gap-3 font-mono text-[0.72rem] uppercase tracking-[0.24em] text-emerald-700">
+      <StockDot tone="ok" />
+      Disponível
+    </p>
   );
 }

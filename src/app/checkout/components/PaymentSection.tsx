@@ -1,9 +1,10 @@
-import { CreditCard, QrCode, Receipt } from "lucide-react";
+import { CreditCard, QrCode, Receipt, type LucideIcon } from "lucide-react";
 import type { PaymentMethod } from "../types";
+import { SectionFrame } from "./SectionFrame";
 
 interface PaymentOption {
   readonly value: PaymentMethod;
-  readonly icon: typeof CreditCard;
+  readonly icon: LucideIcon;
   readonly title: string;
   readonly description: string;
 }
@@ -12,7 +13,7 @@ const PAYMENT_OPTIONS: readonly PaymentOption[] = [
   {
     value: "credit_card",
     icon: CreditCard,
-    title: "Cartão de Crédito",
+    title: "Cartão de crédito",
     description: "Até 12x sem juros",
   },
   {
@@ -24,7 +25,7 @@ const PAYMENT_OPTIONS: readonly PaymentOption[] = [
   {
     value: "boleto",
     icon: Receipt,
-    title: "Boleto Bancário",
+    title: "Boleto bancário",
     description: "Vencimento em 3 dias",
   },
 ];
@@ -36,53 +37,58 @@ interface Props {
 
 export function PaymentSection({ selected, onSelect }: Props) {
   return (
-    <div className="bg-white p-6 rounded-lg border">
-      <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-        <span className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-bold">
-          3
-        </span>
-        Pagamento
-      </h2>
-      <div className="space-y-3">
+    <SectionFrame number="03" title="Pagamento">
+      <ul className="divide-y divide-[var(--mist)] border-y border-[var(--mist)]">
         {PAYMENT_OPTIONS.map((option) => (
-          <PaymentRadio
+          <PaymentRow
             key={option.value}
             option={option}
             isSelected={selected === option.value}
             onSelect={onSelect}
           />
         ))}
-      </div>
-    </div>
+      </ul>
+    </SectionFrame>
   );
 }
 
-interface RadioProps {
+interface RowProps {
   readonly option: PaymentOption;
   readonly isSelected: boolean;
   readonly onSelect: (value: PaymentMethod) => void;
 }
 
-function PaymentRadio({ option, isSelected, onSelect }: RadioProps) {
+function PaymentRow({ option, isSelected, onSelect }: RowProps) {
   const Icon = option.icon;
   return (
-    <label
-      className={`flex items-center gap-4 p-4 border rounded-lg cursor-pointer transition-colors ${
-        isSelected ? "border-blue-500 bg-blue-50" : "hover:bg-gray-50"
-      }`}
-    >
-      <input
-        type="radio"
-        name="payment"
-        checked={isSelected}
-        onChange={() => onSelect(option.value)}
-        className="text-blue-600"
-      />
-      <Icon className="h-6 w-6 text-gray-600" />
-      <div>
-        <p className="font-medium">{option.title}</p>
-        <p className="text-sm text-gray-500">{option.description}</p>
-      </div>
-    </label>
+    <li>
+      <button
+        type="button"
+        onClick={() => onSelect(option.value)}
+        className="flex w-full items-center justify-between gap-6 py-5 text-left"
+      >
+        <div className="flex items-center gap-5">
+          <span
+            aria-hidden
+            className={`h-2 w-2 rounded-full transition-all ${isSelected ? "bg-[var(--tenant-primary)] scale-125" : "bg-[var(--mist)]"}`}
+          />
+          <Icon
+            className="h-5 w-5 text-[var(--ink)]"
+            strokeWidth={1.4}
+            aria-hidden
+          />
+          <div>
+            <p
+              className={`font-display text-[1.1rem] leading-tight ${isSelected ? "text-[var(--ink)]" : "text-[var(--ink)]/80"}`}
+            >
+              {option.title}
+            </p>
+            <p className="mt-1 font-mono text-[0.65rem] uppercase tracking-[0.22em] text-[var(--muted)]">
+              {option.description}
+            </p>
+          </div>
+        </div>
+      </button>
+    </li>
   );
 }

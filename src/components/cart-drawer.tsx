@@ -1,156 +1,288 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
+import { AnimatePresence, motion } from "motion/react";
 import { X, Plus, Minus, ShoppingBag, Trash2, ArrowRight } from "lucide-react";
-import { useTenant } from "@/contexts/tenant-context";
 import { useCart } from "@/contexts/cart-context";
 import { R2_PUBLIC_URL } from "@/lib/api";
+import { formatBRL } from "@/lib/formatters";
 
 interface CartDrawerProps {
-  isOpen: boolean;
-  onClose: () => void;
+  readonly isOpen: boolean;
+  readonly onClose: () => void;
 }
 
-export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
-  const { tenant } = useTenant();
-  const { cart, removeItem, updateQuantity } = useCart();
+const BACKDROP = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 },
+};
 
-  if (!isOpen) return null;
+const PANEL = {
+  hidden: { x: "100%" },
+  visible: {
+    x: 0,
+    transition: { type: "spring" as const, damping: 32, stiffness: 260 },
+  },
+  exit: {
+    x: "100%",
+    transition: { duration: 0.35, ease: [0.19, 1, 0.22, 1] as const },
+  },
+};
+
+const ITEM = {
+  hidden: { opacity: 0, x: 24 },
+  visible: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: -20, scale: 0.96 },
+};
+
+export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
+  const { cart, removeItem, updateQuantity } = useCart();
+  const hasItems = !!cart && cart.items.length > 0;
 
   return (
-    <>
-      {/* Backdrop */}
-      <div 
-        className="fixed inset-0 bg-black/50 z-50"
-        onClick={onClose}
-      />
-      
-      {/* Drawer */}
-      <div className="fixed inset-y-0 right-0 w-full max-w-md bg-white shadow-xl z-50 flex flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-semibold flex items-center gap-2">
-            <ShoppingBag className="h-5 w-5" />
-            Seu Carrinho
-            {cart && cart.itemCount > 0 && (
-              <span className="text-sm font-normal text-gray-500">
-                ({cart.itemCount} {cart.itemCount === 1 ? "item" : "itens"})
-              </span>
-            )}
-          </h2>
-          <button 
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          <motion.div
+            key="backdrop"
+            variants={BACKDROP}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            transition={{ duration: 0.35 }}
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="fixed inset-0 z-50 bg-[var(--ink)]/30 backdrop-blur-sm"
+          />
+          <motion.aside
+            key="panel"
+            variants={PANEL}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="fixed inset-y-0 right-0 z-50 flex w-full max-w-md flex-col bg-[var(--paper)] shadow-[-40px_0_80px_-40px_rgba(0,0,0,0.35)]"
+            aria-label="Carrinho"
           >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
+            <DrawerHeader itemCount={cart?.itemCount ?? 0} onClose={onClose} />
 
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto p-4">
-          {!cart || cart.items.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-center">
-              <ShoppingBag className="h-16 w-16 text-gray-300 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                Seu carrinho está vazio
-              </h3>
-              <p className="text-gray-500 mb-4">
-                Adicione produtos para começar a comprar
-              </p>
-              <button
-                onClick={onClose}
-                className="px-6 py-2 text-white rounded-lg transition-colors"
-                style={{ backgroundColor: tenant?.primaryColor || "#111827" }}
-              >
-                Continuar Comprando
-              </button>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {cart.items.map((item) => (
-                <div key={item.productId} className="flex gap-4 p-3 bg-gray-50 rounded-lg">
-                  {/* Image */}
-                  <div className="h-20 w-20 bg-white rounded-md overflow-hidden flex-shrink-0">
-                    <img
-                      src={item.imageUrl ? `${R2_PUBLIC_URL}/${item.imageUrl}` : "/placeholder-product.png"}
-                      alt={item.name}
-                      className="h-full w-full object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = "/placeholder-product.png";
-                      }}
-                    />
-                  </div>
-
-                  {/* Info */}
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-medium text-sm truncate">{item.name}</h4>
-                    {item.attributes && Object.entries(item.attributes).length > 0 && (
-                      <p className="text-xs text-gray-500">
-                        {Object.entries(item.attributes).map(([key, value]) => `${key}: ${value}`).join(", ")}
-                      </p>
-                    )}
-                    <p className="font-semibold mt-1">
-                      R$ {item.price.toFixed(2).replace(".", ",")}
-                    </p>
-
-                    {/* Quantity Controls */}
-                    <div className="flex items-center gap-2 mt-2">
-                      <button
-                        onClick={() => updateQuantity(item.productId, Math.max(0, item.quantity - 1))}
-                        className="p-1 hover:bg-gray-200 rounded"
+            <div className="flex-1 overflow-y-auto px-6">
+              {!hasItems ? (
+                <EmptyState onClose={onClose} />
+              ) : (
+                <motion.ul
+                  initial="hidden"
+                  animate="visible"
+                  transition={{ staggerChildren: 0.04, delayChildren: 0.1 }}
+                  className="divide-y divide-[var(--mist)]"
+                >
+                  <AnimatePresence initial={false}>
+                    {cart!.items.map((item) => (
+                      <motion.li
+                        key={item.productId}
+                        layout
+                        variants={ITEM}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        transition={{ duration: 0.35, ease: [0.19, 1, 0.22, 1] }}
+                        className="flex gap-5 py-6"
                       >
-                        <Minus className="h-4 w-4" />
-                      </button>
-                      <span className="w-8 text-center font-medium">{item.quantity}</span>
-                      <button
-                        onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-                        className="p-1 hover:bg-gray-200 rounded"
-                      >
-                        <Plus className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => removeItem(item.productId)}
-                        className="ml-auto p-1 text-red-500 hover:bg-red-50 rounded"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+                        <div className="h-24 w-20 flex-shrink-0 overflow-hidden rounded-xs ring-1 ring-[var(--mist)] bg-white">
+                          <img
+                            src={
+                              item.imageUrl
+                                ? `${R2_PUBLIC_URL}/${item.imageUrl}`
+                                : "/placeholder-product.png"
+                            }
+                            alt={item.name}
+                            className="h-full w-full object-cover"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src =
+                                "/placeholder-product.png";
+                            }}
+                          />
+                        </div>
+                        <div className="flex min-w-0 flex-1 flex-col justify-between">
+                          <div className="space-y-1">
+                            <h4 className="font-display text-[1.05rem] leading-tight text-[var(--ink)] truncate">
+                              {item.name}
+                            </h4>
+                            {item.attributes &&
+                              Object.entries(item.attributes).length > 0 && (
+                                <p className="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-[var(--muted)]">
+                                  {Object.entries(item.attributes)
+                                    .map(([k, v]) => `${k}: ${v}`)
+                                    .join(" · ")}
+                                </p>
+                              )}
+                            <p className="font-mono tabular text-[0.95rem] text-[var(--ink)]">
+                              {formatBRL(item.price)}
+                            </p>
+                          </div>
 
-        {/* Footer */}
-        {cart && cart.items.length > 0 && (
-          <div className="border-t p-4 space-y-4">
-            <div className="flex items-center justify-between text-lg font-semibold">
-              <span>Subtotal</span>
-              <span>R$ {cart.subtotal.toFixed(2).replace(".", ",")}</span>
+                          <div className="mt-3 flex items-center justify-between">
+                            <div className="flex items-center gap-0 rounded-full border border-[var(--mist)]">
+                              <QtyBtn
+                                onClick={() =>
+                                  updateQuantity(
+                                    item.productId,
+                                    Math.max(0, item.quantity - 1),
+                                  )
+                                }
+                                aria="Diminuir"
+                              >
+                                <Minus className="h-3.5 w-3.5" />
+                              </QtyBtn>
+                              <span className="font-mono tabular w-8 text-center text-sm text-[var(--ink)]">
+                                {item.quantity}
+                              </span>
+                              <QtyBtn
+                                onClick={() =>
+                                  updateQuantity(item.productId, item.quantity + 1)
+                                }
+                                aria="Aumentar"
+                              >
+                                <Plus className="h-3.5 w-3.5" />
+                              </QtyBtn>
+                            </div>
+                            <button
+                              onClick={() => removeItem(item.productId)}
+                              className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--muted)] transition-colors hover:bg-[var(--tenant-primary)]/10 hover:text-[var(--tenant-primary)]"
+                              aria-label="Remover"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      </motion.li>
+                    ))}
+                  </AnimatePresence>
+                </motion.ul>
+              )}
             </div>
-            <p className="text-sm text-gray-500">
-              Frete e impostos calculados no checkout
-            </p>
-            <Link
-              href="/carrinho"
-              onClick={onClose}
-              className="flex items-center justify-center gap-2 w-full py-3 text-white font-medium rounded-lg transition-colors"
-              style={{ backgroundColor: tenant?.primaryColor || "#111827" }}
-            >
-              Finalizar Compra
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-            <button
-              onClick={onClose}
-              className="w-full py-2 text-gray-600 hover:text-gray-900 font-medium"
-            >
-              Continuar Comprando
-            </button>
-          </div>
-        )}
+
+            {hasItems && <DrawerFooter cart={cart!} onClose={onClose} />}
+          </motion.aside>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}
+
+function DrawerHeader({
+  itemCount,
+  onClose,
+}: {
+  readonly itemCount: number;
+  readonly onClose: () => void;
+}) {
+  return (
+    <div className="flex items-center justify-between border-b border-[var(--mist)] px-6 py-5">
+      <div className="space-y-1">
+        <span className="eyebrow">Seu carrinho</span>
+        <h2 className="font-display text-2xl leading-none tracking-[-0.02em] text-[var(--ink)]">
+          <em className="italic font-[440]">
+            {itemCount > 0
+              ? `${itemCount} ${itemCount === 1 ? "peça" : "peças"}`
+              : "vazio por enquanto"}
+          </em>
+        </h2>
       </div>
-    </>
+      <button
+        onClick={onClose}
+        className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--mist)] text-[var(--ink)] transition-colors hover:border-[var(--ink)]"
+        aria-label="Fechar carrinho"
+      >
+        <X className="h-4 w-4" />
+      </button>
+    </div>
+  );
+}
+
+function QtyBtn({
+  onClick,
+  aria,
+  children,
+}: {
+  readonly onClick: () => void;
+  readonly aria: string;
+  readonly children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      aria-label={aria}
+      className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--ink)] transition-colors hover:bg-[var(--ink)] hover:text-[var(--paper)]"
+    >
+      {children}
+    </button>
+  );
+}
+
+function EmptyState({ onClose }: { readonly onClose: () => void }) {
+  return (
+    <div className="flex h-full flex-col items-center justify-center py-16 text-center">
+      <div className="flex h-20 w-20 items-center justify-center rounded-full ring-1 ring-[var(--mist)]">
+        <ShoppingBag className="h-8 w-8 text-[var(--muted)]" strokeWidth={1.2} />
+      </div>
+      <h3
+        className="mt-8 font-display text-3xl leading-tight tracking-[-0.02em] text-[var(--ink)]"
+        style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}
+      >
+        <em className="italic font-[430]">Seu carrinho aguarda.</em>
+      </h3>
+      <p className="mt-3 max-w-xs font-mono text-[0.72rem] uppercase tracking-[0.22em] text-[var(--muted)]">
+        Escolha peças que ficam com você.
+      </p>
+      <Link
+        href="/produtos"
+        onClick={onClose}
+        className="btn-ink mt-8 group"
+      >
+        Explorar produtos
+        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+      </Link>
+    </div>
+  );
+}
+
+function DrawerFooter({
+  cart,
+  onClose,
+}: {
+  readonly cart: NonNullable<ReturnType<typeof useCart>["cart"]>;
+  readonly onClose: () => void;
+}) {
+  return (
+    <div className="border-t border-[var(--mist)] bg-[var(--paper)] px-6 pt-6 pb-8 space-y-5">
+      <div className="flex items-baseline justify-between">
+        <span className="eyebrow">Subtotal</span>
+        <motion.span
+          key={cart.subtotal}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="font-mono tabular text-2xl text-[var(--ink)]"
+        >
+          {formatBRL(cart.subtotal)}
+        </motion.span>
+      </div>
+      <p className="font-mono text-[0.68rem] uppercase tracking-[0.22em] text-[var(--muted)]">
+        Frete e impostos calculados no checkout
+      </p>
+      <Link
+        href="/carrinho"
+        onClick={onClose}
+        className="btn-ink group w-full justify-center"
+        style={{ borderRadius: "9999px" }}
+      >
+        Finalizar compra
+        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+      </Link>
+      <button
+        onClick={onClose}
+        className="link-underline mx-auto block font-mono text-[0.7rem] uppercase tracking-[0.22em] text-[var(--muted)] hover:text-[var(--ink)]"
+      >
+        Continuar comprando
+      </button>
+    </div>
   );
 }

@@ -32,26 +32,37 @@ export function ProductInfo({
   onAddToCart,
 }: Props) {
   return (
-    <div className="space-y-6">
-      <div>
+    <div className="flex flex-col gap-8">
+      <div className="space-y-4">
         {product.category && (
           <Link
             href={`/produtos?category=${product.category.slug}`}
-            className="text-sm text-blue-600 hover:underline"
+            className="link-underline font-mono text-[0.68rem] uppercase tracking-[0.26em] text-[var(--muted)] hover:text-[var(--ink)]"
           >
             {product.category.name}
           </Link>
         )}
-        <h1 className="text-3xl font-bold mt-2">{product.name}</h1>
+        <h1
+          className="font-display text-[clamp(2.5rem,5vw,4rem)] leading-[0.95] tracking-[-0.03em] text-[var(--ink)]"
+          style={{ fontVariationSettings: '"opsz" 144, "SOFT" 80' }}
+        >
+          {product.name}
+        </h1>
         {product.sku && (
-          <p className="text-sm text-gray-500 mt-1">SKU: {product.sku}</p>
+          <p className="font-mono text-[0.68rem] uppercase tracking-[0.22em] text-[var(--muted)]">
+            Ref · {product.sku}
+          </p>
         )}
       </div>
+
+      <div className="hairline" />
 
       <ProductPrice pricing={pricing} />
 
       {product.shortDescription && (
-        <p className="text-gray-600">{product.shortDescription}</p>
+        <p className="max-w-md text-[1rem] leading-relaxed text-[var(--ink)]/75">
+          {product.shortDescription}
+        </p>
       )}
 
       <ProductStockStatus
