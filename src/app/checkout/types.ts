@@ -1,10 +1,24 @@
-import type { CheckoutData } from "@/lib/api";
-
 export type PaymentMethod = "credit_card" | "pix" | "boleto";
 
-export type CheckoutAddress = CheckoutData["shippingAddress"];
+export interface CheckoutAddress {
+  readonly firstName: string;
+  readonly lastName: string;
+  readonly address1: string;
+  readonly address2: string;
+  readonly city: string;
+  readonly province: string;
+  readonly zip: string;
+  readonly country: string;
+  readonly phone: string;
+}
 
-export type CheckoutCustomer = CheckoutData["customer"];
+export interface CheckoutCustomer {
+  readonly email: string;
+  readonly firstName: string;
+  readonly lastName: string;
+  readonly phone: string;
+  readonly document: string;
+}
 
 export interface ShippingOption {
   readonly id: string;

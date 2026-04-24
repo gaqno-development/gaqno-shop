@@ -26,6 +26,7 @@ export interface CartSummary {
 interface CartContextType {
   cart: CartSummary | null;
   isLoading: boolean;
+  sessionId: string;
   addItem: (
     product: any,
     quantity: number,
@@ -145,6 +146,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       value={{
         cart,
         isLoading,
+        sessionId,
         addItem,
         removeItem,
         updateQuantity,
