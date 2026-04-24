@@ -4,6 +4,41 @@ import GoogleProvider from 'next-auth/providers/google';
 
 const GOOGLE_SCOPES = ['openid', 'email', 'profile'].join(' ');
 
+const isNextProductionBuild = process.env.NEXT_PHASE === 'phase-production-build';
+
+const authSecret =
+  process.env.NEXTAUTH_SECRET ??
+  process.env.AUTH_SECRET ??
+  (isNextProductionBuild ? '__next_build_placeholder__' : undefined);
+
+if (process.env.NODE_ENV === 'production' && !authSecret) {
+  throw new Error(
+    'Set NEXTAUTH_SECRET or AUTH_SECRET when NODE_ENV is production (e.g. openssl rand -base64 32).',
+  );
+}
+
+function ensureNextAuthUrl(): void {
+  if (process.env.NEXTAUTH_URL) return;
+  if (process.env.VERCEL_URL) {
+    process.env.NEXTAUTH_URL = `https://${process.env.VERCEL_URL}`;
+    return;
+  }
+  if (process.env.NODE_ENV !== 'production') {
+    const port = process.env.PORT ?? '3000';
+    process.env.NEXTAUTH_URL = `http://localhost:${port}`;
+    return;
+  }
+  if (isNextProductionBuild) {
+    process.env.NEXTAUTH_URL = 'http://localhost:3000';
+    return;
+  }
+  throw new Error(
+    'Set NEXTAUTH_URL to the public origin in production (e.g. https://shop.example.com).',
+  );
+}
+
+ensureNextAuthUrl();
+
 interface BackendCustomer {
   readonly id: string;
   readonly email: string;
@@ -54,6 +89,7 @@ async function loginWithCredentials(
 }
 
 export const authOptions: NextAuthOptions = {
+  secret: authSecret,
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || '',

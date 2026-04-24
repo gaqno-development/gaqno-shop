@@ -33,13 +33,17 @@ const PAYMENT_OPTIONS: readonly PaymentOption[] = [
 interface Props {
   readonly selected: PaymentMethod;
   readonly onSelect: (value: PaymentMethod) => void;
+  readonly availableMethods?: readonly PaymentMethod[];
 }
 
-export function PaymentSection({ selected, onSelect }: Props) {
+export function PaymentSection({ selected, onSelect, availableMethods }: Props) {
+  const options = availableMethods?.length
+    ? PAYMENT_OPTIONS.filter((option) => availableMethods.includes(option.value))
+    : PAYMENT_OPTIONS;
   return (
     <SectionFrame number="03" title="Pagamento">
       <ul className="divide-y divide-[var(--mist)] border-y border-[var(--mist)]">
-        {PAYMENT_OPTIONS.map((option) => (
+        {options.map((option) => (
           <PaymentRow
             key={option.value}
             option={option}

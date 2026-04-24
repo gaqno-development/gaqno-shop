@@ -95,6 +95,7 @@ function CheckoutContent() {
           <PaymentSection
             selected={page.paymentMethod}
             onSelect={page.setPaymentMethod}
+            availableMethods={page.availablePaymentMethods}
           />
           <NotesSection value={page.form.notes} onChange={page.form.setNotes} />
         </div>

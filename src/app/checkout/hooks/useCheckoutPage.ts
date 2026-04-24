@@ -2,12 +2,14 @@ import { useCallback, useState } from "react";
 import { useCart } from "@/contexts/cart-context";
 import { useTenant } from "@/contexts/tenant-context";
 import type { PaymentMethod } from "../types";
+import { getPaymentMethods } from "@/lib/api";
 import { useCheckoutForm } from "./useCheckoutForm";
 import { useCheckoutSubmit } from "./useCheckoutSubmit";
 import { useCoupon } from "./useCoupon";
 import { useDeliverySchedule } from "./useDeliverySchedule";
 import { useRedirectWhenCartEmpty } from "./useRedirectWhenCartEmpty";
 import { useShippingOptions } from "./useShippingOptions";
+import { useEffect } from "react";
 
 export function useCheckoutPage() {
   const { cart, clearCart, sessionId } = useCart();
@@ -16,6 +18,9 @@ export function useCheckoutPage() {
   const form = useCheckoutForm();
   const [paymentMethod, setPaymentMethod] =
     useState<PaymentMethod>("credit_card");
+  const [availablePaymentMethods, setAvailablePaymentMethods] = useState<PaymentMethod[]>([
+    "credit_card",
+  ]);
   const [orderNumber, setOrderNumber] = useState("");
   const [orderComplete, setOrderComplete] = useState(false);
   const [paymentState, setPaymentState] = useState<
@@ -32,6 +37,26 @@ export function useCheckoutPage() {
 
   const shippingCost = shipping.selected?.price ?? 0;
   const total = (cart?.subtotal ?? 0) + shippingCost - coupon.discount;
+
+  useEffect(() => {
+    let active = true;
+    getPaymentMethods()
+      .then((methods) => {
+        if (!active) return;
+        const mapped = methods.filter((method): method is PaymentMethod =>
+          ["credit_card", "pix", "boleto"].includes(method),
+        );
+        if (mapped.length === 0) return;
+        setAvailablePaymentMethods(mapped);
+        if (!mapped.includes(paymentMethod)) {
+          setPaymentMethod(mapped[0]);
+        }
+      })
+      .catch(() => undefined);
+    return () => {
+      active = false;
+    };
+  }, [paymentMethod]);
 
   const handleSubmit = useCallback(async () => {
     if (!cart) return;
@@ -86,6 +111,7 @@ export function useCheckoutPage() {
     form,
     paymentMethod,
     setPaymentMethod,
+    availablePaymentMethods,
     shipping,
     coupon,
     delivery,

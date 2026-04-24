@@ -31,10 +31,10 @@ describe("api contract helpers", () => {
     );
   });
 
-  it("resolves order tracking through /orders/track/:orderNumber", async () => {
+  it("resolves order tracking through /orders/:orderNumber with email query", async () => {
     await getOrder("ORD-ABC", "foo@example.com");
     expect(fetch).toHaveBeenCalledWith(
-      expect.stringContaining("/orders/track/ORD-ABC?email=foo%40example.com"),
+      expect.stringContaining("/orders/ORD-ABC?email=foo%40example.com"),
       expect.any(Object),
     );
   });

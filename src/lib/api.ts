@@ -175,12 +175,8 @@ export async function createCheckout(sessionId: string, data: CheckoutData) {
   });
 }
 
-export async function getPaymentMethods() {
-  return [
-    { id: "credit_card", name: "Cartao de credito" },
-    { id: "pix", name: "PIX" },
-    { id: "boleto", name: "Boleto" },
-  ];
+export async function getPaymentMethods(): Promise<string[]> {
+  return fetchApi(`/payments/methods`);
 }
 
 export async function processPayment(
