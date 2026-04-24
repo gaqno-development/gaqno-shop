@@ -10,13 +10,46 @@ import { GoogleIcon } from "./components/GoogleIcon";
 
 const EASE = [0.19, 1, 0.22, 1] as const;
 
-type LoginError = "" | "invalid-credentials" | "google-failed" | "unknown";
+type LoginError =
+  | ""
+  | "invalid-credentials"
+  | "google-failed"
+  | "oauth-signin"
+  | "oauth-callback"
+  | "configuration"
+  | "access-denied"
+  | "account-not-linked"
+  | "unknown";
 
 const ERROR_COPY: Record<Exclude<LoginError, "">, string> = {
   "invalid-credentials": "Email ou senha não conferem.",
-  "google-failed": "Não conseguimos concluir com Google.",
+  "google-failed": "Não conseguimos concluir com Google. Tente de novo ou use email.",
+  "oauth-signin": "Não foi possível iniciar o login com Google. Verifique as configurações do site ou tente mais tarde.",
+  "oauth-callback": "O retorno do Google falhou. Tente novamente ou use email.",
+  configuration: "Login com Google não está configurado corretamente no servidor.",
+  "access-denied": "Acesso cancelado ou negado no Google.",
+  "account-not-linked": "Esta conta Google não está vinculada. Entre com email ou crie uma conta.",
   unknown: "Algo deu errado. Tente novamente.",
 };
+
+const NEXT_AUTH_ERROR_TO_LOGIN: Record<string, LoginError> = {
+  OAuthSignin: "oauth-signin",
+  OAuthCallback: "oauth-callback",
+  OAuthCreateAccount: "oauth-callback",
+  Callback: "oauth-callback",
+  Configuration: "configuration",
+  AccessDenied: "access-denied",
+  Verification: "oauth-callback",
+  OAuthAccountNotLinked: "account-not-linked",
+  EmailCreateAccount: "oauth-callback",
+  SessionRequired: "google-failed",
+  Default: "google-failed",
+};
+
+function loginErrorFromNextAuthCode(code: string | null): LoginError {
+  if (!code) return "";
+  return NEXT_AUTH_ERROR_TO_LOGIN[code] ?? "google-failed";
+}
 
 function LoginForm() {
   const router = useRouter();
@@ -27,12 +60,14 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const [credentialsLoading, setCredentialsLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [error, setError] = useState<LoginError>("");
+  const [localError, setLocalError] = useState<LoginError>("");
+  const urlError = loginErrorFromNextAuthCode(searchParams.get("error"));
+  const shownError = localError || urlError;
 
   async function handleCredentialsSubmit(event: React.FormEvent): Promise<void> {
     event.preventDefault();
     setCredentialsLoading(true);
-    setError("");
+    setLocalError("");
     try {
       const result = await signIn("credentials", {
         email,
@@ -41,13 +76,13 @@ function LoginForm() {
         callbackUrl,
       });
       if (result?.error) {
-        setError("invalid-credentials");
+        setLocalError("invalid-credentials");
         return;
       }
       router.push(callbackUrl);
       router.refresh();
     } catch {
-      setError("unknown");
+      setLocalError("unknown");
     } finally {
       setCredentialsLoading(false);
     }
@@ -55,11 +90,21 @@ function LoginForm() {
 
   async function handleGoogleSignIn(): Promise<void> {
     setGoogleLoading(true);
-    setError("");
+    setLocalError("");
     try {
-      await signIn("google", { callbackUrl });
+      const result = await signIn("google", { callbackUrl, redirect: false });
+      if (result?.error) {
+        setLocalError(loginErrorFromNextAuthCode(result.error));
+        return;
+      }
+      if (result?.url) {
+        window.location.assign(result.url);
+        return;
+      }
+      setLocalError("google-failed");
     } catch {
-      setError("google-failed");
+      setLocalError("google-failed");
+    } finally {
       setGoogleLoading(false);
     }
   }
@@ -117,12 +162,27 @@ function LoginForm() {
           <div className="rounded-sm bg-[var(--paper)] p-8 ring-1 ring-[var(--mist)] shadow-[0_30px_60px_-40px_rgba(0,0,0,0.2)]">
             <span className="eyebrow">Formulário · 01</span>
 
+            <AnimatePresence>
+              {shownError ? (
+                <motion.p
+                  key={shownError}
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  role="alert"
+                  className="mt-6 font-mono text-[0.7rem] uppercase tracking-[0.22em] text-red-700"
+                >
+                  {ERROR_COPY[shownError]}
+                </motion.p>
+              ) : null}
+            </AnimatePresence>
+
             <motion.button
               type="button"
               onClick={handleGoogleSignIn}
               disabled={isBusy}
               whileTap={{ scale: 0.98 }}
-              className="mt-8 flex w-full items-center justify-center gap-3 rounded-sm border border-[var(--mist)] bg-transparent px-4 py-3 font-mono text-[0.72rem] uppercase tracking-[0.22em] text-[var(--ink)] transition-colors duration-300 hover:border-[var(--ink)] disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-6 flex w-full items-center justify-center gap-3 rounded-sm border border-[var(--mist)] bg-transparent px-4 py-3 font-mono text-[0.72rem] uppercase tracking-[0.22em] text-[var(--ink)] transition-colors duration-300 hover:border-[var(--ink)] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {googleLoading ? (
                 <>
@@ -184,21 +244,6 @@ function LoginForm() {
                   className="mt-3 w-full border-0 border-b border-[var(--mist)] bg-transparent pb-3 font-display text-xl italic text-[var(--ink)] outline-none transition-colors duration-300 focus:border-[var(--ink)]"
                 />
               </div>
-
-              <AnimatePresence>
-                {error ? (
-                  <motion.p
-                    key={error}
-                    initial={{ opacity: 0, y: -4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    role="alert"
-                    className="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-red-700"
-                  >
-                    {ERROR_COPY[error]}
-                  </motion.p>
-                ) : null}
-              </AnimatePresence>
 
               <div className="flex items-center justify-between">
                 <Link
