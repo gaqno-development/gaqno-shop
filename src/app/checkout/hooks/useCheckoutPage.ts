@@ -10,7 +10,7 @@ import { useRedirectWhenCartEmpty } from "./useRedirectWhenCartEmpty";
 import { useShippingOptions } from "./useShippingOptions";
 
 export function useCheckoutPage() {
-  const { cart, clearCart } = useCart();
+  const { cart, clearCart, sessionId } = useCart();
   const { featureFlags } = useTenant();
   const isBakery = Boolean(featureFlags?.featureBakery);
   const form = useCheckoutForm();
@@ -18,6 +18,10 @@ export function useCheckoutPage() {
     useState<PaymentMethod>("credit_card");
   const [orderNumber, setOrderNumber] = useState("");
   const [orderComplete, setOrderComplete] = useState(false);
+  const [paymentState, setPaymentState] = useState<
+    "idle" | "creating_order" | "initiating_payment" | "awaiting_confirmation" | "approved" | "failed"
+  >("idle");
+  const [paymentMessage, setPaymentMessage] = useState("");
 
   useRedirectWhenCartEmpty(cart);
 
@@ -43,6 +47,8 @@ export function useCheckoutPage() {
             .filter(Boolean)
             .join(" | ")
         : form.notes;
+    setPaymentState("creating_order");
+    setPaymentMessage("");
     await submit({
       customer: form.customer,
       shippingAddress: form.shippingAddress,
@@ -52,13 +58,28 @@ export function useCheckoutPage() {
       paymentMethod,
       couponCode: coupon.code,
       notes: bakeryNotes,
+      sessionId,
+      items: cart.items,
+      onPending: (number) => {
+        setOrderNumber(number);
+        setPaymentState("initiating_payment");
+        setPaymentMessage("Iniciando pagamento...");
+        setPaymentState("awaiting_confirmation");
+        setPaymentMessage("Aguardando confirmação de pagamento...");
+      },
       onSuccess: (number) => {
         setOrderNumber(number);
+        setPaymentState("approved");
+        setPaymentMessage("Pagamento confirmado.");
         setOrderComplete(true);
         clearCart();
       },
+      onFailure: (message) => {
+        setPaymentState("failed");
+        setPaymentMessage(message);
+      },
     });
-  }, [cart, coupon.code, form, paymentMethod, submit, clearCart, isBakery, delivery]);
+  }, [cart, coupon.code, form, paymentMethod, submit, clearCart, isBakery, delivery, sessionId]);
 
   return {
     cart,
@@ -74,6 +95,8 @@ export function useCheckoutPage() {
     orderNumber,
     shippingCost,
     total,
+    paymentState,
+    paymentMessage,
     handleSubmit,
   };
 }

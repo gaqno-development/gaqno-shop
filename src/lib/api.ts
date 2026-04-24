@@ -2,6 +2,26 @@
 const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4017";
 export const API_URL = rawApiUrl.endsWith("/v1") ? rawApiUrl : `${rawApiUrl.replace(/\/$/, "")}/v1`;
 export const R2_PUBLIC_URL = process.env.NEXT_PUBLIC_R2_PUBLIC_URL || "";
+const DEFAULT_TENANT_SLUG = process.env.NEXT_PUBLIC_TENANT_SLUG || "default";
+
+export function resolveAssetUrl(path: string | null | undefined): string | null {
+  if (!path) return null;
+  if (/^https?:\/\//i.test(path)) return path;
+  const base = R2_PUBLIC_URL.replace(/\/+$/, "");
+  const cleanPath = path.replace(/^\/+/, "");
+  if (!cleanPath) return null;
+  return base ? `${base}/${cleanPath}` : `/${cleanPath}`;
+}
+
+function getTenantHeaders(): Record<string, string> {
+  const headers: Record<string, string> = {
+    "X-Tenant-Slug": DEFAULT_TENANT_SLUG,
+  };
+  if (typeof window !== "undefined") {
+    headers["X-Tenant-Domain"] = window.location.host;
+  }
+  return headers;
+}
 
 // API client
 export async function fetchApi(endpoint: string, options: RequestInit = {}) {
@@ -11,13 +31,9 @@ export async function fetchApi(endpoint: string, options: RequestInit = {}) {
   
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
+    ...getTenantHeaders(),
     ...(options.headers as Record<string, string> || {}),
   };
-
-  // Add tenant domain header
-  if (typeof window !== "undefined") {
-    headers["X-Tenant-Domain"] = window.location.host;
-  }
 
   const response = await fetch(url, {
     ...options,
@@ -115,40 +131,38 @@ export async function clearCart(sessionId: string) {
 
 // Checkout API
 export interface CheckoutData {
-  customer: {
-    email: string;
-    firstName: string;
-    lastName: string;
-    phone: string;
-    document?: string;
-  };
+  customerId?: string;
+  sessionId?: string;
+  items: Array<{
+    productId: string;
+    quantity: number;
+    price: number;
+    name: string;
+    imageUrl?: string;
+    variationId?: string;
+    notes?: string;
+  }>;
   shippingAddress: {
-    firstName: string;
-    lastName: string;
-    address1: string;
-    address2?: string;
+    name: string;
+    cep: string;
+    street: string;
+    number: string;
+    neighborhood: string;
     city: string;
-    province: string;
-    zip: string;
-    country: string;
-    phone?: string;
+    state: string;
+    complement?: string;
   };
   billingAddress?: {
-    firstName: string;
-    lastName: string;
-    address1: string;
-    address2?: string;
+    name: string;
+    cep: string;
+    street: string;
+    number: string;
+    neighborhood: string;
     city: string;
-    province: string;
-    zip: string;
-    country: string;
-    phone?: string;
+    state: string;
+    complement?: string;
   };
-  paymentMethod: "credit_card" | "pix" | "boleto";
-  paymentToken?: string;
-  installments?: number;
-  couponCode?: string;
-  notes?: string;
+  customerNotes?: string;
 }
 
 export async function createCheckout(sessionId: string, data: CheckoutData) {
@@ -162,14 +176,30 @@ export async function createCheckout(sessionId: string, data: CheckoutData) {
 }
 
 export async function getPaymentMethods() {
-  return fetchApi(`/payments/methods`);
+  return [
+    { id: "credit_card", name: "Cartao de credito" },
+    { id: "pix", name: "PIX" },
+    { id: "boleto", name: "Boleto" },
+  ];
 }
 
-export async function processPayment(orderId: string, paymentData: { paymentMethod: string; token?: string; installments?: number }) {
-  return fetchApi(`/payments/process`, {
+export async function processPayment(
+  orderNumber: string,
+  paymentData: {
+    paymentMethod: string;
+    cardToken?: string;
+    installments?: number;
+    payerEmail?: string;
+  },
+) {
+  return fetchApi(`/payments`, {
     method: "POST",
-    body: JSON.stringify({ orderId, ...paymentData }),
+    body: JSON.stringify({ orderNumber, ...paymentData }),
   });
+}
+
+export async function getPaymentStatus(orderNumber: string) {
+  return fetchApi(`/payments/status/${encodeURIComponent(orderNumber)}`);
 }
 
 // Orders API

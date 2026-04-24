@@ -63,6 +63,11 @@ function CheckoutContent() {
 
       <div className="grid grid-cols-1 gap-14 lg:grid-cols-[1.6fr_1fr] lg:gap-20">
         <div className="space-y-16">
+          {page.paymentState !== "idle" && !page.orderComplete ? (
+            <div className="rounded-md border border-[var(--mist)] px-4 py-3 font-mono text-[0.68rem] uppercase tracking-[0.2em] text-[var(--muted)]">
+              {page.paymentMessage || "Processando pagamento"}
+            </div>
+          ) : null}
           <ContactSection
             customer={page.form.customer}
             onChange={page.form.patchCustomer}
