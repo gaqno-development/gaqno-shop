@@ -29,6 +29,7 @@ interface Tenant {
   isActive: boolean;
   isDropshipping: boolean;
   orderPrefix: string;
+  settings?: Record<string, unknown> | null;
 }
 
 interface TenantContextType {

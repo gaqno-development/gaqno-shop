@@ -6,6 +6,7 @@ import { TenantProvider, useTenant } from "@/contexts/tenant-context";
 import { CartProvider } from "@/contexts/cart-context";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/footer";
+import { ShopAnalytics } from "@/components/ShopAnalytics";
 
 const DEFAULT_PRIMARY = "#111111";
 const DEFAULT_SECONDARY = "#f3f4f6";
@@ -42,6 +43,7 @@ function TenantShell({ children }: { readonly children: React.ReactNode }) {
       style={style}
       className="min-h-screen flex flex-col bg-[var(--paper)] text-[var(--ink)]"
     >
+      <ShopAnalytics />
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />
