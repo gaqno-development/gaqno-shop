@@ -31,6 +31,13 @@ export function ShippingAddressFields({ address, onChange }: Props) {
         onChange={(address2) => onChange({ address2 })}
       />
       <EditorialInput
+        label="Bairro *"
+        value={address.neighborhood}
+        onChange={(neighborhood) => onChange({ neighborhood })}
+        required
+        className="md:col-span-2"
+      />
+      <EditorialInput
         label="Cidade *"
         value={address.city}
         onChange={(city) => onChange({ city })}

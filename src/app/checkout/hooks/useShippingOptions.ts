@@ -18,7 +18,11 @@ export function useShippingOptions(cart: CartSummary | null, zip: string) {
           productId: item.productId,
           quantity: item.quantity,
         }));
-        const fetched = (await calculateShipping(zip, items)) as ShippingOption[] | null;
+        const fetched = (await calculateShipping(
+          zip,
+          items,
+          cart!.subtotal,
+        )) as ShippingOption[] | null;
         if (cancelled) return;
         const safe = fetched ?? [];
         setOptions(safe);

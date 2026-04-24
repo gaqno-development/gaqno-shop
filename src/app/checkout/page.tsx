@@ -64,8 +64,25 @@ function CheckoutContent() {
       <div className="grid grid-cols-1 gap-14 lg:grid-cols-[1.6fr_1fr] lg:gap-20">
         <div className="space-y-16">
           {page.paymentState !== "idle" && !page.orderComplete ? (
-            <div className="rounded-md border border-[var(--mist)] px-4 py-3 font-mono text-[0.68rem] uppercase tracking-[0.2em] text-[var(--muted)]">
-              {page.paymentMessage || "Processando pagamento"}
+            <div className="space-y-6 rounded-md border border-[var(--mist)] px-4 py-3 font-mono text-[0.68rem] uppercase tracking-[0.2em] text-[var(--muted)]">
+              <p>{page.paymentMessage || "Processando pagamento"}</p>
+              {page.pixCheckout &&
+              (page.pixCheckout.qrCodeBase64 || page.pixCheckout.qrCode) ? (
+                <div className="space-y-4 border-t border-[var(--mist)] pt-6 normal-case tracking-normal">
+                  {page.pixCheckout.qrCodeBase64 ? (
+                    <img
+                      src={`data:image/png;base64,${page.pixCheckout.qrCodeBase64}`}
+                      alt="QR Code PIX"
+                      className="mx-auto max-w-[220px] border border-[var(--mist)] bg-white p-3"
+                    />
+                  ) : null}
+                  {page.pixCheckout.qrCode ? (
+                    <p className="break-all text-center text-[0.8rem] leading-relaxed text-[var(--ink)]">
+                      {page.pixCheckout.qrCode}
+                    </p>
+                  ) : null}
+                </div>
+              ) : null}
             </div>
           ) : null}
           <ContactSection

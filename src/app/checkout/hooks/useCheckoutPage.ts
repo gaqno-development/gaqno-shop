@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useCart } from "@/contexts/cart-context";
 import { useTenant } from "@/contexts/tenant-context";
 import type { PaymentMethod } from "../types";
@@ -9,7 +9,13 @@ import { useCoupon } from "./useCoupon";
 import { useDeliverySchedule } from "./useDeliverySchedule";
 import { useRedirectWhenCartEmpty } from "./useRedirectWhenCartEmpty";
 import { useShippingOptions } from "./useShippingOptions";
-import { useEffect } from "react";
+
+export interface PixCheckoutPayload {
+  readonly orderNumber: string;
+  readonly qrCode?: string;
+  readonly qrCodeBase64?: string;
+  readonly expiresAt?: string;
+}
 
 export function useCheckoutPage() {
   const { cart, clearCart, sessionId } = useCart();
@@ -27,6 +33,7 @@ export function useCheckoutPage() {
     "idle" | "creating_order" | "initiating_payment" | "awaiting_confirmation" | "approved" | "failed"
   >("idle");
   const [paymentMessage, setPaymentMessage] = useState("");
+  const [pixCheckout, setPixCheckout] = useState<PixCheckoutPayload | null>(null);
 
   useRedirectWhenCartEmpty(cart);
 
@@ -60,6 +67,7 @@ export function useCheckoutPage() {
 
   const handleSubmit = useCallback(async () => {
     if (!cart) return;
+    if (!shipping.selected?.id) return;
     if (isBakery && delivery.minLeadDays > 0 && !delivery.isValid) return;
     const bakeryNotes =
       isBakery && delivery.deliveryDate
@@ -72,6 +80,7 @@ export function useCheckoutPage() {
             .filter(Boolean)
             .join(" | ")
         : form.notes;
+    setPixCheckout(null);
     setPaymentState("creating_order");
     setPaymentMessage("");
     await submit({
@@ -85,6 +94,10 @@ export function useCheckoutPage() {
       notes: bakeryNotes,
       sessionId,
       items: cart.items,
+      shippingMethodId: shipping.selected.id,
+      deliveryDate: isBakery ? delivery.deliveryDate : undefined,
+      deliveryTime: isBakery ? delivery.deliveryTime : undefined,
+      deliveryIsPickup: isBakery ? delivery.isPickup : undefined,
       onPending: (number) => {
         setOrderNumber(number);
         setPaymentState("initiating_payment");
@@ -92,8 +105,13 @@ export function useCheckoutPage() {
         setPaymentState("awaiting_confirmation");
         setPaymentMessage("Aguardando confirmação de pagamento...");
       },
+      onPixData: (payload) => {
+        setPixCheckout(payload);
+        setPaymentMessage("Escaneie o QR Code para pagar com PIX.");
+      },
       onSuccess: (number) => {
         setOrderNumber(number);
+        setPixCheckout(null);
         setPaymentState("approved");
         setPaymentMessage("Pagamento confirmado.");
         setOrderComplete(true);
@@ -104,7 +122,18 @@ export function useCheckoutPage() {
         setPaymentMessage(message);
       },
     });
-  }, [cart, coupon.code, form, paymentMethod, submit, clearCart, isBakery, delivery, sessionId]);
+  }, [
+    cart,
+    coupon.code,
+    form,
+    paymentMethod,
+    submit,
+    clearCart,
+    isBakery,
+    delivery,
+    sessionId,
+    shipping.selected,
+  ]);
 
   return {
     cart,
@@ -123,6 +152,7 @@ export function useCheckoutPage() {
     total,
     paymentState,
     paymentMessage,
+    pixCheckout,
     handleSubmit,
   };
 }

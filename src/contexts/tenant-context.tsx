@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { resolveTenant } from "@/lib/api";
+import { resolveTenant, setShopTenantSlug } from "@/lib/api";
 
 interface FeatureFlags {
   featureShipping: boolean;
@@ -59,12 +59,15 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
         const data = await resolveTenant(domain);
         
         if (data.tenant) {
+          setShopTenantSlug(data.tenant.slug);
           setTenant(data.tenant);
           setFeatureFlags(data.featureFlags);
         } else {
+          setShopTenantSlug(null);
           setError("Tenant not found");
         }
       } catch (err) {
+        setShopTenantSlug(null);
         setError("Failed to load tenant");
       } finally {
         setIsLoading(false);

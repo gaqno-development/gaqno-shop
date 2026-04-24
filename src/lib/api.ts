@@ -2,7 +2,30 @@
 const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4017";
 export const API_URL = rawApiUrl.endsWith("/v1") ? rawApiUrl : `${rawApiUrl.replace(/\/$/, "")}/v1`;
 export const R2_PUBLIC_URL = process.env.NEXT_PUBLIC_R2_PUBLIC_URL || "";
-const DEFAULT_TENANT_SLUG = process.env.NEXT_PUBLIC_TENANT_SLUG || "default";
+
+let shopTenantSlug: string | null = null;
+
+export function setShopTenantSlug(slug: string | null) {
+  shopTenantSlug = slug?.trim() || null;
+}
+
+export const MP_CHECKOUT_RETURN_EMAIL_KEY = "mp_checkout_return_email";
+export const MP_CHECKOUT_RETURN_ORDER_KEY = "mp_checkout_return_order";
+
+function formatApiErrorPayload(payload: unknown): string {
+  if (!payload || typeof payload !== "object") {
+    return "Request failed";
+  }
+  const o = payload as Record<string, unknown>;
+  const raw = o.message;
+  if (typeof raw === "string" && raw.trim()) return raw;
+  if (Array.isArray(raw)) {
+    const joined = raw.map((x) => String(x)).filter(Boolean).join("; ");
+    if (joined) return joined;
+  }
+  if (typeof o.error === "string" && o.error.trim()) return o.error;
+  return "Request failed";
+}
 
 export function resolveAssetUrl(path: string | null | undefined): string | null {
   if (!path) return null;
@@ -14,9 +37,10 @@ export function resolveAssetUrl(path: string | null | undefined): string | null 
 }
 
 function getTenantHeaders(): Record<string, string> {
-  const headers: Record<string, string> = {
-    "X-Tenant-Slug": DEFAULT_TENANT_SLUG,
-  };
+  const headers: Record<string, string> = {};
+  if (shopTenantSlug) {
+    headers["X-Tenant-Slug"] = shopTenantSlug;
+  }
   if (typeof window !== "undefined") {
     headers["X-Tenant-Domain"] = window.location.host;
   }
@@ -41,8 +65,8 @@ export async function fetchApi(endpoint: string, options: RequestInit = {}) {
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: `HTTP ${response.status}` }));
-    throw new Error(error.message || `API error: ${response.status}`);
+    const error = await response.json().catch(() => ({}));
+    throw new Error(formatApiErrorPayload(error) || `API error: ${response.status}`);
   }
 
   return response.json();
@@ -133,14 +157,19 @@ export async function clearCart(sessionId: string) {
 export interface CheckoutData {
   customerId?: string;
   sessionId?: string;
+  shippingMethodId: string;
+  couponCode?: string;
+  deliveryDate?: string;
+  deliveryTime?: string;
+  deliveryIsPickup?: boolean;
   items: Array<{
     productId: string;
     quantity: number;
-    price: number;
-    name: string;
-    imageUrl?: string;
     variationId?: string;
+    decorations?: Array<{ decorationId: string; quantity: number }>;
+    size?: string;
     notes?: string;
+    referenceImageUrl?: string;
   }>;
   shippingAddress: {
     name: string;
@@ -176,7 +205,10 @@ export async function createCheckout(sessionId: string, data: CheckoutData) {
 }
 
 export async function getPaymentMethods(): Promise<string[]> {
-  return fetchApi(`/payments/methods`);
+  const body = (await fetchApi(`/payments/methods`)) as unknown;
+  if (Array.isArray(body)) return body as string[];
+  const wrapped = body as { data?: string[] };
+  return wrapped.data ?? [];
 }
 
 export async function processPayment(
@@ -204,19 +236,42 @@ export async function getOrder(orderNumber: string, email: string) {
 }
 
 // Shipping API
-export async function calculateShipping(zipCode: string, items: { productId: string; quantity: number }[]) {
-  return fetchApi(`/shipping/calculate`, {
+export async function calculateShipping(
+  zipCode: string,
+  items: { productId: string; quantity: number }[],
+  subtotal = 0,
+) {
+  const body = (await fetchApi(`/shipping/calculate`, {
     method: "POST",
-    body: JSON.stringify({ zipCode, items }),
-  });
+    body: JSON.stringify({ zipCode, items, subtotal }),
+  })) as {
+    data?: Array<{
+      methodId: string;
+      name: string;
+      price: number;
+      days: { min: number; max: number };
+    }>;
+  };
+  const rows = body.data ?? [];
+  return rows.map((r) => ({
+    id: r.methodId,
+    name: r.name,
+    price: r.price,
+    deliveryTime: r.days?.max ?? r.days?.min ?? 0,
+  }));
 }
 
 // Coupon API
 export async function validateCoupon(code: string, subtotal: number) {
-  return fetchApi(`/coupons/validate`, {
+  const body = (await fetchApi(`/coupons/validate`, {
     method: "POST",
     body: JSON.stringify({ code, subtotal }),
-  });
+  })) as {
+    data?: { valid: boolean; discount: number };
+    valid?: boolean;
+    discount?: number;
+  };
+  return body.data ?? { valid: Boolean(body.valid), discount: body.discount ?? 0 };
 }
 
 // Bakery — public site settings
@@ -237,10 +292,7 @@ export async function uploadBakeryReferenceImage(
   const url = `${API_URL}${normalizedEndpoint}`;
   const form = new FormData();
   form.append("file", file);
-  const headers: Record<string, string> = {};
-  if (typeof window !== "undefined") {
-    headers["X-Tenant-Domain"] = window.location.host;
-  }
+  const headers: Record<string, string> = { ...getTenantHeaders() };
   const response = await fetch(url, {
     method: "POST",
     body: form,

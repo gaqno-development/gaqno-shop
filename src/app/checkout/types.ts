@@ -5,6 +5,7 @@ export interface CheckoutAddress {
   readonly lastName: string;
   readonly address1: string;
   readonly address2: string;
+  readonly neighborhood: string;
   readonly city: string;
   readonly province: string;
   readonly zip: string;
@@ -40,6 +41,7 @@ export const INITIAL_ADDRESS: CheckoutAddress = {
   lastName: "",
   address1: "",
   address2: "",
+  neighborhood: "",
   city: "",
   province: "",
   zip: "",
