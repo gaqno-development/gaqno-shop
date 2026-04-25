@@ -3,7 +3,16 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   output: 'standalone',
   images: {
-    domains: ['media.gaqno.com.br'],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "media.gaqno.com.br",
+      },
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+    ],
   },
   transpilePackages: ['@gaqno-development/frontcore'],
 };

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
+import { resolveAssetUrl } from "@/lib/api";
 import type { Category } from "@/types/catalog";
 
 interface Props {
@@ -68,6 +69,7 @@ function CategoryTile({
   readonly featured?: boolean;
   readonly className?: string;
 }) {
+  const imageUrl = resolveAssetUrl(category.imageUrl ?? null);
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
@@ -78,9 +80,9 @@ function CategoryTile({
       style={{ minHeight: featured ? undefined : 220 }}
     >
       <Link href={`/produtos?category=${category.slug}`} className="block h-full">
-        {category.imageUrl ? (
+        {imageUrl ? (
           <motion.img
-            src={category.imageUrl}
+            src={imageUrl}
             alt={category.name}
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.9, ease: EASE }}

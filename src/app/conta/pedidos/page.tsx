@@ -31,7 +31,7 @@ const STATUS_TONE: Record<string, string> = {
 };
 
 export default function OrdersPage() {
-  const { orders, isLoading, pagination, setPage } = useMyOrders();
+  const { orders, isLoading, error, pagination, setPage } = useMyOrders();
 
   if (isLoading) {
     return (
@@ -44,6 +44,15 @@ export default function OrdersPage() {
   return (
     <div className="space-y-12">
       <OrdersHeader total={pagination.total} />
+
+      {error ? (
+        <div
+          role="alert"
+          className="rounded-md border border-[var(--mist)] bg-[var(--paper-soft)] px-4 py-3 text-sm text-[var(--muted)]"
+        >
+          {error}
+        </div>
+      ) : null}
 
       {orders.length === 0 ? (
         <EmptyOrders />

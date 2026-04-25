@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 import { RotateCcw, Shield, Truck, type LucideIcon } from "lucide-react";
+import type { ResolvedStorefrontHomeCopy } from "@/lib/storefront-copy";
 
 interface Feature {
   readonly icon: LucideIcon;
@@ -10,35 +11,25 @@ interface Feature {
   readonly description: string;
 }
 
-const FEATURES: readonly Feature[] = [
-  {
-    icon: Truck,
-    eyebrow: "01 · Entrega",
-    title: "Frete grátis",
-    description: "Em compras acima de R$ 199, seguro e rastreado.",
-  },
-  {
-    icon: Shield,
-    eyebrow: "02 · Confiança",
-    title: "Pagamento protegido",
-    description: "Criptografia em todos os processos, sem exceção.",
-  },
-  {
-    icon: RotateCcw,
-    eyebrow: "03 · Tranquilidade",
-    title: "7 dias para trocar",
-    description: "Satisfação garantida. O risco é nosso, não seu.",
-  },
-];
+const FEATURE_ICONS: readonly LucideIcon[] = [Truck, Shield, RotateCcw];
 
 const EASE = [0.19, 1, 0.22, 1] as const;
 
-export function HomeFeatures() {
+interface HomeFeaturesProps {
+  readonly features: ResolvedStorefrontHomeCopy["features"];
+}
+
+export function HomeFeatures({ features }: HomeFeaturesProps) {
+  const resolvedFeatures: readonly Feature[] = features.map((feature, index) => ({
+    ...feature,
+    icon: FEATURE_ICONS[index] ?? RotateCcw,
+  }));
+
   return (
     <section className="border-y border-[var(--mist)] bg-[var(--paper)]">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
         <div className="grid grid-cols-1 divide-y divide-[var(--mist)] md:grid-cols-3 md:divide-x md:divide-y-0">
-          {FEATURES.map((feature, idx) => (
+          {resolvedFeatures.map((feature, idx) => (
             <FeatureCell key={feature.title} feature={feature} index={idx} />
           ))}
         </div>

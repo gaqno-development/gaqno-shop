@@ -33,6 +33,7 @@ export function useMyOrders() {
   const router = useRouter();
   const [orders, setOrders] = useState<readonly MyOrderRow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [pagination, setPagination] = useState<Pagination>(INITIAL_PAGINATION);
 
   const setPage = useCallback((page: number) => {
@@ -60,6 +61,7 @@ export function useMyOrders() {
         )) as MyOrdersResponse;
         if (cancelled) return;
         setOrders(data.items ?? []);
+        setError(null);
         setPagination({
           page: data.page ?? 1,
           totalPages: data.totalPages ?? 1,
@@ -67,6 +69,9 @@ export function useMyOrders() {
         });
       } catch (error) {
         console.error("Error fetching orders:", error);
+        if (!cancelled) {
+          setError("Não foi possível carregar seus pedidos.");
+        }
       } finally {
         if (!cancelled) setIsLoading(false);
       }
@@ -80,6 +85,7 @@ export function useMyOrders() {
   return {
     orders,
     isLoading: isLoading || status === "loading",
+    error,
     pagination,
     setPage,
   } as const;

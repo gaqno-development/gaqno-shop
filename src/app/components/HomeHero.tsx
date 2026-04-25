@@ -1,18 +1,22 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { motion } from "motion/react";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { useTenant } from "@/contexts/tenant-context";
+import type { ResolvedStorefrontHomeCopy } from "@/lib/storefront-copy";
 
 const EASE = [0.19, 1, 0.22, 1] as const;
 
-export function HomeHero() {
+interface HomeHeroProps {
+  readonly copy: ResolvedStorefrontHomeCopy;
+}
+
+export function HomeHero({ copy }: HomeHeroProps) {
   const { tenant } = useTenant();
   const name = tenant?.name ?? "nossa casa";
-  const description =
-    tenant?.description ??
-    "Curadoria cuidadosa para o cotidiano. Peças que se tornam parte da história de quem as escolhe.";
+  const description = copy.hero.welcomeLead;
 
   return (
     <section className="relative overflow-hidden bg-[var(--paper)]">
@@ -32,7 +36,7 @@ export function HomeHero() {
             className="eyebrow mb-8 inline-flex items-center gap-2"
           >
             <Sparkles className="h-3 w-3" aria-hidden />
-            Coleção · {new Date().getFullYear()}
+            {copy.hero.eyebrow}
           </motion.span>
 
           <motion.h1
@@ -42,12 +46,11 @@ export function HomeHero() {
             className="editorial-display text-[clamp(3.2rem,9vw,6.5rem)] text-[var(--ink)]"
             style={{ fontVariationSettings: '"opsz" 144, "SOFT" 90' }}
           >
-            Tudo começa <br />
-            <em className="italic">com um gesto</em>
+            {copy.hero.line1} <br />
+            <em className="italic">{copy.hero.line2Italic}</em>
             <br />
-            de {" "}
             <span className="relative inline-block">
-              cuidado
+              {copy.hero.line3}
               <motion.svg
                 aria-hidden
                 viewBox="0 0 240 16"
@@ -88,16 +91,16 @@ export function HomeHero() {
             className="mt-10 flex flex-wrap items-center gap-4"
           >
             <Link href="/produtos" className="btn-ink group">
-              Ver produtos
+              {copy.hero.primaryCtaLabel}
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
             <Link href="/produtos?ordering=new" className="btn-ghost">
-              Novidades
+              {copy.hero.secondaryCtaLabel}
             </Link>
           </motion.div>
         </motion.div>
 
-        <HeroArt />
+        <HeroArt copy={copy} />
       </div>
     </section>
   );
@@ -120,7 +123,7 @@ function BackgroundArt() {
   );
 }
 
-function HeroArt() {
+function HeroArt({ copy }: HomeHeroProps) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.96 }}
@@ -140,13 +143,12 @@ function HeroArt() {
               "radial-gradient(circle at 30% 20%, var(--tenant-secondary), transparent 60%), radial-gradient(circle at 70% 80%, var(--tenant-primary), transparent 55%)",
           }}
         >
-          <img
-            src="/hero-image.jpg"
-            alt=""
-            className="h-full w-full object-cover mix-blend-multiply opacity-95"
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.opacity = "0";
-            }}
+          <Image
+            src={copy.hero.heroImageUrl}
+            alt={copy.hero.heroImageAlt}
+            fill
+            sizes="(max-width: 1024px) 100vw, 420px"
+            className="object-cover mix-blend-multiply opacity-95"
           />
         </motion.div>
 
@@ -156,15 +158,15 @@ function HeroArt() {
           transition={{ duration: 0.9, ease: EASE, delay: 0.9 }}
           className="absolute -bottom-8 -left-8 w-56 rounded-sm bg-[var(--paper)] p-5 ring-1 ring-[var(--mist)] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.3)]"
         >
-          <span className="eyebrow">Avaliação · 2.4k</span>
+          <span className="eyebrow">{copy.statsCard.eyebrow}</span>
           <p
             className="mt-3 font-display text-5xl leading-none tracking-[-0.03em] text-[var(--ink)]"
             style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}
           >
-            4.<em className="italic">9</em>
+            {copy.statsCard.scoreLine}
           </p>
           <p className="mt-2 font-mono text-[0.65rem] uppercase tracking-[0.22em] text-[var(--muted)]">
-            clientes recomendam
+            {copy.statsCard.footnote}
           </p>
         </motion.div>
 
@@ -175,10 +177,10 @@ function HeroArt() {
           className="absolute -top-6 -right-6 hidden w-44 rounded-sm bg-[var(--ink)] px-5 py-4 text-[var(--paper)] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.4)] lg:block"
         >
           <span className="font-mono text-[0.62rem] uppercase tracking-[0.26em] text-white/60">
-            Curadoria
+            {copy.cornerCard.eyebrow}
           </span>
           <p className="mt-2 font-display text-lg italic leading-tight">
-            peças que duram
+            {copy.cornerCard.title}
           </p>
         </motion.div>
       </div>

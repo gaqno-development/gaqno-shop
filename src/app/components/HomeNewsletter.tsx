@@ -3,10 +3,15 @@
 import { useState, type FormEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowRight, Check, Loader2 } from "lucide-react";
+import type { ResolvedStorefrontHomeCopy } from "@/lib/storefront-copy";
 
 type Status = "idle" | "loading" | "success";
 
-export function HomeNewsletter() {
+interface HomeNewsletterProps {
+  readonly copy: ResolvedStorefrontHomeCopy["newsletter"];
+}
+
+export function HomeNewsletter({ copy }: HomeNewsletterProps) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
 
@@ -42,7 +47,7 @@ export function HomeNewsletter() {
           transition={{ duration: 0.6 }}
           className="eyebrow text-white/60"
         >
-          Boletim editorial
+          {copy.eyebrow}
         </motion.span>
 
         <motion.h2
@@ -53,7 +58,7 @@ export function HomeNewsletter() {
           className="mt-6 font-display text-[clamp(2.8rem,7vw,5rem)] leading-[0.95] tracking-[-0.03em]"
           style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}
         >
-          Fique por <em className="italic">dentro</em>.
+          {copy.titlePrefix} <em className="italic">{copy.titleItalic}</em>.
         </motion.h2>
 
         <motion.p
@@ -63,8 +68,7 @@ export function HomeNewsletter() {
           transition={{ duration: 0.8, delay: 0.25, ease: [0.19, 1, 0.22, 1] }}
           className="mx-auto mt-6 max-w-lg text-[1rem] leading-relaxed text-white/70"
         >
-          Histórias de bastidores, lançamentos antecipados e convites
-          exclusivos. Um e-mail por mês, sem ruído.
+          {copy.body}
         </motion.p>
 
         <motion.form
@@ -76,11 +80,11 @@ export function HomeNewsletter() {
           className="mx-auto mt-12 flex max-w-lg items-center gap-2 rounded-full border border-white/15 bg-white/5 p-1.5 backdrop-blur-xl"
         >
           <label className="flex-1">
-            <span className="sr-only">Seu melhor email</span>
+            <span className="sr-only">{copy.emailSrLabel}</span>
             <input
               type="email"
               required
-              placeholder="você@email.com"
+              placeholder={copy.emailPlaceholder}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full rounded-full bg-transparent px-5 py-3 font-mono text-sm text-white placeholder:text-white/40 focus:outline-none"
@@ -100,7 +104,7 @@ export function HomeNewsletter() {
                   exit={{ opacity: 0, y: -6 }}
                   className="inline-flex items-center gap-2"
                 >
-                  Assinar
+                  {copy.idleLabel}
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                 </motion.span>
               )}
@@ -113,7 +117,7 @@ export function HomeNewsletter() {
                   className="inline-flex items-center gap-2"
                 >
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Enviando
+                  {copy.loadingLabel}
                 </motion.span>
               )}
               {status === "success" && (
@@ -125,7 +129,7 @@ export function HomeNewsletter() {
                   className="inline-flex items-center gap-2"
                 >
                   <Check className="h-4 w-4" />
-                  Obrigada
+                  {copy.successLabel}
                 </motion.span>
               )}
             </AnimatePresence>
@@ -133,7 +137,7 @@ export function HomeNewsletter() {
         </motion.form>
 
         <p className="mt-5 font-mono text-[0.65rem] uppercase tracking-[0.24em] text-white/40">
-          Sem spam · cancele quando quiser
+          {copy.footnote}
         </p>
       </div>
     </section>

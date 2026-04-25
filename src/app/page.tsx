@@ -11,11 +11,13 @@ import {
   HomeProductSection,
 } from "./components";
 import { useHomeData } from "./hooks/useHomeData";
+import { resolveStorefrontHomeCopy } from "@/lib/storefront-copy";
 
 export default function Home() {
-  const { isLoading: tenantLoading, error } = useTenant();
+  const { tenant, isLoading: tenantLoading, error } = useTenant();
   const { products, featuredProducts, categories, isLoading } =
     useHomeData(!tenantLoading);
+  const storefrontHomeCopy = resolveStorefrontHomeCopy(tenant);
 
   if (tenantLoading || isLoading) {
     return <HomeLoadingScreen />;
@@ -27,22 +29,22 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      <HomeHero />
-      <HomeFeatures />
+      <HomeHero copy={storefrontHomeCopy} />
+      <HomeFeatures features={storefrontHomeCopy.features} />
       <HomeCategoriesSection categories={categories} />
       <HomeProductSection
-        title="Em destaque"
-        eyebrow="Curadoria · a dedo"
+        title={storefrontHomeCopy.sections.featuredTitle}
+        eyebrow={storefrontHomeCopy.sections.featuredEyebrow}
         products={featuredProducts}
         hideWhenEmpty
       />
       <HomeProductSection
-        title="Todos os produtos"
-        eyebrow="Catálogo completo"
+        title={storefrontHomeCopy.sections.catalogTitle}
+        eyebrow={storefrontHomeCopy.sections.catalogEyebrow}
         products={products}
         backgroundClassName="bg-[var(--mist)]/30"
       />
-      <HomeNewsletter />
+      <HomeNewsletter copy={storefrontHomeCopy.newsletter} />
     </div>
   );
 }
