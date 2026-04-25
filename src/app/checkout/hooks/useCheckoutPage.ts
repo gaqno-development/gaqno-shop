@@ -19,7 +19,7 @@ export interface PixCheckoutPayload {
 
 export function useCheckoutPage() {
   const { cart, clearCart, sessionId } = useCart();
-  const { featureFlags } = useTenant();
+  const { featureFlags, isLoading: tenantLoading } = useTenant();
   const isBakery = Boolean(featureFlags?.featureBakery);
   const form = useCheckoutForm();
   const [paymentMethod, setPaymentMethod] =
@@ -46,6 +46,7 @@ export function useCheckoutPage() {
   const total = (cart?.subtotal ?? 0) + shippingCost - coupon.discount;
 
   useEffect(() => {
+    if (tenantLoading) return;
     let active = true;
     getPaymentMethods()
       .then((methods) => {
@@ -63,7 +64,7 @@ export function useCheckoutPage() {
     return () => {
       active = false;
     };
-  }, [paymentMethod]);
+  }, [paymentMethod, tenantLoading]);
 
   const handleSubmit = useCallback(async () => {
     if (!cart) return;
