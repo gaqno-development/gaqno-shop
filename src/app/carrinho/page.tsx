@@ -12,7 +12,7 @@ import {
   Tag,
 } from "lucide-react";
 import { useCart, type CartItem } from "@/contexts/cart-context";
-import { R2_PUBLIC_URL } from "@/lib/api";
+import { resolveAssetUrl } from "@/lib/api";
 import { formatBRL, formatFreightOrFree } from "@/lib/formatters";
 
 const EASE = [0.19, 1, 0.22, 1] as const;
@@ -100,9 +100,8 @@ function CartLine({
   readonly onRemove: () => void;
   readonly onQuantity: (q: number) => void;
 }) {
-  const imageUrl = item.imageUrl
-    ? `${R2_PUBLIC_URL}/${item.imageUrl}`
-    : "/placeholder-product.png";
+  const imageUrl =
+    resolveAssetUrl(item.imageUrl ?? null) ?? "/placeholder-product.png";
   return (
     <motion.li
       layout

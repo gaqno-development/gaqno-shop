@@ -4,7 +4,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { X, Plus, Minus, ShoppingBag, Trash2, ArrowRight } from "lucide-react";
 import { useCart } from "@/contexts/cart-context";
-import { R2_PUBLIC_URL } from "@/lib/api";
+import { resolveAssetUrl } from "@/lib/api";
 import { formatBRL } from "@/lib/formatters";
 
 interface CartDrawerProps {
@@ -89,9 +89,8 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                         <div className="h-24 w-20 flex-shrink-0 overflow-hidden rounded-xs ring-1 ring-[var(--mist)] bg-white">
                           <img
                             src={
-                              item.imageUrl
-                                ? `${R2_PUBLIC_URL}/${item.imageUrl}`
-                                : "/placeholder-product.png"
+                              resolveAssetUrl(item.imageUrl ?? null) ??
+                              "/placeholder-product.png"
                             }
                             alt={item.name}
                             className="h-full w-full object-cover"

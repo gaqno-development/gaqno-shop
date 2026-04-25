@@ -1,5 +1,5 @@
 import { Package } from "lucide-react";
-import { R2_PUBLIC_URL } from "@/lib/api";
+import { resolveAssetUrl } from "@/lib/api";
 import { formatBRL } from "@/lib/formatters";
 import type { AccountOrderItem } from "../types";
 
@@ -26,11 +26,7 @@ export function AccountOrderItemsList({ items }: Props) {
 }
 
 function OrderItemRow({ item }: { readonly item: AccountOrderItem }) {
-  const src = item.imageUrl
-    ? item.imageUrl.startsWith("http")
-      ? item.imageUrl
-      : `${R2_PUBLIC_URL}/${item.imageUrl}`
-    : null;
+  const src = resolveAssetUrl(item.imageUrl);
   return (
     <li className="grid grid-cols-[80px_1fr_auto] items-center gap-6 py-6 md:grid-cols-[96px_1fr_auto_auto] md:gap-8">
       <div

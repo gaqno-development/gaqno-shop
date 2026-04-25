@@ -5,7 +5,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowUpRight, Check, Plus } from "lucide-react";
 import { useCart } from "@/contexts/cart-context";
-import { R2_PUBLIC_URL } from "@/lib/api";
+import { resolveAssetUrl } from "@/lib/api";
 import { formatBRL } from "@/lib/formatters";
 import { derivePricing } from "@/lib/pricing";
 import type { ProductSummary } from "@/types/catalog";
@@ -17,7 +17,7 @@ interface ProductCardProps {
 const CONFIRM_MS = 1100;
 
 function toFirstImageUrl(images: readonly string[]): string {
-  return images[0] ? `${R2_PUBLIC_URL}/${images[0]}` : "/placeholder-product.png";
+  return resolveAssetUrl(images[0]) ?? "/placeholder-product.png";
 }
 
 export default function ProductCard({ product }: ProductCardProps) {

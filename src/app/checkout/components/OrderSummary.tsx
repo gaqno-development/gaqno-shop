@@ -2,7 +2,7 @@
 
 import { motion } from "motion/react";
 import { Lock, Tag } from "lucide-react";
-import { R2_PUBLIC_URL } from "@/lib/api";
+import { resolveAssetUrl } from "@/lib/api";
 import { formatBRL, formatFreightOrFree } from "@/lib/formatters";
 import type { CartSummary } from "@/contexts/cart-context";
 
@@ -51,9 +51,8 @@ export function OrderSummary({
               >
                 <img
                   src={
-                    item.imageUrl
-                      ? `${R2_PUBLIC_URL}/${item.imageUrl}`
-                      : "/placeholder-product.png"
+                    resolveAssetUrl(item.imageUrl ?? null) ??
+                    "/placeholder-product.png"
                   }
                   alt={item.name}
                   className="h-full w-full object-cover"

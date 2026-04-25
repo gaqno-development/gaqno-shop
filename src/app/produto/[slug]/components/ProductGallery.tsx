@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "motion/react";
-import { R2_PUBLIC_URL } from "@/lib/api";
+import { resolveAssetUrl } from "@/lib/api";
 
 interface Props {
   readonly productName: string;
@@ -11,7 +11,7 @@ interface Props {
 }
 
 function toImageUrl(image: string | undefined): string {
-  return image ? `${R2_PUBLIC_URL}/${image}` : "/placeholder-product.png";
+  return resolveAssetUrl(image) ?? "/placeholder-product.png";
 }
 
 export function ProductGallery({
