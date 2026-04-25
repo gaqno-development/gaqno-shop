@@ -36,7 +36,7 @@ function ensureNextAuthUrl(): void {
     process.env.NEXTAUTH_URL = 'http://localhost:3000';
     return;
   }
-  process.env.NEXTAUTH_URL = 'http://localhost:3000';
+  throw new Error('Set NEXTAUTH_URL when NODE_ENV is production.');
 }
 
 ensureNextAuthUrl();

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { API_URL, shopApiTenantHeaders } from "@/lib/api";
+import { fetchApi } from "@/lib/api";
 
 export interface MyOrderRow {
   readonly id: string;
@@ -17,6 +17,13 @@ interface Pagination {
   readonly page: number;
   readonly totalPages: number;
   readonly total: number;
+}
+
+interface MyOrdersResponse {
+  readonly items?: readonly MyOrderRow[];
+  readonly page?: number;
+  readonly totalPages?: number;
+  readonly total?: number;
 }
 
 const INITIAL_PAGINATION: Pagination = { page: 1, totalPages: 1, total: 0 };
@@ -41,18 +48,16 @@ export function useMyOrders() {
 
     let cancelled = false;
     async function load() {
+      setIsLoading(true);
       try {
-        const response = await fetch(
-          `${API_URL}/orders/my-orders?page=${pagination.page}&limit=10`,
+        const data = (await fetchApi(
+          `/orders/my-orders?page=${pagination.page}&limit=10`,
           {
             headers: {
               Authorization: `Bearer ${session!.accessToken as string}`,
-              ...shopApiTenantHeaders(),
             },
           },
-        );
-        if (!response.ok) throw new Error("Failed to fetch orders");
-        const data = await response.json();
+        )) as MyOrdersResponse;
         if (cancelled) return;
         setOrders(data.items ?? []);
         setPagination({

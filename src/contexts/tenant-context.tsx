@@ -49,6 +49,9 @@ export function TenantProvider({
   }, [initialResolve?.tenant?.slug]);
 
   useEffect(() => {
+    if (initialResolve?.tenant) {
+      return;
+    }
     async function loadTenant() {
       try {
         const domain = window.location.host;
@@ -61,10 +64,14 @@ export function TenantProvider({
           setError(null);
         } else {
           setShopTenantSlug(null);
+          setTenant(null);
+          setFeatureFlags(null);
           setError("Tenant not found");
         }
       } catch {
         setShopTenantSlug(null);
+        setTenant(null);
+        setFeatureFlags(null);
         setError("Failed to load tenant");
       } finally {
         setIsLoading(false);
@@ -72,7 +79,7 @@ export function TenantProvider({
     }
 
     void loadTenant();
-  }, []);
+  }, [initialResolve?.tenant]);
 
   return (
     <TenantContext.Provider value={{ tenant, featureFlags, isLoading, error }}>

@@ -1,24 +1,18 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
-import { API_URL, shopApiTenantHeaders } from "@/lib/api";
+import { fetchApi } from "@/lib/api";
 import type { AccountOrderDetail } from "../types";
 
 async function fetchOrder(
   id: string,
   accessToken: string,
 ): Promise<AccountOrderDetail> {
-  const response = await fetch(
-    `${API_URL}/orders/my-orders/${id}`,
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        ...shopApiTenantHeaders(),
-      },
+  return fetchApi(`/orders/my-orders/${id}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
     },
-  );
-  if (!response.ok) throw new Error("Failed to fetch order");
-  return response.json();
+  }) as Promise<AccountOrderDetail>;
 }
 
 export function useAccountOrderDetail() {

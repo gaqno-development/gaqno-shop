@@ -10,7 +10,8 @@ Um **mesmo deploy** deste projeto pode atender **vários domínios** (ex.: `fifi
 O navegador chama `https://api…/shop/v1` a partir do **origin** da loja (ex.: `https://fifiadoces.com.br`). Subdomínios `*.gaqno.com(.br)` já são aceitos pelo CORS compartilhado (`@gaqno-development/backcore`). Para apex em domínio próprio:
 
 - Inclua cada origin em `CORS_ORIGIN` ou `ALLOWED_ORIGINS` (lista separada por vírgula), **ou**
-- Defina `SHOP_CORS_ALLOW_PUBLIC_STOREFRONTS=true` no **deploy do shop-service** para permitir origins `https://` com hostname multi-segmento (várias lojas sem listar uma a uma). Avalie o risco no seu ambiente antes de usar em produção.
+- Defina `SHOP_CORS_ALLOW_PUBLIC_STOREFRONTS=true` no **deploy do shop-service** para permitir origins `https://` com hostname multi-segmento.
+- Para produção mais restrita, combine com `SHOP_CORS_PUBLIC_STOREFRONT_ORIGINS` (lista separada por vírgula de origins explícitos e/ou padrões `*.dominio.com.br`), limitando os storefronts aceitos.
 
 ## Setup
 
