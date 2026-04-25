@@ -117,6 +117,7 @@ function CartLine({
         style={{ aspectRatio: "4 / 5" }}
       >
         <img
+          referrerPolicy="no-referrer"
           src={imageUrl}
           alt={item.name}
           className="h-full w-full object-cover"

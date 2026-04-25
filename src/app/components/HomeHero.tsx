@@ -144,6 +144,7 @@ function HeroArt({ copy }: HomeHeroProps) {
           }}
         >
           <Image
+            referrerPolicy="no-referrer"
             src={copy.hero.heroImageUrl}
             alt={copy.hero.heroImageAlt}
             fill

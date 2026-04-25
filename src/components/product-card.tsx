@@ -49,6 +49,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         style={{ aspectRatio: "4 / 5" }}
       >
         <motion.img
+          referrerPolicy="no-referrer"
           src={imageUrl}
           alt={product.name}
           loading="lazy"

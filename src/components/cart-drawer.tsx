@@ -88,6 +88,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       >
                         <div className="h-24 w-20 flex-shrink-0 overflow-hidden rounded-xs ring-1 ring-[var(--mist)] bg-white">
                           <img
+                            referrerPolicy="no-referrer"
                             src={
                               resolveAssetUrl(item.imageUrl ?? null) ??
                               "/placeholder-product.png"

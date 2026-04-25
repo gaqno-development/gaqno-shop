@@ -35,6 +35,7 @@ function OrderItemRow({ item }: { readonly item: AccountOrderItem }) {
       >
         {src ? (
           <img
+            referrerPolicy="no-referrer"
             src={src}
             alt={item.name}
             className="h-full w-full object-cover"

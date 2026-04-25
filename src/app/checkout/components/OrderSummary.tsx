@@ -50,6 +50,7 @@ export function OrderSummary({
                 style={{ width: 56, aspectRatio: "4 / 5" }}
               >
                 <img
+                  referrerPolicy="no-referrer"
                   src={
                     resolveAssetUrl(item.imageUrl ?? null) ??
                     "/placeholder-product.png"

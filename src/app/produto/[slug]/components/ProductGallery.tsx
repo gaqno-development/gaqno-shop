@@ -31,6 +31,7 @@ export function ProductGallery({
         <AnimatePresence mode="wait">
           <motion.img
             key={selectedImage}
+            referrerPolicy="no-referrer"
             src={toImageUrl(current)}
             alt={productName}
             initial={{ opacity: 0, scale: 1.02 }}
@@ -59,6 +60,7 @@ export function ProductGallery({
                 style={{ width: 72, aspectRatio: "4 / 5" }}
               >
                 <img
+                  referrerPolicy="no-referrer"
                   src={toImageUrl(image)}
                   alt={`${productName} — ${index + 1}`}
                   className="h-full w-full object-cover"

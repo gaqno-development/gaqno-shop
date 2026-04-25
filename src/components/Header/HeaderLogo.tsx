@@ -26,7 +26,12 @@ export function HeaderLogo({ name, logoUrl, compact, isBrandLoading }: HeaderLog
       }
     >
       {logoUrl ? (
-        <img src={logoUrl} alt={label} className={`${height} w-auto transition-all`} />
+        <img
+          referrerPolicy="no-referrer"
+          src={logoUrl}
+          alt={label}
+          className={`${height} w-auto transition-all`}
+        />
       ) : showSkeleton ? (
         <span
           className={`block rounded-md bg-[var(--mist)] ${compact ? "h-7 w-28" : "h-9 w-36"} animate-pulse`}

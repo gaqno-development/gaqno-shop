@@ -82,6 +82,7 @@ function CategoryTile({
       <Link href={`/produtos?category=${category.slug}`} className="block h-full">
         {imageUrl ? (
           <motion.img
+            referrerPolicy="no-referrer"
             src={imageUrl}
             alt={category.name}
             whileHover={{ scale: 1.05 }}
