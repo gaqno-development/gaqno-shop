@@ -109,13 +109,13 @@ export function useCheckoutPage() {
         setPixCheckout(payload);
         setPaymentMessage("Escaneie o QR Code para pagar com PIX.");
       },
-      onSuccess: (number) => {
+      onSuccess: async (number) => {
         setOrderNumber(number);
         setPixCheckout(null);
         setPaymentState("approved");
         setPaymentMessage("Pagamento confirmado.");
         setOrderComplete(true);
-        clearCart();
+        await clearCart();
       },
       onFailure: (message) => {
         setPaymentState("failed");

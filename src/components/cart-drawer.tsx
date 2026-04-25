@@ -36,7 +36,7 @@ const ITEM = {
 };
 
 export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
-  const { cart, removeItem, updateQuantity } = useCart();
+  const { cart, removeItem, updateQuantity, isCartMutating } = useCart();
   const hasItems = !!cart && cart.items.length > 0;
 
   return (
@@ -122,8 +122,9 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                           <div className="mt-3 flex items-center justify-between">
                             <div className="flex items-center gap-0 rounded-full border border-[var(--mist)]">
                               <QtyBtn
+                                disabled={isCartMutating}
                                 onClick={() =>
-                                  updateQuantity(
+                                  void updateQuantity(
                                     item.productId,
                                     Math.max(0, item.quantity - 1),
                                   )
@@ -136,8 +137,12 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                 {item.quantity}
                               </span>
                               <QtyBtn
+                                disabled={isCartMutating}
                                 onClick={() =>
-                                  updateQuantity(item.productId, item.quantity + 1)
+                                  void updateQuantity(
+                                    item.productId,
+                                    item.quantity + 1,
+                                  )
                                 }
                                 aria="Aumentar"
                               >
@@ -145,8 +150,10 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                               </QtyBtn>
                             </div>
                             <button
-                              onClick={() => removeItem(item.productId)}
-                              className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--muted)] transition-colors hover:bg-[var(--tenant-primary)]/10 hover:text-[var(--tenant-primary)]"
+                              type="button"
+                              disabled={isCartMutating}
+                              onClick={() => void removeItem(item.productId)}
+                              className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--muted)] transition-colors hover:bg-[var(--tenant-primary)]/10 hover:text-[var(--tenant-primary)] disabled:opacity-40"
                               aria-label="Remover"
                             >
                               <Trash2 className="h-3.5 w-3.5" />
@@ -199,19 +206,23 @@ function DrawerHeader({
 }
 
 function QtyBtn({
+  disabled,
   onClick,
   aria,
   children,
 }: {
+  readonly disabled: boolean;
   readonly onClick: () => void;
   readonly aria: string;
   readonly children: React.ReactNode;
 }) {
   return (
     <button
+      type="button"
+      disabled={disabled}
       onClick={onClick}
       aria-label={aria}
-      className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--ink)] transition-colors hover:bg-[var(--ink)] hover:text-[var(--paper)]"
+      className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--ink)] transition-colors hover:bg-[var(--ink)] hover:text-[var(--paper)] disabled:opacity-40"
     >
       {children}
     </button>

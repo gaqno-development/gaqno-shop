@@ -125,9 +125,9 @@ export async function addToCart(sessionId: string, item: { productId: string; va
   });
 }
 
-export async function updateCartItem(sessionId: string, itemId: string, quantity: number) {
-  return fetchApi(`/cart/items/${itemId}`, {
-    method: "PATCH",
+export async function updateCartItem(sessionId: string, productId: string, quantity: number) {
+  return fetchApi(`/cart/items/${productId}`, {
+    method: "PUT",
     headers: {
       "X-Session-Id": sessionId,
     },
@@ -135,8 +135,8 @@ export async function updateCartItem(sessionId: string, itemId: string, quantity
   });
 }
 
-export async function removeCartItem(sessionId: string, itemId: string) {
-  return fetchApi(`/cart/items/${itemId}`, {
+export async function removeCartItem(sessionId: string, productId: string) {
+  return fetchApi(`/cart/items/${productId}`, {
     method: "DELETE",
     headers: {
       "X-Session-Id": sessionId,

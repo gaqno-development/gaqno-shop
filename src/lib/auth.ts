@@ -1,6 +1,7 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
+import { API_URL } from './api';
 
 const GOOGLE_SCOPES = ['openid', 'email', 'profile'].join(' ');
 
@@ -57,15 +58,51 @@ function buildFullName(customer: BackendCustomer): string {
   return [customer.firstName, customer.lastName].filter(Boolean).join(' ').trim() || customer.email;
 }
 
+function buildShopAuthHeaders(tenantHost?: string): Record<string, string> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+  const slug = process.env.NEXT_PUBLIC_TENANT_SLUG?.trim();
+  if (slug) {
+    headers['X-Tenant-Slug'] = slug;
+  } else {
+    headers['X-Tenant-Slug'] = 'default';
+  }
+  if (tenantHost) {
+    headers['X-Tenant-Domain'] = tenantHost;
+  }
+  return headers;
+}
+
+function getHostFromAuthRequest(req: unknown): string | undefined {
+  if (!req || typeof req !== 'object' || !('headers' in req)) return undefined;
+  const h = (req as { headers: unknown }).headers;
+  if (h && typeof h === 'object' && 'get' in h && typeof (h as Headers).get === 'function') {
+    const headers = h as Headers;
+    const fromForwarded = headers.get('x-forwarded-host')?.split(',')[0]?.trim();
+    const fromHost = headers.get('host')?.trim();
+    return fromForwarded || fromHost || undefined;
+  }
+  const nodeHeaders = h as Record<string, string | string[] | undefined>;
+  const forwarded = nodeHeaders['x-forwarded-host'];
+  const host = Array.isArray(forwarded) ? forwarded[0] : forwarded;
+  if (typeof host === 'string' && host.trim()) {
+    return host.split(',')[0]!.trim();
+  }
+  const raw = nodeHeaders.host;
+  if (typeof raw === 'string' && raw.trim()) {
+    return raw.split(',')[0]!.trim();
+  }
+  return undefined;
+}
+
 async function exchangeGoogleTokenForSession(
   googleAccessToken: string,
+  tenantHost?: string,
 ): Promise<BackendAuthResult | null> {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/oauth/google`, {
+  const response = await fetch(`${API_URL}/auth/oauth/google`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Tenant-Slug': process.env.NEXT_PUBLIC_TENANT_SLUG || 'default',
-    },
+    headers: buildShopAuthHeaders(tenantHost),
     body: JSON.stringify({ accessToken: googleAccessToken }),
   });
   if (!response.ok) return null;
@@ -75,13 +112,11 @@ async function exchangeGoogleTokenForSession(
 async function loginWithCredentials(
   email: string,
   password: string,
+  tenantHost?: string,
 ): Promise<BackendAuthResult | null> {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+  const response = await fetch(`${API_URL}/auth/login`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Tenant-Slug': process.env.NEXT_PUBLIC_TENANT_SLUG || 'default',
-    },
+    headers: buildShopAuthHeaders(tenantHost),
     body: JSON.stringify({ email, password }),
   });
   if (!response.ok) return null;
@@ -102,10 +137,11 @@ export const authOptions: NextAuthOptions = {
         email: { label: 'Email', type: 'email' },
         password: { label: 'Senha', type: 'password' },
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         if (!credentials?.email || !credentials?.password) return null;
+        const tenantHost = getHostFromAuthRequest(req);
         try {
-          const data = await loginWithCredentials(credentials.email, credentials.password);
+          const data = await loginWithCredentials(credentials.email, credentials.password, tenantHost);
           if (!data) return null;
           return {
             id: data.customer.id,
@@ -124,7 +160,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ account, user }) {
       if (account?.provider !== 'google' || !account.access_token) return true;
-      const backendAuth = await exchangeGoogleTokenForSession(account.access_token);
+      const backendAuth = await exchangeGoogleTokenForSession(account.access_token, undefined);
       if (!backendAuth) return false;
       (user as { accessToken?: string }).accessToken = backendAuth.accessToken;
       (user as { refreshToken?: string }).refreshToken = backendAuth.refreshToken;

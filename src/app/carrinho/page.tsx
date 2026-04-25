@@ -18,7 +18,7 @@ import { formatBRL, formatFreightOrFree } from "@/lib/formatters";
 const EASE = [0.19, 1, 0.22, 1] as const;
 
 export default function CartPage() {
-  const { cart, removeItem, updateQuantity } = useCart();
+  const { cart, removeItem, updateQuantity, isCartMutating } = useCart();
   const [couponCode, setCouponCode] = useState("");
 
   if (!cart || cart.items.length === 0) {
@@ -41,8 +41,9 @@ export default function CartPage() {
                 <CartLine
                   key={item.productId}
                   item={item}
-                  onRemove={() => removeItem(item.productId)}
-                  onQuantity={(q) => updateQuantity(item.productId, q)}
+                  disabled={isCartMutating}
+                  onRemove={() => void removeItem(item.productId)}
+                  onQuantity={(q) => void updateQuantity(item.productId, q)}
                 />
               ))}
             </AnimatePresence>
@@ -90,10 +91,12 @@ function CartHeader({ itemCount }: { readonly itemCount: number }) {
 
 function CartLine({
   item,
+  disabled,
   onRemove,
   onQuantity,
 }: {
   readonly item: CartItem;
+  readonly disabled: boolean;
   readonly onRemove: () => void;
   readonly onQuantity: (q: number) => void;
 }) {
@@ -147,6 +150,7 @@ function CartLine({
 
       <div className="flex items-center rounded-full border border-[var(--mist)]">
         <QtyBtn
+          disabled={disabled}
           onClick={() => onQuantity(Math.max(0, item.quantity - 1))}
           aria="Diminuir"
         >
@@ -156,6 +160,7 @@ function CartLine({
           {item.quantity}
         </span>
         <QtyBtn
+          disabled={disabled}
           onClick={() => onQuantity(item.quantity + 1)}
           aria="Aumentar"
         >
@@ -173,9 +178,11 @@ function CartLine({
           {formatBRL(item.total)}
         </motion.span>
         <button
+          type="button"
+          disabled={disabled}
           onClick={onRemove}
           aria-label="Remover"
-          className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--muted)] transition-colors hover:bg-[var(--tenant-primary)]/10 hover:text-[var(--tenant-primary)]"
+          className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--muted)] transition-colors hover:bg-[var(--tenant-primary)]/10 hover:text-[var(--tenant-primary)] disabled:opacity-40"
         >
           <Trash2 className="h-4 w-4" />
         </button>
@@ -185,19 +192,23 @@ function CartLine({
 }
 
 function QtyBtn({
+  disabled,
   onClick,
   aria,
   children,
 }: {
+  readonly disabled: boolean;
   readonly onClick: () => void;
   readonly aria: string;
   readonly children: React.ReactNode;
 }) {
   return (
     <button
+      type="button"
+      disabled={disabled}
       onClick={onClick}
       aria-label={aria}
-      className="flex h-9 w-9 items-center justify-center rounded-full text-[var(--ink)] transition-colors hover:bg-[var(--ink)] hover:text-[var(--paper)]"
+      className="flex h-9 w-9 items-center justify-center rounded-full text-[var(--ink)] transition-colors hover:bg-[var(--ink)] hover:text-[var(--paper)] disabled:opacity-40"
     >
       {children}
     </button>

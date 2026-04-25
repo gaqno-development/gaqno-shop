@@ -27,7 +27,7 @@ export interface SubmitInput {
   readonly deliveryTime?: string;
   readonly deliveryIsPickup?: boolean;
   readonly onPending: (orderNumber: string) => void;
-  readonly onSuccess: (orderNumber: string) => void;
+  readonly onSuccess: (orderNumber: string) => void | Promise<void>;
   readonly onFailure: (message: string) => void;
   readonly onPixData?: (payload: {
     orderNumber: string;
@@ -167,7 +167,7 @@ export function useCheckoutSubmit() {
           input.onFailure("Pagamento PIX ainda não confirmado.");
           return;
         }
-        input.onSuccess(result.orderNumber);
+        await Promise.resolve(input.onSuccess(result.orderNumber));
         return;
       }
 
@@ -183,7 +183,7 @@ export function useCheckoutSubmit() {
         input.onFailure("Pagamento ainda não confirmado.");
         return;
       }
-      input.onSuccess(result.orderNumber);
+      await Promise.resolve(input.onSuccess(result.orderNumber));
     } catch (error) {
       console.error("Checkout failed:", error);
       const message =
