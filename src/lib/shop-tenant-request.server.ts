@@ -5,10 +5,17 @@ import { API_URL } from "@/lib/api";
 import type { ShopTenantResolveSnapshot } from "@/types/shop-tenant";
 import { shopMetadataFromTenantSnapshot } from "@/lib/shop-tenant-metadata";
 
+function normalizeHost(rawHost: string): string {
+  const base = rawHost.trim().toLowerCase();
+  if (!base) return "";
+  const withoutPort = base.split(":")[0]?.trim() ?? "";
+  return withoutPort;
+}
+
 async function readRequestHost(): Promise<string> {
   const h = await headers();
   const forwarded = h.get("x-forwarded-host")?.split(",")[0]?.trim();
-  return (forwarded || h.get("host") || "").trim();
+  return normalizeHost(forwarded || h.get("host") || "");
 }
 
 async function readRequestOrigin(): Promise<string | undefined> {
@@ -22,15 +29,25 @@ async function readRequestOrigin(): Promise<string | undefined> {
 async function fetchShopTenantResolveUncached(): Promise<ShopTenantResolveSnapshot | null> {
   const host = await readRequestHost();
   if (!host) return null;
-  const url = `${API_URL}/tenants/resolve`;
-  try {
+
+  const tryResolve = async (domain: string): Promise<ShopTenantResolveSnapshot | null> => {
+    const url = `${API_URL}/tenants/resolve`;
     const res = await fetch(url, {
-      headers: { "X-Tenant-Domain": host },
-      next: { revalidate: 120 },
+      headers: { "X-Tenant-Domain": domain },
+      cache: "no-store",
     });
     if (!res.ok) return null;
     const body = (await res.json()) as ShopTenantResolveSnapshot;
     return body;
+  };
+
+  try {
+    const primary = await tryResolve(host);
+    if (primary?.tenant) return primary;
+    if (host.startsWith("www.")) {
+      return tryResolve(host.replace(/^www\./, ""));
+    }
+    return primary;
   } catch {
     return null;
   }
