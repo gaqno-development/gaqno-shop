@@ -29,6 +29,7 @@ export interface Product extends ProductSummary {
   readonly allowsReferenceImage?: boolean;
   readonly leadDays?: number | null;
   readonly allowsAdditionalDecorations?: boolean;
+  readonly enabledCustomizationTypeIds?: string[];
   readonly recipeId?: string | null;
 }
 

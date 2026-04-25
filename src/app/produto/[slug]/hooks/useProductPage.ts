@@ -34,7 +34,12 @@ export function useProductPage() {
   const { product, relatedProducts, isLoading } = useProductLoader(slug);
   const { featureFlags } = useTenant();
   const isBakery = Boolean(featureFlags?.featureBakery);
-  const { data: decorations } = useBakeryDecorations();
+  const { data: allDecorations } = useBakeryDecorations();
+
+  const enabledTypeIds = product?.enabledCustomizationTypeIds;
+  const decorations = enabledTypeIds?.length
+    ? allDecorations.filter((d) => d.customizationTypeId && enabledTypeIds.includes(d.customizationTypeId))
+    : allDecorations;
 
   const quantityControls = useQuantity(
     product?.trackInventory ? product.quantity : undefined,

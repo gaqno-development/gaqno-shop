@@ -2,6 +2,7 @@ export interface BakeryDecoration {
   readonly id: string;
   readonly name: string;
   readonly type: "topper" | "flower" | "custom";
+  readonly customizationTypeId: string | null;
   readonly description: string | null;
   readonly priceAdjustment: string;
   readonly imageUrl: string | null;
