@@ -9,10 +9,31 @@ interface FeatureFlags {
   featureCoupons: boolean;
   featureRecipes: boolean;
   featureInventory: boolean;
-  featureCheckoutPro: boolean;
+  featureCreditCard: boolean;
+  featureBoleto: boolean;
   featurePix: boolean;
   featureDropshipping: boolean;
   featureBakery?: boolean;
+}
+
+function toFeatureFlags(raw: unknown): FeatureFlags | null {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+  const o = raw as Record<string, unknown>;
+  const legacy =
+    typeof o.featureCheckoutPro === "boolean" ? o.featureCheckoutPro : true;
+  return {
+    featureShipping: Boolean(o.featureShipping ?? true),
+    featureDecorations: Boolean(o.featureDecorations ?? true),
+    featureCoupons: Boolean(o.featureCoupons ?? true),
+    featureRecipes: Boolean(o.featureRecipes ?? false),
+    featureInventory: Boolean(o.featureInventory ?? true),
+    featureCreditCard:
+      typeof o.featureCreditCard === "boolean" ? o.featureCreditCard : legacy,
+    featureBoleto: typeof o.featureBoleto === "boolean" ? o.featureBoleto : legacy,
+    featurePix: Boolean(o.featurePix ?? true),
+    featureDropshipping: Boolean(o.featureDropshipping ?? false),
+    featureBakery: Boolean(o.featureBakery ?? false),
+  };
 }
 
 interface Tenant {
@@ -61,7 +82,7 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
         if (data.tenant) {
           setShopTenantSlug(data.tenant.slug);
           setTenant(data.tenant);
-          setFeatureFlags(data.featureFlags);
+          setFeatureFlags(toFeatureFlags(data.featureFlags));
         } else {
           setShopTenantSlug(null);
           setError("Tenant not found");
