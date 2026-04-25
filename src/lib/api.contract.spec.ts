@@ -1,5 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { processPayment, getOrder, getPaymentStatus, resolveAssetUrl } from "./api";
+import {
+  processPayment,
+  getOrder,
+  getPaymentStatus,
+  resolveAssetUrl,
+  getProduct,
+  getProducts,
+} from "./api";
 
 describe("api contract helpers", () => {
   beforeEach(() => {
@@ -55,5 +62,40 @@ describe("api contract helpers", () => {
   it("returns null for empty asset path", () => {
     expect(resolveAssetUrl("")).toBeNull();
     expect(resolveAssetUrl(undefined)).toBeNull();
+  });
+
+  it("normalizes product image objects to url strings", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          id: "p1",
+          name: "Produto",
+          images: [{ url: "/uploads/a.jpg" }, { imageUrl: "https://cdn.example.com/b.jpg" }],
+        }),
+      }),
+    );
+    const product = (await getProduct("produto")) as { images: string[] };
+    expect(product.images).toEqual(["/uploads/a.jpg", "https://cdn.example.com/b.jpg"]);
+  });
+
+  it("normalizes paginated product payload image objects", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          items: [
+            { id: "p1", images: [{ url: "/uploads/a.jpg" }] },
+            { id: "p2", images: ["https://cdn.example.com/p2.jpg"] },
+          ],
+          total: 2,
+        }),
+      }),
+    );
+    const list = (await getProducts()) as { items: Array<{ images: string[] }> };
+    expect(list.items[0].images).toEqual(["/uploads/a.jpg"]);
+    expect(list.items[1].images).toEqual(["https://cdn.example.com/p2.jpg"]);
   });
 });

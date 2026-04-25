@@ -36,6 +36,56 @@ export function resolveAssetUrl(path: string | null | undefined): string | null 
   return base ? `${base}/${cleanPath}` : `/${cleanPath}`;
 }
 
+function readImagePath(value: unknown): string | null {
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : null;
+  }
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return null;
+  }
+  const record = value as Record<string, unknown>;
+  const candidates = [record.url, record.imageUrl, record.src, record.path];
+  for (const candidate of candidates) {
+    if (typeof candidate === "string" && candidate.trim().length > 0) {
+      return candidate.trim();
+    }
+  }
+  return null;
+}
+
+function normalizeProductPayload<T>(input: T): T {
+  if (!input || typeof input !== "object" || Array.isArray(input)) {
+    return input;
+  }
+  const record = input as Record<string, unknown>;
+  const rawImages = Array.isArray(record.images) ? record.images : [];
+  const images = rawImages.map(readImagePath).filter((item): item is string => Boolean(item));
+  return {
+    ...record,
+    images,
+  } as T;
+}
+
+function normalizeProductListPayload<T>(payload: T): T {
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+    return payload;
+  }
+  const record = payload as Record<string, unknown>;
+  const fromData = Array.isArray(record.data) ? record.data : null;
+  const fromItems = Array.isArray(record.items) ? record.items : null;
+  if (!fromData && !fromItems) {
+    return payload;
+  }
+  const source = fromData ?? fromItems ?? [];
+  const normalized = source.map((item) => normalizeProductPayload(item));
+  return {
+    ...record,
+    data: normalized,
+    items: normalized,
+  } as T;
+}
+
 function getTenantHeaders(): Record<string, string> {
   const headers: Record<string, string> = {};
   if (shopTenantSlug) {
@@ -98,16 +148,31 @@ export async function getCategories() {
 // Product API
 export async function getProducts(params?: Record<string, string>) {
   const queryString = params ? `?${new URLSearchParams(params)}` : "";
-  return fetchApi(`/products${queryString}`);
+  const payload = await fetchApi(`/products${queryString}`);
+  return normalizeProductListPayload(payload);
 }
 
 export async function getProduct(slug: string) {
-  return fetchApi(`/products/${slug}`);
+  const payload = await fetchApi(`/products/${slug}`);
+  return normalizeProductPayload(payload);
 }
 
 export async function getFeaturedProducts(limit?: number) {
   const queryString = limit ? `?limit=${limit}` : "";
-  return fetchApi(`/products/featured${queryString}`);
+  const payload = await fetchApi(`/products/featured${queryString}`);
+  if (Array.isArray(payload)) {
+    return payload.map((item) => normalizeProductPayload(item));
+  }
+  const normalized = normalizeProductListPayload(payload);
+  if (
+    normalized &&
+    typeof normalized === "object" &&
+    !Array.isArray(normalized) &&
+    Array.isArray((normalized as Record<string, unknown>).items)
+  ) {
+    return (normalized as { items: unknown[] }).items;
+  }
+  return [];
 }
 
 export async function getProductsByCategory(categorySlug: string, params?: Record<string, string>) {
