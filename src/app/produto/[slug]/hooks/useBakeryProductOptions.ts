@@ -38,13 +38,11 @@ export function useBakeryProductOptions({
     }
   };
 
-  const toggleDecoration = (id: string, delta: number) => {
+  const setDecorationSelected = (id: string, selected: boolean) => {
     setDecorationQuantities((prev) => {
       const next = { ...prev };
-      const current = next[id] ?? 0;
-      const updated = Math.max(0, current + delta);
-      if (updated === 0) delete next[id];
-      else next[id] = updated;
+      if (selected) next[id] = 1;
+      else delete next[id];
       return next;
     });
   };
@@ -91,7 +89,7 @@ export function useBakeryProductOptions({
     isUploading,
     uploadError,
     decorationQuantities,
-    toggleDecoration,
+    setDecorationSelected,
     selectedDecorations,
     decorationsExtraCost,
     buildMeta,

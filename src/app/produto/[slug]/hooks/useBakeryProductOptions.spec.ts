@@ -55,7 +55,7 @@ describe("useBakeryProductOptions", () => {
     expect(meta.notes).toBe("sem lactose");
   });
 
-  it("toggles decorations and calculates extra cost", () => {
+  it("selects decorations with toggle semantics and calculates extra cost", () => {
     const { result } = renderHook(() =>
       useBakeryProductOptions({
         allowsReferenceImage: false,
@@ -64,19 +64,19 @@ describe("useBakeryProductOptions", () => {
     );
 
     act(() => {
-      result.current.toggleDecoration("d1", 1);
-      result.current.toggleDecoration("d1", 1);
-      result.current.toggleDecoration("d2", 1);
+      result.current.setDecorationSelected("d1", true);
+      result.current.setDecorationSelected("d1", true);
+      result.current.setDecorationSelected("d2", true);
     });
 
     expect(result.current.selectedDecorations).toHaveLength(2);
-    expect(result.current.decorationsExtraCost).toBeCloseTo(10 * 2 + 25.5);
+    expect(result.current.decorationsExtraCost).toBeCloseTo(10 + 25.5);
 
     act(() => {
-      result.current.toggleDecoration("d1", -1);
-      result.current.toggleDecoration("d1", -1);
+      result.current.setDecorationSelected("d1", false);
     });
     expect(result.current.selectedDecorations).toHaveLength(1);
+    expect(result.current.decorationsExtraCost).toBeCloseTo(25.5);
   });
 
   it("uploads reference image and stores the returned url", async () => {

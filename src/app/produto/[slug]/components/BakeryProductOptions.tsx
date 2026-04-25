@@ -1,6 +1,6 @@
 "use client";
 
-import { Upload, Minus, Plus } from "lucide-react";
+import { Upload } from "lucide-react";
 import type { ChangeEvent } from "react";
 import type { BakeryDecoration } from "@/types/bakery";
 import type { UseBakeryProductOptionsReturn } from "../hooks/useBakeryProductOptions";
@@ -24,7 +24,7 @@ export function BakeryProductOptions({ options, decorations, leadDays }: Props) 
     isUploading,
     uploadError,
     decorationQuantities,
-    toggleDecoration,
+    setDecorationSelected,
   } = options;
 
   const onFile = (e: ChangeEvent<HTMLInputElement>) => {
@@ -47,7 +47,7 @@ export function BakeryProductOptions({ options, decorations, leadDays }: Props) 
         <DecorationsSection
           decorations={decorations}
           quantities={decorationQuantities}
-          onToggle={toggleDecoration}
+          onSelect={setDecorationSelected}
         />
       ) : null}
 
@@ -102,11 +102,11 @@ function SizeSection({
 function DecorationsSection({
   decorations,
   quantities,
-  onToggle,
+  onSelect,
 }: {
   readonly decorations: readonly BakeryDecoration[];
   readonly quantities: Record<string, number>;
-  readonly onToggle: (id: string, delta: number) => void;
+  readonly onSelect: (id: string, selected: boolean) => void;
 }) {
   return (
     <div>
@@ -115,11 +115,11 @@ function DecorationsSection({
       </p>
       <ul className="mt-2 space-y-2">
         {decorations.map((d) => {
-          const qty = quantities[d.id] ?? 0;
+          const selected = (quantities[d.id] ?? 0) > 0;
           return (
             <li
               key={d.id}
-              className="flex items-center justify-between rounded-lg border border-[var(--mist)] px-3 py-2"
+              className="flex items-center justify-between gap-3 rounded-lg border border-[var(--mist)] px-3 py-2"
             >
               <div className="min-w-0">
                 <p className="text-sm text-[var(--ink)]">{d.name}</p>
@@ -127,33 +127,47 @@ function DecorationsSection({
                   + R$ {d.priceAdjustment}
                 </p>
               </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => onToggle(d.id, -1)}
-                  disabled={qty === 0}
-                  aria-label={`Remover ${d.name}`}
-                  className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--ink)] transition-colors hover:bg-[var(--ink)] hover:text-[var(--paper)] disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-[var(--ink)]"
-                >
-                  <Minus className="h-4 w-4" />
-                </button>
-                <span className="font-mono w-6 text-center text-sm tabular-nums">
-                  {qty}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => onToggle(d.id, 1)}
-                  aria-label={`Adicionar ${d.name}`}
-                  className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--ink)] transition-colors hover:bg-[var(--ink)] hover:text-[var(--paper)]"
-                >
-                  <Plus className="h-4 w-4" />
-                </button>
-              </div>
+              <DecorationSwitch
+                checked={selected}
+                onChange={(next) => onSelect(d.id, next)}
+                label={`Incluir ${d.name}`}
+              />
             </li>
           );
         })}
       </ul>
     </div>
+  );
+}
+
+function DecorationSwitch({
+  checked,
+  onChange,
+  label,
+}: {
+  readonly checked: boolean;
+  readonly onChange: (next: boolean) => void;
+  readonly label: string;
+}) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      aria-label={label}
+      onClick={() => onChange(!checked)}
+      className={`relative inline-flex h-7 w-11 shrink-0 rounded-full border transition-colors ${
+        checked
+          ? "border-[var(--ink)] bg-[var(--ink)]"
+          : "border-[var(--mist)] bg-[var(--mist)]/35"
+      }`}
+    >
+      <span
+        className={`pointer-events-none absolute top-1 left-1 h-5 w-5 rounded-full bg-[var(--paper)] shadow-sm transition-transform ${
+          checked ? "translate-x-5" : "translate-x-0"
+        }`}
+      />
+    </button>
   );
 }
 
