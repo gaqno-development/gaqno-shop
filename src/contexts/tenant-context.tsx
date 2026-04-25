@@ -1,61 +1,17 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useLayoutEffect, useState } from "react";
 import { resolveTenant, setShopTenantSlug } from "@/lib/api";
-
-interface FeatureFlags {
-  featureShipping: boolean;
-  featureDecorations: boolean;
-  featureCoupons: boolean;
-  featureRecipes: boolean;
-  featureInventory: boolean;
-  featureCreditCard: boolean;
-  featureBoleto: boolean;
-  featurePix: boolean;
-  featureDropshipping: boolean;
-  featureBakery?: boolean;
-}
-
-function toFeatureFlags(raw: unknown): FeatureFlags | null {
-  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
-  const o = raw as Record<string, unknown>;
-  const legacy =
-    typeof o.featureCheckoutPro === "boolean" ? o.featureCheckoutPro : true;
-  return {
-    featureShipping: Boolean(o.featureShipping ?? true),
-    featureDecorations: Boolean(o.featureDecorations ?? true),
-    featureCoupons: Boolean(o.featureCoupons ?? true),
-    featureRecipes: Boolean(o.featureRecipes ?? false),
-    featureInventory: Boolean(o.featureInventory ?? true),
-    featureCreditCard:
-      typeof o.featureCreditCard === "boolean" ? o.featureCreditCard : legacy,
-    featureBoleto: typeof o.featureBoleto === "boolean" ? o.featureBoleto : legacy,
-    featurePix: Boolean(o.featurePix ?? true),
-    featureDropshipping: Boolean(o.featureDropshipping ?? false),
-    featureBakery: Boolean(o.featureBakery ?? false),
-  };
-}
-
-interface Tenant {
-  id: string;
-  slug: string;
-  name: string;
-  domain: string | null;
-  description: string | null;
-  primaryColor: string;
-  bgColor: string;
-  secondaryColor: string;
-  logoUrl: string | null;
-  faviconUrl: string | null;
-  isActive: boolean;
-  isDropshipping: boolean;
-  orderPrefix: string;
-  settings?: Record<string, unknown> | null;
-}
+import { parseShopFeatureFlags } from "@/lib/shop-feature-flags";
+import type {
+  ShopFeatureFlags,
+  ShopTenant,
+  ShopTenantResolveSnapshot,
+} from "@/types/shop-tenant";
 
 interface TenantContextType {
-  tenant: Tenant | null;
-  featureFlags: FeatureFlags | null;
+  tenant: ShopTenant | null;
+  featureFlags: ShopFeatureFlags | null;
   isLoading: boolean;
   error: string | null;
 }
@@ -67,27 +23,47 @@ const TenantContext = createContext<TenantContextType>({
   error: null,
 });
 
-export function TenantProvider({ children }: { children: React.ReactNode }) {
-  const [tenant, setTenant] = useState<Tenant | null>(null);
-  const [featureFlags, setFeatureFlags] = useState<FeatureFlags | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+export function TenantProvider({
+  children,
+  initialResolve,
+}: {
+  readonly children: React.ReactNode;
+  readonly initialResolve?: ShopTenantResolveSnapshot | null;
+}) {
+  const [tenant, setTenant] = useState<ShopTenant | null>(
+    initialResolve?.tenant ?? null,
+  );
+  const [featureFlags, setFeatureFlags] = useState<ShopFeatureFlags | null>(
+    initialResolve?.tenant
+      ? parseShopFeatureFlags(initialResolve.featureFlags)
+      : null,
+  );
+  const [isLoading, setIsLoading] = useState(!initialResolve?.tenant);
   const [error, setError] = useState<string | null>(null);
+
+  useLayoutEffect(() => {
+    const t = initialResolve?.tenant;
+    if (t?.slug) {
+      setShopTenantSlug(t.slug);
+    }
+  }, [initialResolve?.tenant?.slug]);
 
   useEffect(() => {
     async function loadTenant() {
       try {
         const domain = window.location.host;
         const data = await resolveTenant(domain);
-        
+
         if (data.tenant) {
           setShopTenantSlug(data.tenant.slug);
-          setTenant(data.tenant);
-          setFeatureFlags(toFeatureFlags(data.featureFlags));
+          setTenant(data.tenant as ShopTenant);
+          setFeatureFlags(parseShopFeatureFlags(data.featureFlags));
+          setError(null);
         } else {
           setShopTenantSlug(null);
           setError("Tenant not found");
         }
-      } catch (err) {
+      } catch {
         setShopTenantSlug(null);
         setError("Failed to load tenant");
       } finally {
@@ -95,7 +71,7 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    loadTenant();
+    void loadTenant();
   }, []);
 
   return (

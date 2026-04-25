@@ -30,7 +30,8 @@ function useScrolled(): boolean {
 }
 
 export function Header() {
-  const { tenant } = useTenant();
+  const { tenant, isLoading } = useTenant();
+  const isBrandLoading = isLoading && !tenant;
   const { cart } = useCart();
   const nav = useAuthNav();
   const search = useHeaderSearch();
@@ -53,6 +54,7 @@ export function Header() {
               logoUrl={tenant?.logoUrl}
               primaryColor={tenant?.primaryColor}
               compact={scrolled}
+              isBrandLoading={isBrandLoading}
             />
             <HeaderSearch
               query={search.query}

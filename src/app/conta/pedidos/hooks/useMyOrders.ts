@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { API_URL, shopApiTenantHeaders } from "@/lib/api";
 
 export interface MyOrderRow {
   readonly id: string;
@@ -18,7 +19,6 @@ interface Pagination {
   readonly total: number;
 }
 
-const DEFAULT_TENANT_SLUG = "default";
 const INITIAL_PAGINATION: Pagination = { page: 1, totalPages: 1, total: 0 };
 
 export function useMyOrders() {
@@ -43,12 +43,11 @@ export function useMyOrders() {
     async function load() {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/orders/my-orders?page=${pagination.page}&limit=10`,
+          `${API_URL}/orders/my-orders?page=${pagination.page}&limit=10`,
           {
             headers: {
               Authorization: `Bearer ${session!.accessToken as string}`,
-              "X-Tenant-Slug":
-                process.env.NEXT_PUBLIC_TENANT_SLUG ?? DEFAULT_TENANT_SLUG,
+              ...shopApiTenantHeaders(),
             },
           },
         );
@@ -71,7 +70,7 @@ export function useMyOrders() {
     return () => {
       cancelled = true;
     };
-  }, [status, session?.accessToken, pagination.page, router]);
+  }, [status, session, pagination.page, router]);
 
   return {
     orders,

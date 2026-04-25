@@ -1,21 +1,19 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
+import { API_URL, shopApiTenantHeaders } from "@/lib/api";
 import type { AccountOrderDetail } from "../types";
-
-const DEFAULT_TENANT_SLUG = "default";
 
 async function fetchOrder(
   id: string,
   accessToken: string,
 ): Promise<AccountOrderDetail> {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/orders/my-orders/${id}`,
+    `${API_URL}/orders/my-orders/${id}`,
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,
-        "X-Tenant-Slug":
-          process.env.NEXT_PUBLIC_TENANT_SLUG ?? DEFAULT_TENANT_SLUG,
+        ...shopApiTenantHeaders(),
       },
     },
   );
@@ -54,7 +52,7 @@ export function useAccountOrderDetail() {
     return () => {
       cancelled = true;
     };
-  }, [status, id, session?.accessToken, router]);
+  }, [status, id, session, router]);
 
   return { order, isLoading, isPageLoading: status === "loading" || isLoading };
 }

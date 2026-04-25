@@ -5,19 +5,6 @@ const nextConfig: NextConfig = {
   images: {
     domains: ['media.gaqno.com.br'],
   },
-  async headers() {
-    return [
-      {
-        source: '/:path*',
-        headers: [
-          {
-            key: 'X-Tenant-Domain',
-            value: 'shop.gaqno.com.br',
-          },
-        ],
-      },
-    ];
-  },
   transpilePackages: ['@gaqno-development/frontcore'],
 };
 

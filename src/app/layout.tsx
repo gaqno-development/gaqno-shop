@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { Fraunces, Geist, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
+import {
+  buildShopMetadataFromResolve,
+  getShopTenantResolveForRequest,
+} from "@/lib/shop-tenant-request.server";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -22,22 +26,23 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "Gaqno Shop",
-  description: "An everyday ritual, delivered.",
-};
-
 const FONT_VARIABLES = [geist.variable, fraunces.variable, jetbrainsMono.variable].join(" ");
 
-export default function RootLayout({
+export async function generateMetadata(): Promise<Metadata> {
+  const snapshot = await getShopTenantResolveForRequest();
+  return buildShopMetadataFromResolve(snapshot);
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const tenantResolve = await getShopTenantResolveForRequest();
   return (
     <html lang="pt-BR" className={FONT_VARIABLES}>
       <body className="font-sans antialiased">
-        <Providers>{children}</Providers>
+        <Providers initialTenantResolve={tenantResolve}>{children}</Providers>
       </body>
     </html>
   );

@@ -40,11 +40,20 @@ function getTenantHeaders(): Record<string, string> {
   const headers: Record<string, string> = {};
   if (shopTenantSlug) {
     headers["X-Tenant-Slug"] = shopTenantSlug;
+  } else {
+    const slug = process.env.NEXT_PUBLIC_TENANT_SLUG?.trim();
+    if (slug) {
+      headers["X-Tenant-Slug"] = slug;
+    }
   }
   if (typeof window !== "undefined") {
     headers["X-Tenant-Domain"] = window.location.host;
   }
   return headers;
+}
+
+export function shopApiTenantHeaders(): Record<string, string> {
+  return getTenantHeaders();
 }
 
 // API client

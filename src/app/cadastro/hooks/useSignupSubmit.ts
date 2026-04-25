@@ -1,15 +1,13 @@
 import { useCallback, useState } from "react";
+import { API_URL, shopApiTenantHeaders } from "@/lib/api";
 import type { SignupFormData } from "../types";
 
-const DEFAULT_TENANT_SLUG = "default";
-
 async function postSignup(data: SignupFormData): Promise<Response> {
-  return fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
+  return fetch(`${API_URL}/auth/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "X-Tenant-Slug":
-        process.env.NEXT_PUBLIC_TENANT_SLUG ?? DEFAULT_TENANT_SLUG,
+      ...shopApiTenantHeaders(),
     },
     body: JSON.stringify({
       firstName: data.firstName,

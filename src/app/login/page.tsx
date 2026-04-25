@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, Suspense, useMemo } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -51,10 +51,33 @@ function loginErrorFromNextAuthCode(code: string | null): LoginError {
   return NEXT_AUTH_ERROR_TO_LOGIN[code] ?? "google-failed";
 }
 
+function resolveSafeCallbackUrl(searchParams: { get(name: string): string | null }): string {
+  if (typeof window === "undefined") {
+    return "/conta";
+  }
+  const origin = window.location.origin;
+  const raw = searchParams.get("callbackUrl");
+  if (!raw) {
+    return `${origin}/conta`;
+  }
+  if (raw.startsWith("/") && !raw.startsWith("//")) {
+    return `${origin}${raw}`;
+  }
+  try {
+    const parsed = new URL(raw);
+    if (parsed.origin === origin) {
+      return raw;
+    }
+  } catch {
+    return `${origin}/conta`;
+  }
+  return `${origin}/conta`;
+}
+
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/conta";
+  const callbackUrl = useMemo(() => resolveSafeCallbackUrl(searchParams), [searchParams]);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

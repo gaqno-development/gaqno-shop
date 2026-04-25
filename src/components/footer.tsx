@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowUpRight, Instagram, Facebook } from "lucide-react";
 import { useTenant } from "@/contexts/tenant-context";
 import { useAuthNav } from "@/hooks/useAuthNav";
+import { DEFAULT_STORE_BRAND_LABEL } from "@/lib/brand-defaults";
 
 const FOOTER_SECTIONS = [
   {
@@ -27,7 +28,7 @@ const FOOTER_SECTIONS = [
 export function Footer() {
   const { tenant } = useTenant();
   const { showOrdersLink, ordersHref } = useAuthNav();
-  const brand = tenant?.name ?? "Gaqno Shop";
+  const brand = tenant?.name?.trim() || DEFAULT_STORE_BRAND_LABEL;
   const year = new Date().getFullYear();
 
   return (

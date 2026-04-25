@@ -1,6 +1,9 @@
-import { NextAuthOptions } from 'next-auth';
+import type { NextAuthOptions } from 'next-auth';
+
+type ShopAuthOptions = NextAuthOptions & { readonly trustHost?: boolean };
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
+import { headers } from 'next/headers';
 import { API_URL } from './api';
 
 const GOOGLE_SCOPES = ['openid', 'email', 'profile'].join(' ');
@@ -33,9 +36,7 @@ function ensureNextAuthUrl(): void {
     process.env.NEXTAUTH_URL = 'http://localhost:3000';
     return;
   }
-  throw new Error(
-    'Set NEXTAUTH_URL to the public origin in production (e.g. https://shop.example.com).',
-  );
+  process.env.NEXTAUTH_URL = 'http://localhost:3000';
 }
 
 ensureNextAuthUrl();
@@ -58,6 +59,23 @@ function buildFullName(customer: BackendCustomer): string {
   return [customer.firstName, customer.lastName].filter(Boolean).join(' ').trim() || customer.email;
 }
 
+function parseOAuthRedirectAllowlist(): readonly string[] {
+  const raw = process.env.SHOP_OAUTH_REDIRECT_ALLOWLIST?.trim();
+  if (!raw) return [];
+  return raw
+    .split(',')
+    .map((entry) => entry.trim())
+    .filter(Boolean);
+}
+
+function safeUrlOrigin(value: string): string | undefined {
+  try {
+    return new URL(value).origin;
+  } catch {
+    return undefined;
+  }
+}
+
 function buildShopAuthHeaders(tenantHost?: string): Record<string, string> {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -65,13 +83,22 @@ function buildShopAuthHeaders(tenantHost?: string): Record<string, string> {
   const slug = process.env.NEXT_PUBLIC_TENANT_SLUG?.trim();
   if (slug) {
     headers['X-Tenant-Slug'] = slug;
-  } else {
-    headers['X-Tenant-Slug'] = 'default';
   }
   if (tenantHost) {
     headers['X-Tenant-Domain'] = tenantHost;
   }
   return headers;
+}
+
+async function getTenantHostFromRequestContext(): Promise<string | undefined> {
+  try {
+    const requestHeaders = await headers();
+    const fromForwarded = requestHeaders.get('x-forwarded-host')?.split(',')[0]?.trim();
+    const fromHost = requestHeaders.get('host')?.trim();
+    return fromForwarded || fromHost || undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 function getHostFromAuthRequest(req: unknown): string | undefined {
@@ -123,8 +150,9 @@ async function loginWithCredentials(
   return response.json();
 }
 
-export const authOptions: NextAuthOptions = {
+export const authOptions: ShopAuthOptions = {
   secret: authSecret,
+  trustHost: true,
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || '',
@@ -158,9 +186,26 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      if (url.startsWith('/')) {
+        const origin = safeUrlOrigin(baseUrl);
+        return origin ? `${origin}${url}` : baseUrl;
+      }
+      const targetOrigin = safeUrlOrigin(url);
+      const baseOrigin = safeUrlOrigin(baseUrl);
+      if (targetOrigin && baseOrigin && targetOrigin === baseOrigin) {
+        return url;
+      }
+      const allowlist = parseOAuthRedirectAllowlist();
+      if (targetOrigin && allowlist.includes(targetOrigin)) {
+        return url;
+      }
+      return baseUrl;
+    },
     async signIn({ account, user }) {
       if (account?.provider !== 'google' || !account.access_token) return true;
-      const backendAuth = await exchangeGoogleTokenForSession(account.access_token, undefined);
+      const tenantHost = await getTenantHostFromRequestContext();
+      const backendAuth = await exchangeGoogleTokenForSession(account.access_token, tenantHost);
       if (!backendAuth) return false;
       (user as { accessToken?: string }).accessToken = backendAuth.accessToken;
       (user as { refreshToken?: string }).refreshToken = backendAuth.refreshToken;
