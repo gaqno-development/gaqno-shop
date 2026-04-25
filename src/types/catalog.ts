@@ -28,6 +28,7 @@ export interface Product extends ProductSummary {
   readonly seoDescription: string | null;
   readonly allowsReferenceImage?: boolean;
   readonly leadDays?: number | null;
+  readonly allowsAdditionalDecorations?: boolean;
   readonly recipeId?: string | null;
 }
 

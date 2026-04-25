@@ -25,10 +25,13 @@ export default function ProductPage() {
 
   const { product, pricing, stock, quantityControls, isBakery, bakeryOptions, decorations } = page;
 
+  const decorationCatalog =
+    product.allowsAdditionalDecorations === false ? [] : decorations;
+
   const bakerySlot = isBakery ? (
     <BakeryProductOptions
       options={bakeryOptions}
-      decorations={decorations}
+      decorations={decorationCatalog}
       leadDays={product.leadDays}
     />
   ) : null;
