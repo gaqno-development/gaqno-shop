@@ -8,11 +8,16 @@ import type { Category } from "@/types/catalog";
 
 interface Props {
   readonly categories: readonly Category[];
+  readonly labels?: {
+    readonly eyebrow?: string;
+    readonly sectionTitle?: string;
+    readonly ctaLabel?: string;
+  };
 }
 
 const EASE = [0.19, 1, 0.22, 1] as const;
 
-export function HomeCategoriesSection({ categories }: Props) {
+export function HomeCategoriesSection({ categories, labels }: Props) {
   if (categories.length === 0) return null;
   const [hero, ...rest] = categories;
   const secondary = rest.slice(0, 3);
@@ -20,16 +25,17 @@ export function HomeCategoriesSection({ categories }: Props) {
   return (
     <section className="bg-[var(--paper)] py-24">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        <SectionHeader />
+        <SectionHeader labels={labels} />
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:grid-rows-2 md:gap-6 lg:h-[640px]">
           <CategoryTile
             category={hero}
+            labels={labels}
             featured
             className="md:col-span-2 md:row-span-2"
           />
           {secondary.map((category) => (
-            <CategoryTile key={category.id} category={category} />
+            <CategoryTile key={category.id} category={category} labels={labels} />
           ))}
         </div>
       </div>
@@ -37,16 +43,20 @@ export function HomeCategoriesSection({ categories }: Props) {
   );
 }
 
-function SectionHeader() {
+function SectionHeader({ labels }: { readonly labels?: Props["labels"] }) {
   return (
     <div className="mb-14 flex items-end justify-between gap-8 border-b border-[var(--mist)] pb-8">
       <div className="space-y-3">
-        <span className="eyebrow">Coleções · 2026</span>
+        <span className="eyebrow">{labels?.eyebrow ?? "Coleções · 2026"}</span>
         <h2
           className="font-display text-[clamp(2.5rem,5vw,4rem)] leading-[0.95] tracking-[-0.03em] text-[var(--ink)]"
           style={{ fontVariationSettings: '"opsz" 144, "SOFT" 80' }}
         >
-          Por <em className="italic">categoria</em>.
+          {labels?.sectionTitle ? (
+            labels.sectionTitle
+          ) : (
+            <>Por <em className="italic">categoria</em>.</>
+          )}
         </h2>
       </div>
       <Link
@@ -64,10 +74,12 @@ function CategoryTile({
   category,
   featured,
   className = "",
+  labels,
 }: {
   readonly category: Category;
   readonly featured?: boolean;
   readonly className?: string;
+  readonly labels?: Props["labels"];
 }) {
   const imageUrl = resolveAssetUrl(category.imageUrl ?? null);
   return (
@@ -114,7 +126,7 @@ function CategoryTile({
 
         <div className="relative flex h-full flex-col justify-between p-6 md:p-8">
           <span className="eyebrow mix-blend-difference text-white/90">
-            Coleção
+            {labels?.eyebrow?.replace(/ · \d{4}$/, "") ?? "Coleção"}
           </span>
 
           <div className="space-y-3">
@@ -132,7 +144,7 @@ function CategoryTile({
               transition={{ duration: 0.6, ease: EASE, delay: 0.1 }}
               className="flex items-center gap-2 font-mono text-[0.7rem] uppercase tracking-[0.22em] text-white/80"
             >
-              Explorar
+              {labels?.ctaLabel ?? "Explorar"}
               <motion.span
                 initial={{ x: 0 }}
                 whileHover={{ x: 6 }}
