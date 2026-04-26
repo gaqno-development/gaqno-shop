@@ -37,6 +37,11 @@ export interface ResolvedStorefrontHomeCopy {
     readonly catalogTitle: string;
     readonly catalogEyebrow: string;
   };
+  readonly categories: {
+    readonly eyebrow: string;
+    readonly sectionTitle: string;
+    readonly ctaLabel: string;
+  };
   readonly features: readonly StorefrontCopyHomeFeature[];
   readonly newsletter: {
     readonly eyebrow: string;
@@ -101,6 +106,11 @@ const DEFAULT_HOME_COPY: ResolvedStorefrontHomeCopy = {
     featuredEyebrow: "Curadoria · a dedo",
     catalogTitle: "Todos os produtos",
     catalogEyebrow: "Catalogo completo",
+  },
+  categories: {
+    eyebrow: "Colecoes · 2026",
+    sectionTitle: "Por categoria",
+    ctaLabel: "Explorar",
   },
   features: [
     {
@@ -197,6 +207,7 @@ export function resolveStorefrontHomeCopy(
   const statsCard = asRecord(home?.statsCard);
   const cornerCard = asRecord(home?.cornerCard);
   const sections = asRecord(home?.sections);
+  const categories = asRecord(home?.categories);
   const newsletter = asRecord(home?.newsletter);
 
   return {
@@ -243,6 +254,14 @@ export function resolveStorefrontHomeCopy(
         sections?.catalogEyebrow,
         DEFAULT_HOME_COPY.sections.catalogEyebrow,
       ),
+    },
+    categories: {
+      eyebrow: asText(categories?.eyebrow, DEFAULT_HOME_COPY.categories.eyebrow),
+      sectionTitle: asText(
+        categories?.sectionTitle,
+        DEFAULT_HOME_COPY.categories.sectionTitle,
+      ),
+      ctaLabel: asText(categories?.ctaLabel, DEFAULT_HOME_COPY.categories.ctaLabel),
     },
     features: mergeFeatures(home?.features),
     newsletter: {
