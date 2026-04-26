@@ -31,7 +31,10 @@ export default function Home() {
     <div className="min-h-screen">
       <HomeHero copy={storefrontHomeCopy} />
       <HomeFeatures features={storefrontHomeCopy.features} />
-      <HomeCategoriesSection categories={categories} />
+      <HomeCategoriesSection
+          categories={categories}
+          labels={storefrontHomeCopy.categories}
+        />
       <HomeProductSection
         title={storefrontHomeCopy.sections.featuredTitle}
         eyebrow={storefrontHomeCopy.sections.featuredEyebrow}
