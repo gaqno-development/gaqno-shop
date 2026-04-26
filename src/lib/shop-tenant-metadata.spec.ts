@@ -34,12 +34,14 @@ describe("shopMetadataFromTenantSnapshot", () => {
     });
     expect(meta.description).toBe("Doces artesanais");
     expect(meta.metadataBase?.toString()).toBe("https://fifiadoces.com.br/");
-    expect(meta.icons?.icon?.[0]?.url).toBe("https://cdn.example/favicon.ico");
-    expect(meta.openGraph?.images?.[0]).toEqual({
+    const iconsAny = meta.icons as { icon?: Array<{ url: string }> } | undefined;
+    expect(iconsAny?.icon?.[0]?.url).toBe("https://cdn.example/favicon.ico");
+    const ogAny = meta.openGraph as { images?: Array<{ url: string; alt: string }>; siteName?: string } | undefined;
+    expect(ogAny?.images?.[0]).toEqual({
       url: "https://cdn.example/logo.png",
       alt: "Fifia Doces",
     });
-    expect(meta.openGraph?.siteName).toBe("Fifia Doces");
+    expect(ogAny?.siteName).toBe("Fifia Doces");
   });
 
   it("falls back to default label when tenant missing", () => {

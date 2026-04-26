@@ -4,7 +4,7 @@ type ShopAuthOptions = NextAuthOptions & { readonly trustHost?: boolean };
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 import { headers } from 'next/headers';
-import { API_URL } from './api';
+import { API_URL, SSO_URL } from './api';
 
 const GOOGLE_SCOPES = ['openid', 'email', 'profile'].join(' ');
 
@@ -127,13 +127,24 @@ async function exchangeGoogleTokenForSession(
   googleAccessToken: string,
   tenantHost?: string,
 ): Promise<BackendAuthResult | null> {
-  const response = await fetch(`${API_URL}/auth/oauth/google`, {
+  const response = await fetch(`${SSO_URL}/auth/google/register`, {
     method: 'POST',
     headers: buildShopAuthHeaders(tenantHost),
     body: JSON.stringify({ accessToken: googleAccessToken }),
   });
   if (!response.ok) return null;
-  return response.json();
+  const result = await response.json();
+  return {
+    accessToken: result.tokens.accessToken,
+    refreshToken: result.tokens.refreshToken,
+    customer: {
+      id: result.user.id,
+      email: result.user.email,
+      firstName: result.user.metadata?.firstName ?? null,
+      lastName: result.user.metadata?.lastName ?? null,
+      avatarUrl: result.user.metadata?.avatar ?? null,
+    },
+  };
 }
 
 async function loginWithCredentials(

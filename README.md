@@ -27,6 +27,7 @@ Crie `.env.local` com as variáveis abaixo. Em desenvolvimento abra [http://loca
 | Nome | Obrigatória | Descrição |
 | --- | --- | --- |
 | `NEXT_PUBLIC_API_URL` | sim | URL do `gaqno-shop-service` (ex: `https://api.gaqno.com.br/shop/v1`) |
+| `NEXT_PUBLIC_SSO_URL` | não | URL do `gaqno-sso-service` para OAuthregister (ex: `https://sso.gaqno.com.br`). Default: `http://localhost:4001` |
 | `NEXT_PUBLIC_TENANT_SLUG` | não (prod multi-domínio) | Slug fixo só quando útil (ex.: dev sem domínio customizado). Em produção com um deploy e vários apex, **omitir** e deixar só a resolução por domínio. |
 | `NEXT_PUBLIC_R2_PUBLIC_URL` | não | CDN pública para imagens de produto |
 | `NEXTAUTH_URL` | sim (prod) | URL canônica usada pelo NextAuth (cookies/CSRF). Com **um deploy e vários domínios de loja**, defina uma base estável (ex.: hostname principal do proxy ou primeira loja) e use `trustHost` + lista de redirects; se o callback pós-login for para outro origin, use `SHOP_OAUTH_REDIRECT_ALLOWLIST`. |

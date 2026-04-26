@@ -1,6 +1,7 @@
 // API configuration - ensure /v1 suffix
 const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4017";
 export const API_URL = rawApiUrl.endsWith("/v1") ? rawApiUrl : `${rawApiUrl.replace(/\/$/, "")}/v1`;
+export const SSO_URL = process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:4001";
 export const R2_PUBLIC_URL = process.env.NEXT_PUBLIC_R2_PUBLIC_URL || "";
 
 let shopTenantSlug: string | null = null;
