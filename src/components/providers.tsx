@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { SessionProvider } from "next-auth/react";
-import { QueryProvider } from "@gaqno-development/frontcore/components/providers";
+import { QueryProvider } from "@gaqno-development/frontcore/components/providers/query-provider";
 import { useWhiteLabel } from "@gaqno-development/frontcore/hooks/useWhiteLabel";
 import { TenantProvider, useTenant } from "@/contexts/tenant-context";
 import { CartProvider } from "@/contexts/cart-context";
