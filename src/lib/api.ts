@@ -349,9 +349,9 @@ export async function validateCoupon(code: string, subtotal: number) {
   return body.data ?? { valid: Boolean(body.valid), discount: body.discount ?? 0 };
 }
 
-// Bakery — public site settings
-export async function getBakerySiteSettings() {
-  return fetchApi(`/bakery/site-settings`);
+// Storefront — public site settings
+export async function getStorefrontSiteSettings() {
+  return fetchApi(`/storefront/site-settings`);
 }
 
 // Bakery — decorations catalog (public read)
@@ -359,11 +359,11 @@ export async function getBakeryDecorations() {
   return fetchApi(`/bakery/decorations`);
 }
 
-// Bakery — reference-image upload (returns { url })
-export async function uploadBakeryReferenceImage(
+// Storefront — reference-image upload (returns { url })
+export async function uploadStorefrontReferenceImage(
   file: File,
 ): Promise<{ url: string }> {
-  const normalizedEndpoint = "/bakery/assets/upload";
+  const normalizedEndpoint = "/storefront/assets";
   const url = `${API_URL}${normalizedEndpoint}`;
   const form = new FormData();
   form.append("file", file);

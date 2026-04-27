@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { uploadBakeryReferenceImage } from "@/lib/api";
+import { uploadStorefrontReferenceImage } from "@/lib/api";
 import type { BakeryDecoration, OrderItemBakeryMeta } from "@/types/bakery";
 
 const DEFAULT_SIZES = ["P", "M", "G"] as const;
@@ -28,7 +28,7 @@ export function useBakeryProductOptions({
     setIsUploading(true);
     setUploadError(null);
     try {
-      const res = await uploadBakeryReferenceImage(file);
+      const res = await uploadStorefrontReferenceImage(file);
       setReferenceImageUrl(res.url);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Falha no upload";

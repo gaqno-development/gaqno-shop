@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getBakerySiteSettings } from "@/lib/api";
+import { getStorefrontSiteSettings } from "@/lib/api";
 import type { BakerySiteSettings } from "@/types/bakery";
 import { useTenant } from "@/contexts/tenant-context";
 
@@ -19,7 +19,7 @@ export function useBakerySiteSettings() {
     }
     let cancelled = false;
     setIsLoading(true);
-    getBakerySiteSettings()
+    getStorefrontSiteSettings()
       .then((res) => {
         if (!cancelled) setData(res as BakerySiteSettings);
       })

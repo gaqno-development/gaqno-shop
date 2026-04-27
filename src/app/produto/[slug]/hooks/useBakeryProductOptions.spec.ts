@@ -4,7 +4,7 @@ import { useBakeryProductOptions } from "./useBakeryProductOptions";
 import type { BakeryDecoration } from "@/types/bakery";
 
 vi.mock("@/lib/api", () => ({
-  uploadBakeryReferenceImage: vi.fn(async (_file: File) => ({
+  uploadStorefrontReferenceImage: vi.fn(async (_file: File) => ({
     url: "https://cdn.test/uploaded.jpg",
   })),
 }));
