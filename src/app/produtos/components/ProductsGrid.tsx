@@ -18,11 +18,11 @@ export function ProductsGrid({ products, isLoading }: Props) {
         {Array.from({ length: 6 }).map((_, i) => (
           <div key={i} className="space-y-4">
             <div
-              className="w-full animate-pulse bg-[var(--mist)]/60"
+              className="w-full animate-pulse glass-card"
               style={{ aspectRatio: "4 / 5" }}
             />
-            <div className="h-4 w-3/4 animate-pulse bg-[var(--mist)]/60" />
-            <div className="h-3 w-1/3 animate-pulse bg-[var(--mist)]/60" />
+            <div className="h-4 w-3/4 animate-pulse bg-[var(--glass-surface)]" />
+            <div className="h-3 w-1/3 animate-pulse bg-[var(--glass-surface)]" />
           </div>
         ))}
       </div>

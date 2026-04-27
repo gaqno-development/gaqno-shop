@@ -76,7 +76,7 @@ export default function ForgotPasswordPage() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.4 }}
-                className="rounded-sm bg-[var(--paper)] p-8 ring-1 ring-[var(--mist)] shadow-[0_30px_60px_-40px_rgba(0,0,0,0.2)]"
+                className="glass-card p-8"
                 noValidate
               >
                 <span className="eyebrow">Formulário · 01</span>
@@ -95,7 +95,7 @@ export default function ForgotPasswordPage() {
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
                     placeholder="voce@dominio.com"
-                    className="mt-3 w-full border-0 border-b border-[var(--mist)] bg-transparent pb-3 font-display text-xl italic text-[var(--ink)] outline-none transition-colors duration-300 focus:border-[var(--ink)]"
+                    className="mt-3 w-full border-0 border-b border-[var(--glass-border)] bg-transparent pb-3 font-display text-xl italic text-[var(--ink)] outline-none transition-colors duration-300 focus:border-[var(--tenant-primary)]"
                   />
                 </div>
 
@@ -154,13 +154,13 @@ function SuccessCard({ email }: { readonly email: string }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.6, ease: EASE }}
-      className="rounded-sm bg-[var(--paper)] p-10 ring-1 ring-[var(--mist)] shadow-[0_30px_60px_-40px_rgba(0,0,0,0.2)]"
+      className="glass-card p-10"
     >
       <motion.span
         initial={{ scale: 0.4, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.6, ease: EASE, delay: 0.1 }}
-        className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[var(--ink)] text-[var(--paper)]"
+        className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[var(--tenant-primary)] text-white"
       >
         <Check className="h-5 w-5" aria-hidden />
       </motion.span>

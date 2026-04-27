@@ -42,7 +42,7 @@ export function DeliveryScheduleSection({
             value={deliveryDate}
             min={minDate}
             onChange={(e) => onChangeDate(e.target.value)}
-            className="mt-2 w-full rounded-lg border border-[var(--mist)] bg-transparent px-3 py-2 text-sm text-[var(--ink)] focus:border-[var(--ink)] focus:outline-none"
+            className="mt-2 w-full rounded-lg border border-[var(--glass-border)] bg-transparent px-3 py-2 text-sm text-[var(--ink)] focus:border-[var(--tenant-primary)] focus:outline-none"
           />
         </div>
         <div>
@@ -53,7 +53,7 @@ export function DeliveryScheduleSection({
             type="time"
             value={deliveryTime}
             onChange={(e) => onChangeTime(e.target.value)}
-            className="mt-2 w-full rounded-lg border border-[var(--mist)] bg-transparent px-3 py-2 text-sm text-[var(--ink)] focus:border-[var(--ink)] focus:outline-none"
+            className="mt-2 w-full rounded-lg border border-[var(--glass-border)] bg-transparent px-3 py-2 text-sm text-[var(--ink)] focus:border-[var(--tenant-primary)] focus:outline-none"
           />
         </div>
       </div>
@@ -63,7 +63,7 @@ export function DeliveryScheduleSection({
           type="checkbox"
           checked={isPickup}
           onChange={(e) => onChangeIsPickup(e.target.checked)}
-          className="h-4 w-4 rounded border-[var(--mist)]"
+          className="h-4 w-4 rounded border-[var(--glass-border)]"
         />
         <span>Retirada no local</span>
       </label>

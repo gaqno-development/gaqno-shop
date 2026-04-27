@@ -32,7 +32,7 @@ export function HeaderSearch({
           placeholder="Busque uma coleção, produto ou tema"
           value={query}
           onChange={(e) => onChange(e.target.value)}
-          className={`w-full rounded-full border border-[var(--mist)] bg-white/60 pl-11 pr-4 ${size} font-mono tracking-tight text-[var(--ink)] placeholder:text-[var(--muted)] placeholder:font-sans placeholder:tracking-normal transition-all focus:outline-none focus:border-[var(--ink)] focus:bg-white focus:shadow-[0_10px_40px_-15px_rgba(0,0,0,0.25)]`}
+          className={`w-full rounded-full border border-[var(--glass-border)] bg-[var(--glass-surface)] pl-11 pr-4 ${size} font-mono tracking-tight text-[var(--ink)] placeholder:text-[var(--muted)] placeholder:font-sans placeholder:tracking-normal transition-all focus:outline-none focus:border-[var(--tenant-primary)] focus:bg-[var(--glass-highlight)] focus:shadow-[0_10px_40px_-15px_rgba(0,0,0,0.25)]`}
         />
       </label>
     </form>

@@ -15,7 +15,7 @@ export function SectionFrame({
 }: SectionFrameProps) {
   return (
     <section>
-      <header className="mb-8 flex items-end justify-between gap-6 border-b border-[var(--mist)] pb-5">
+      <header className="mb-8 flex items-end justify-between gap-6 border-b border-[var(--glass-border)] pb-5">
         <div className="space-y-2">
           <span className="eyebrow">{number} · Checkout</span>
           <h2

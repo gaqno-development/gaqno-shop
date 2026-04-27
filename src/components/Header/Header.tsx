@@ -42,7 +42,7 @@ export function Header() {
     <>
       <header
         data-scrolled={scrolled}
-        className="sticky top-0 z-40 border-b border-[var(--mist)] bg-[var(--paper)]/80 backdrop-blur-xl transition-[padding,background] duration-500 data-[scrolled=true]:bg-[var(--paper)]/95"
+        className="sticky top-0 z-40 border-b border-[var(--glass-border)] bg-[var(--paper)]/60 backdrop-blur-xl transition-[padding,background] duration-500 data-[scrolled=true]:bg-[var(--paper)]/80 data-[scrolled=true]:border-[var(--tenant-primary)]/30"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div

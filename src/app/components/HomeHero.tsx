@@ -33,9 +33,9 @@ export function HomeHero({ copy }: HomeHeroProps) {
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: EASE, delay: 0.1 }}
-            className="eyebrow mb-8 inline-flex items-center gap-2"
+            className="eyebrow mb-8 inline-flex items-center gap-2 text-[var(--muted)]"
           >
-            <Sparkles className="h-3 w-3" aria-hidden />
+            <Sparkles className="h-3 w-3 text-[var(--tenant-primary)]" aria-hidden />
             {copy.hero.eyebrow}
           </motion.span>
 
@@ -79,7 +79,7 @@ export function HomeHero({ copy }: HomeHeroProps) {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: EASE, delay: 0.45 }}
-            className="mt-10 max-w-lg text-[1.05rem] leading-relaxed text-[var(--ink)]/80"
+            className="mt-10 max-w-lg text-[1.05rem] leading-relaxed text-[var(--ink)]/70"
           >
             Bem-vindo à <em className="italic">{name}</em>. {description}
           </motion.p>
@@ -111,13 +111,18 @@ function BackgroundArt() {
     <>
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-40 -right-40 h-[640px] w-[640px] rounded-full opacity-[0.22] blur-3xl"
+        className="pointer-events-none absolute -top-40 -right-40 h-[640px] w-[640px] rounded-full opacity-[0.35] blur-3xl"
         style={{ background: "var(--tenant-primary)" }}
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute bottom-0 left-[12%] h-[360px] w-[360px] rounded-full opacity-[0.14] blur-3xl"
+        className="pointer-events-none absolute bottom-0 left-[12%] h-[360px] w-[360px] rounded-full opacity-[0.2] blur-3xl"
         style={{ background: "var(--tenant-secondary)" }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute top-1/2 left-0 h-[480px] w-[480px] -translate-y-1/2 rounded-full opacity-[0.15] blur-[120px]"
+        style={{ background: "var(--glass-glow)" }}
       />
     </>
   );
@@ -137,7 +142,7 @@ function HeroArt({ copy }: HomeHeroProps) {
             rotate: [-2, 1, -2],
           }}
           transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-          className="relative aspect-[4/5] overflow-hidden rounded-[3px] ring-1 ring-[var(--mist)]"
+          className="relative aspect-[4/5] overflow-hidden rounded-[3px] ring-1 ring-[var(--glass-border)]"
           style={{
             background:
               "radial-gradient(circle at 30% 20%, var(--tenant-secondary), transparent 60%), radial-gradient(circle at 70% 80%, var(--tenant-primary), transparent 55%)",
@@ -157,7 +162,7 @@ function HeroArt({ copy }: HomeHeroProps) {
           initial={{ opacity: 0, y: 24, rotate: 0 }}
           animate={{ opacity: 1, y: 0, rotate: -5 }}
           transition={{ duration: 0.9, ease: EASE, delay: 0.9 }}
-          className="absolute -bottom-8 -left-8 w-56 rounded-sm bg-[var(--paper)] p-5 ring-1 ring-[var(--mist)] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.3)]"
+          className="absolute -bottom-8 -left-8 w-56 rounded-sm glass-card p-5"
         >
           <span className="eyebrow">{copy.statsCard.eyebrow}</span>
           <p
@@ -175,12 +180,12 @@ function HeroArt({ copy }: HomeHeroProps) {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.9, ease: EASE, delay: 1.1 }}
-          className="absolute -top-6 -right-6 hidden w-44 rounded-sm bg-[var(--ink)] px-5 py-4 text-[var(--paper)] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.4)] lg:block"
+          className="absolute -top-6 -right-6 hidden w-44 rounded-sm glass-card px-5 py-4 shadow-[0_30px_60px_-30px_rgba(0,0,0,0.4)] lg:block"
         >
-          <span className="font-mono text-[0.62rem] uppercase tracking-[0.26em] text-white/60">
+          <span className="font-mono text-[0.62rem] uppercase tracking-[0.26em] text-[var(--muted)]">
             {copy.cornerCard.eyebrow}
           </span>
-          <p className="mt-2 font-display text-lg italic leading-tight">
+          <p className="mt-2 font-display text-lg italic leading-tight text-[var(--ink)]">
             {copy.cornerCard.title}
           </p>
         </motion.div>

@@ -43,7 +43,7 @@ const STATS: readonly Stat[] = [
 export default function AccountDashboard() {
   return (
     <div className="space-y-16">
-      <header className="border-b border-[var(--mist)] pb-10">
+      <header className="border-b border-[var(--glass-border)] pb-10">
         <span className="eyebrow">Painel · visão geral</span>
         <h1
           className="mt-4 font-display text-[clamp(2.4rem,5vw,3.6rem)] leading-[0.95] tracking-[-0.03em] text-[var(--ink)]"
@@ -66,7 +66,7 @@ export default function AccountDashboard() {
       </section>
 
       <section>
-        <div className="flex items-baseline justify-between border-b border-[var(--mist)] pb-5">
+        <div className="flex items-baseline justify-between border-b border-[var(--glass-border)] pb-5">
           <span className="eyebrow">Atividade · recente</span>
           <Link
             href="/conta/pedidos"
@@ -82,9 +82,9 @@ export default function AccountDashboard() {
           transition={{ duration: 0.7, ease: EASE }}
           className="mt-10 flex flex-col items-center gap-6 px-6 py-16 text-center"
         >
-          <div className="flex h-14 w-14 items-center justify-center rounded-full ring-1 ring-[var(--mist)]">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full glass-card">
             <TrendingUp
-              className="h-5 w-5 text-[var(--muted)]"
+              className="h-5 w-5 text-[var(--tenant-primary)]"
               strokeWidth={1.2}
             />
           </div>
@@ -124,14 +124,14 @@ function StatCard({
     >
       <Link
         href={stat.href}
-        className="group flex flex-col justify-between border border-[var(--mist)] bg-[var(--paper)] p-7 transition-colors duration-300 hover:border-[var(--ink)]"
+        className="group glass-card flex flex-col justify-between p-7 transition-colors duration-300 hover:border-[var(--tenant-primary)]/40"
       >
         <div className="flex items-center justify-between">
           <span className="font-mono tabular text-[0.66rem] uppercase tracking-[0.24em] text-[var(--muted)]">
             {stat.index}
           </span>
           <Icon
-            className="h-4 w-4 text-[var(--muted)] transition-colors group-hover:text-[var(--ink)]"
+            className="h-4 w-4 text-[var(--muted)] transition-colors group-hover:text-[var(--tenant-primary)]"
             strokeWidth={1.5}
           />
         </div>

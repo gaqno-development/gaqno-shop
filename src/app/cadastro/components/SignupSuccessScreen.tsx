@@ -27,7 +27,7 @@ export function SignupSuccessScreen({ email }: Props) {
           initial={{ scale: 0.4, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.6, ease: EASE, delay: 0.1 }}
-          className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-[var(--ink)] text-[var(--paper)]"
+          className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-[var(--tenant-primary)] text-white"
         >
           <Check className="h-5 w-5" aria-hidden />
         </motion.span>

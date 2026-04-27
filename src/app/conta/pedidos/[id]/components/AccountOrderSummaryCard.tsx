@@ -12,7 +12,7 @@ export function AccountOrderSummaryCard({ order }: Props) {
   const total = Number.parseFloat(order.total);
 
   return (
-    <section className="border border-[var(--mist)] bg-[var(--paper)] p-8">
+    <section className="glass-card p-8">
       <span className="eyebrow">Resumo · recibo</span>
       <h2
         className="mt-4 font-display text-3xl leading-tight tracking-[-0.02em] text-[var(--ink)]"

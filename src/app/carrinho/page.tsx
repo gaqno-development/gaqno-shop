@@ -35,7 +35,7 @@ export default function CartPage() {
 
       <div className="mt-14 grid grid-cols-1 gap-12 lg:grid-cols-[1.6fr_1fr] lg:gap-20">
         <div>
-          <ul className="divide-y divide-[var(--mist)] border-y border-[var(--mist)]">
+          <ul className="divide-y divide-[var(--glass-border)] border-y border-[var(--glass-border)]">
             <AnimatePresence initial={false}>
               {cart.items.map((item) => (
                 <CartLine
@@ -71,7 +71,7 @@ export default function CartPage() {
 
 function CartHeader({ itemCount }: { readonly itemCount: number }) {
   return (
-    <header className="space-y-6 border-b border-[var(--mist)] pb-10">
+    <header className="space-y-6 border-b border-[var(--glass-border)] pb-10">
       <span className="eyebrow">Carrinho</span>
       <div className="flex items-end justify-between gap-8">
         <h1
@@ -113,7 +113,7 @@ function CartLine({
     >
       <Link
         href={`/produto/${item.productId}`}
-        className="block overflow-hidden ring-1 ring-[var(--mist)]"
+        className="block overflow-hidden glass-card"
         style={{ aspectRatio: "4 / 5" }}
       >
         <img
@@ -148,7 +148,7 @@ function CartLine({
         </p>
       </div>
 
-      <div className="flex items-center rounded-full border border-[var(--mist)]">
+      <div className="flex items-center rounded-full border border-[var(--glass-border)]">
         <QtyBtn
           disabled={disabled}
           onClick={() => onQuantity(Math.max(0, item.quantity - 1))}
@@ -234,7 +234,7 @@ function OrderSummary({
 }: SummaryProps) {
   return (
     <aside className="lg:sticky lg:top-28 lg:self-start">
-      <div className="border border-[var(--mist)] bg-[var(--paper)] p-8">
+      <div className="glass-card p-8">
         <span className="eyebrow">Resumo · recibo</span>
         <h2
           className="mt-4 font-display text-3xl leading-tight tracking-[-0.02em] text-[var(--ink)]"
@@ -279,7 +279,7 @@ function OrderSummary({
           </motion.span>
         </div>
 
-        <div className="mt-8 flex items-center gap-2 rounded-full border border-[var(--mist)] px-4 py-2">
+        <div className="mt-8 flex items-center gap-2 rounded-full border border-[var(--glass-border)] px-4 py-2">
           <Tag className="h-3.5 w-3.5 text-[var(--muted)]" strokeWidth={1.5} />
           <input
             type="text"
@@ -336,9 +336,9 @@ function SummaryRow({
 function EmptyCart() {
   return (
     <div className="mx-auto max-w-2xl px-6 py-28 text-center">
-      <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full ring-1 ring-[var(--mist)]">
+      <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full glass-card">
         <ShoppingBag
-          className="h-9 w-9 text-[var(--muted)]"
+          className="h-9 w-9 text-[var(--tenant-primary)]"
           strokeWidth={1.2}
         />
       </div>

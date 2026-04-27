@@ -59,7 +59,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="fixed inset-y-0 right-0 z-50 flex w-full max-w-md flex-col bg-[var(--paper)] shadow-[-40px_0_80px_-40px_rgba(0,0,0,0.35)]"
+            className="fixed inset-y-0 right-0 z-50 flex w-full max-w-md flex-col bg-[var(--paper)] shadow-[-40px_0_80px_-40px_rgba(0,0,0,0.35)] border-l border-[var(--glass-border)]"
             aria-label="Carrinho"
           >
             <DrawerHeader itemCount={cart?.itemCount ?? 0} onClose={onClose} />
@@ -72,7 +72,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   initial="hidden"
                   animate="visible"
                   transition={{ staggerChildren: 0.04, delayChildren: 0.1 }}
-                  className="divide-y divide-[var(--mist)]"
+                  className="divide-y divide-[var(--glass-border)]"
                 >
                   <AnimatePresence initial={false}>
                     {cart!.items.map((item) => (
@@ -86,7 +86,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                         transition={{ duration: 0.35, ease: [0.19, 1, 0.22, 1] }}
                         className="flex gap-5 py-6"
                       >
-                        <div className="h-24 w-20 flex-shrink-0 overflow-hidden rounded-xs ring-1 ring-[var(--mist)] bg-white">
+                        <div className="h-24 w-20 flex-shrink-0 overflow-hidden rounded-xs glass-card">
                           <img
                             referrerPolicy="no-referrer"
                             src={
@@ -120,7 +120,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                           </div>
 
                           <div className="mt-3 flex items-center justify-between">
-                            <div className="flex items-center gap-0 rounded-full border border-[var(--mist)]">
+                            <div className="flex items-center gap-0 rounded-full border border-[var(--glass-border)]">
                               <QtyBtn
                                 disabled={isCartMutating}
                                 onClick={() =>
@@ -183,7 +183,7 @@ function DrawerHeader({
   readonly onClose: () => void;
 }) {
   return (
-    <div className="flex items-center justify-between border-b border-[var(--mist)] px-6 py-5">
+    <div className="flex items-center justify-between border-b border-[var(--glass-border)] px-6 py-5">
       <div className="space-y-1">
         <span className="eyebrow">Seu carrinho</span>
         <h2 className="font-display text-2xl leading-none tracking-[-0.02em] text-[var(--ink)]">
@@ -196,7 +196,7 @@ function DrawerHeader({
       </div>
       <button
         onClick={onClose}
-        className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--mist)] text-[var(--ink)] transition-colors hover:border-[var(--ink)]"
+        className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--glass-border)] text-[var(--ink)] transition-colors hover:border-[var(--tenant-primary)]"
         aria-label="Fechar carrinho"
       >
         <X className="h-4 w-4" />
@@ -222,7 +222,7 @@ function QtyBtn({
       disabled={disabled}
       onClick={onClick}
       aria-label={aria}
-      className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--ink)] transition-colors hover:bg-[var(--ink)] hover:text-[var(--paper)] disabled:opacity-40"
+      className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--ink)] transition-colors hover:bg-[var(--tenant-primary)] hover:text-white disabled:opacity-40"
     >
       {children}
     </button>
@@ -232,8 +232,8 @@ function QtyBtn({
 function EmptyState({ onClose }: { readonly onClose: () => void }) {
   return (
     <div className="flex h-full flex-col items-center justify-center py-16 text-center">
-      <div className="flex h-20 w-20 items-center justify-center rounded-full ring-1 ring-[var(--mist)]">
-        <ShoppingBag className="h-8 w-8 text-[var(--muted)]" strokeWidth={1.2} />
+      <div className="flex h-20 w-20 items-center justify-center rounded-full glass-card">
+        <ShoppingBag className="h-8 w-8 text-[var(--tenant-primary)]" strokeWidth={1.2} />
       </div>
       <h3
         className="mt-8 font-display text-3xl leading-tight tracking-[-0.02em] text-[var(--ink)]"
@@ -264,7 +264,7 @@ function DrawerFooter({
   readonly onClose: () => void;
 }) {
   return (
-    <div className="border-t border-[var(--mist)] bg-[var(--paper)] px-6 pt-6 pb-8 space-y-5">
+    <div className="border-t border-[var(--glass-border)] bg-[var(--paper)] px-6 pt-6 pb-8 space-y-5">
       <div className="flex items-baseline justify-between">
         <span className="eyebrow">Subtotal</span>
         <motion.span

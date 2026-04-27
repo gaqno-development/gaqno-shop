@@ -61,7 +61,7 @@ interface CategoriesProps {
 
 function CategoriesFilter({ categories, selected, onSelect }: CategoriesProps) {
   return (
-    <div className="space-y-4 border-t border-[var(--mist)] pt-6">
+    <div className="space-y-4 border-t border-[var(--glass-border)] pt-6">
       <h3 className="eyebrow">Categorias</h3>
       <ul className="space-y-1.5">
         <CategoryOption
@@ -97,10 +97,10 @@ function CategoryOption({ checked, onSelect, label }: OptionProps) {
       >
         <span
           aria-hidden
-          className={`h-1.5 w-1.5 rounded-full transition-all ${checked ? "bg-[var(--tenant-primary)] scale-125" : "bg-[var(--mist)] group-hover:bg-[var(--ink)]"}`}
+          className={`h-1.5 w-1.5 rounded-full transition-all ${checked ? "bg-[var(--tenant-primary)] scale-125" : "bg-[var(--glass-border)] group-hover:bg-[var(--tenant-primary)]"}`}
         />
         <span
-          className={`text-[0.95rem] transition-colors ${checked ? "text-[var(--ink)]" : "text-[var(--muted)] group-hover:text-[var(--ink)]"}`}
+          className={`text-[0.95rem] transition-colors ${checked ? "text-[var(--ink)]" : "text-[var(--muted)] group-hover:text-[var(--tenant-primary)]"}`}
         >
           {label}
         </span>
@@ -116,7 +116,7 @@ interface PriceProps {
 
 function PriceRangeFilter({ range, onChange }: PriceProps) {
   return (
-    <div className="space-y-4 border-t border-[var(--mist)] pt-6">
+    <div className="space-y-4 border-t border-[var(--glass-border)] pt-6">
       <h3 className="eyebrow">Preço</h3>
       <div className="flex items-center gap-2">
         <input
@@ -124,15 +124,15 @@ function PriceRangeFilter({ range, onChange }: PriceProps) {
           placeholder="Min"
           value={range.min}
           onChange={(e) => onChange({ ...range, min: e.target.value })}
-          className="w-full border-b border-[var(--mist)] bg-transparent px-0 py-2 font-mono text-sm text-[var(--ink)] placeholder:text-[var(--muted)] focus:border-[var(--ink)] focus:outline-none"
+          className="w-full border-b border-[var(--glass-border)] bg-transparent px-0 py-2 font-mono text-sm text-[var(--ink)] placeholder:text-[var(--muted)] focus:border-[var(--tenant-primary)] focus:outline-none"
         />
-        <span aria-hidden className="h-[1px] w-4 bg-[var(--mist)]" />
+        <span aria-hidden className="h-[1px] w-4 bg-[var(--glass-border)]" />
         <input
           type="number"
           placeholder="Max"
           value={range.max}
           onChange={(e) => onChange({ ...range, max: e.target.value })}
-          className="w-full border-b border-[var(--mist)] bg-transparent px-0 py-2 font-mono text-sm text-[var(--ink)] placeholder:text-[var(--muted)] focus:border-[var(--ink)] focus:outline-none"
+          className="w-full border-b border-[var(--glass-border)] bg-transparent px-0 py-2 font-mono text-sm text-[var(--ink)] placeholder:text-[var(--muted)] focus:border-[var(--tenant-primary)] focus:outline-none"
         />
       </div>
     </div>

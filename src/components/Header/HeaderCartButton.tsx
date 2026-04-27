@@ -15,7 +15,7 @@ export function HeaderCartButton({ itemCount, onOpen }: HeaderCartButtonProps) {
   return (
     <button
       onClick={onOpen}
-      className="group relative flex h-11 w-11 items-center justify-center rounded-full border border-[var(--mist)] text-[var(--ink)] transition-colors hover:border-[var(--ink)] hover:bg-[var(--ink)] hover:text-[var(--paper)]"
+      className="group relative flex h-11 w-11 items-center justify-center rounded-full border border-[var(--glass-border)] text-[var(--ink)] transition-colors hover:border-[var(--tenant-primary)] hover:bg-[var(--glass-highlight)]"
       aria-label="Abrir carrinho"
     >
       <ShoppingBag

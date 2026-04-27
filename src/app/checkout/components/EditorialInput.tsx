@@ -23,7 +23,7 @@ export function EditorialInput({
         {...rest}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="mt-2 w-full border-b border-[var(--mist)] bg-transparent px-0 py-3 text-[0.95rem] text-[var(--ink)] placeholder:text-[var(--muted)] transition-colors focus:border-[var(--ink)] focus:outline-none"
+        className="mt-2 w-full border-b border-[var(--glass-border)] bg-transparent px-0 py-3 text-[0.95rem] text-[var(--ink)] placeholder:text-[var(--muted)] transition-colors focus:border-[var(--tenant-primary)] focus:outline-none"
       />
     </label>
   );

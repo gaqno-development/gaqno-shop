@@ -11,7 +11,7 @@ export function ProductsHeader({ searchQuery, isLoading, productsCount }: Props)
     : `${productsCount} ${productsCount === 1 ? "peça" : "peças"} disponíveis`;
 
   return (
-    <header className="mb-14 space-y-6 border-b border-[var(--mist)] pb-10">
+    <header className="mb-14 space-y-6 border-b border-[var(--glass-border)] pb-10">
       <nav
         aria-label="Breadcrumb"
         className="font-mono text-[0.68rem] uppercase tracking-[0.26em] text-[var(--muted)]"

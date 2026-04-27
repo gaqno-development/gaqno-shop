@@ -32,7 +32,7 @@ export function SignupField({
       >
         {label}
       </label>
-      <div className="relative mt-3 flex items-center border-b border-[var(--mist)] pb-3 transition-colors duration-300 focus-within:border-[var(--ink)]">
+      <div className="relative mt-3 flex items-center border-b border-[var(--glass-border)] pb-3 transition-colors duration-300 focus-within:border-[var(--tenant-primary)]">
         {icon ? (
           <span
             aria-hidden

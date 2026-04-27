@@ -7,7 +7,7 @@ interface Props {
 export function OrderShippingAddress({ address }: Props) {
   return (
     <section>
-      <div className="flex items-baseline justify-between border-b border-[var(--mist)] pb-5">
+      <div className="flex items-baseline justify-between border-b border-[var(--glass-border)] pb-5">
         <span className="eyebrow">Endereço · entrega</span>
       </div>
       <address className="mt-8 space-y-1 text-[1rem] not-italic leading-relaxed text-[var(--ink)]/80">

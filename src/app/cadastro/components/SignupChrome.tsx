@@ -59,7 +59,7 @@ export function SignupErrorBanner({ message }: { readonly message: string }) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0 }}
           role="alert"
-          className="border-l-2 border-red-700 bg-red-700/5 px-5 py-4 font-mono text-[0.72rem] uppercase tracking-[0.22em] text-red-700"
+          className="glass-card border-l-2 border-red-700 px-5 py-4 font-mono text-[0.72rem] uppercase tracking-[0.22em] text-red-700"
         >
           {message}
         </motion.div>

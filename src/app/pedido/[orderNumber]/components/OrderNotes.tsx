@@ -6,7 +6,7 @@ export function OrderNotes({ notes }: Props) {
   if (!notes) return null;
   return (
     <section>
-      <div className="flex items-baseline justify-between border-b border-[var(--mist)] pb-5">
+      <div className="flex items-baseline justify-between border-b border-[var(--glass-border)] pb-5">
         <span className="eyebrow">Observações</span>
       </div>
       <blockquote

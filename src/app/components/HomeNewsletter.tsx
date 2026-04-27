@@ -27,16 +27,20 @@ export function HomeNewsletter({ copy }: HomeNewsletterProps) {
   };
 
   return (
-    <section className="relative overflow-hidden bg-[var(--ink)] text-[var(--paper)]">
+    <section className="relative overflow-hidden bg-[var(--paper)] text-[var(--paper)]">
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-40 left-1/2 h-[680px] w-[680px] -translate-x-1/2 rounded-full opacity-[0.28] blur-3xl"
+        className="pointer-events-none absolute -top-40 left-1/2 h-[680px] w-[680px] -translate-x-1/2 rounded-full opacity-[0.35] blur-3xl"
         style={{ background: "var(--tenant-primary)" }}
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute -bottom-40 -right-20 h-[420px] w-[420px] rounded-full opacity-[0.22] blur-3xl"
+        className="pointer-events-none absolute -bottom-40 -right-20 h-[420px] w-[420px] rounded-full opacity-[0.25] blur-3xl"
         style={{ background: "var(--tenant-secondary)" }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[var(--glass-surface)] backdrop-blur-sm"
       />
 
       <div className="relative mx-auto max-w-3xl px-6 py-28 text-center lg:px-10">
@@ -77,7 +81,7 @@ export function HomeNewsletter({ copy }: HomeNewsletterProps) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.4, ease: [0.19, 1, 0.22, 1] }}
-          className="mx-auto mt-12 flex max-w-lg items-center gap-2 rounded-full border border-white/15 bg-white/5 p-1.5 backdrop-blur-xl"
+          className="mx-auto mt-12 flex max-w-lg items-center gap-2 rounded-full border border-[var(--glass-border)] bg-[var(--glass-surface)] p-1.5 backdrop-blur-xl"
         >
           <label className="flex-1">
             <span className="sr-only">{copy.emailSrLabel}</span>

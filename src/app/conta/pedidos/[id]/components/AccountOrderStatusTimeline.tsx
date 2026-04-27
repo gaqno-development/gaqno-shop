@@ -20,7 +20,7 @@ export function AccountOrderStatusTimeline({ history }: Props) {
   if (history.length === 0) return null;
   return (
     <section>
-      <div className="flex items-baseline justify-between border-b border-[var(--mist)] pb-5">
+      <div className="flex items-baseline justify-between border-b border-[var(--glass-border)] pb-5">
         <span className="eyebrow">Status · histórico</span>
       </div>
 
@@ -55,7 +55,7 @@ function TimelineEntry({
       <span
         aria-hidden
         className={`absolute left-[-26px] top-1.5 inline-block h-2 w-2 rounded-full ${
-          isLatest ? "bg-[var(--ink)]" : "bg-[var(--mist)] ring-1 ring-[var(--ink)]/30"
+          isLatest ? "bg-[var(--tenant-primary)]" : "bg-[var(--glass-border)] ring-1 ring-[var(--tenant-primary)]/30"
         }`}
       />
       <div className="flex items-baseline justify-between gap-4">

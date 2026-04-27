@@ -86,8 +86,8 @@ export default function AccountLayout({
               {session.user?.email}
             </p>
 
-            <nav className="mt-10 border-t border-[var(--mist)]">
-              <ul className="divide-y divide-[var(--mist)]">
+            <nav className="mt-10 border-t border-[var(--glass-border)]">
+              <ul className="divide-y divide-[var(--glass-border)]">
                 {MENU_ITEMS.map((item) => {
                   const Icon = item.icon;
                   const isActive =
@@ -111,8 +111,8 @@ export default function AccountLayout({
                         <Icon
                           className={`h-4 w-4 transition-colors ${
                             isActive
-                              ? "text-[var(--ink)]"
-                              : "text-[var(--muted)] group-hover:text-[var(--ink)]"
+                              ? "text-[var(--tenant-primary)]"
+                              : "text-[var(--muted)] group-hover:text-[var(--tenant-primary)]"
                           }`}
                           strokeWidth={1.5}
                         />
@@ -128,7 +128,7 @@ export default function AccountLayout({
                         {isActive ? (
                           <motion.span
                             layoutId="account-active-indicator"
-                            className="h-1.5 w-1.5 rounded-full bg-[var(--ink)]"
+                            className="h-1.5 w-1.5 rounded-full bg-[var(--tenant-primary)]"
                             aria-hidden
                           />
                         ) : null}
@@ -146,10 +146,10 @@ export default function AccountLayout({
                       ——
                     </span>
                     <LogOut
-                      className="h-4 w-4 text-[var(--muted)] transition-colors group-hover:text-[var(--ink)]"
+                      className="h-4 w-4 text-[var(--muted)] transition-colors group-hover:text-[var(--tenant-primary)]"
                       strokeWidth={1.5}
                     />
-                    <span className="font-display text-lg italic text-[var(--muted)] transition-colors group-hover:text-[var(--ink)]">
+                    <span className="font-display text-lg italic text-[var(--muted)] transition-colors group-hover:text-[var(--tenant-primary)]">
                       Sair
                     </span>
                   </button>

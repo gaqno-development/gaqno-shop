@@ -23,7 +23,7 @@ export function HomeLoadingScreen() {
           {[0, 1, 2].map((i) => (
             <motion.span
               key={i}
-              className="h-1.5 w-1.5 rounded-full bg-[var(--ink)]"
+              className="h-1.5 w-1.5 rounded-full bg-[var(--tenant-primary)]"
               variants={{
                 rest: { opacity: 0.3 },
                 pulse: {
@@ -48,7 +48,7 @@ export function HomeErrorScreen({ message }: { readonly message: string }) {
     <div className="flex min-h-[60vh] items-center justify-center px-6">
       <div className="max-w-md text-center">
         <AlertTriangle
-          className="mx-auto mb-8 h-8 w-8 text-[var(--ink)]"
+          className="mx-auto mb-8 h-8 w-8 text-[var(--tenant-primary)]"
           strokeWidth={1.2}
           aria-hidden
         />

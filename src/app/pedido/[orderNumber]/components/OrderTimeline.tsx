@@ -22,7 +22,7 @@ interface Props {
 export function OrderTimeline({ currentStatus }: Props) {
   return (
     <section className="mt-14">
-      <div className="flex items-baseline justify-between border-b border-[var(--mist)] pb-5">
+      <div className="flex items-baseline justify-between border-b border-[var(--glass-border)] pb-5">
         <span className="eyebrow">Progresso · entrega</span>
         <span className="font-mono tabular text-[0.66rem] uppercase tracking-[0.22em] text-[var(--ink)]">
           {ORDER_STATUS_LABELS[currentStatus] ?? currentStatus}
@@ -40,10 +40,10 @@ export function OrderTimeline({ currentStatus }: Props) {
                   aria-hidden
                   className={`inline-block h-2 w-2 rounded-full transition-colors ${
                     isCurrent
-                      ? "ring-2 ring-[var(--ink)] ring-offset-2 ring-offset-[var(--paper)] bg-[var(--ink)]"
+                      ? "ring-2 ring-[var(--tenant-primary)] ring-offset-2 ring-offset-[var(--paper)] bg-[var(--tenant-primary)]"
                       : reached
-                        ? "bg-[var(--ink)]"
-                        : "bg-[var(--mist)]"
+                        ? "bg-[var(--tenant-primary)]"
+                        : "bg-[var(--glass-border)]"
                   }`}
                 />
                 {index < TIMELINE_STATUSES.length - 1 ? (
@@ -52,8 +52,8 @@ export function OrderTimeline({ currentStatus }: Props) {
                     className="ml-2 h-px flex-1"
                     style={{
                       background: reached
-                        ? "var(--ink)"
-                        : "var(--mist)",
+                        ? "var(--tenant-primary)"
+                        : "var(--glass-border)",
                       opacity: reached ? 0.35 : 1,
                     }}
                   />

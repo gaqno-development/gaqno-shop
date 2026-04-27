@@ -33,7 +33,7 @@ export function OrderSummary({
 }: Props) {
   return (
     <aside className="lg:sticky lg:top-28 lg:self-start">
-      <div className="border border-[var(--mist)] bg-[var(--paper)] p-8">
+      <div className="glass-card p-8">
         <span className="eyebrow">Resumo</span>
         <h2
           className="mt-4 font-display text-3xl leading-tight tracking-[-0.02em] text-[var(--ink)]"
@@ -46,7 +46,7 @@ export function OrderSummary({
           {cart.items.map((item) => (
             <li key={item.productId} className="flex gap-4">
               <div
-                className="flex-shrink-0 overflow-hidden ring-1 ring-[var(--mist)]"
+                className="flex-shrink-0 overflow-hidden glass-card"
                 style={{ width: 56, aspectRatio: "4 / 5" }}
               >
                 <img
@@ -74,7 +74,7 @@ export function OrderSummary({
           ))}
         </ul>
 
-        <div className="mt-8 flex items-center gap-2 rounded-full border border-[var(--mist)] px-4 py-2">
+        <div className="mt-8 flex items-center gap-2 rounded-full border border-[var(--glass-border)] px-4 py-2">
           <Tag className="h-3.5 w-3.5 text-[var(--muted)]" strokeWidth={1.5} />
           <input
             type="text"
@@ -128,7 +128,7 @@ export function OrderSummary({
           onClick={onSubmit}
           disabled={isSubmitting || !canSubmit}
           whileTap={{ scale: 0.98 }}
-          className="group mt-8 flex w-full items-center justify-center gap-3 rounded-full bg-[var(--ink)] px-6 py-4 font-mono text-[0.72rem] uppercase tracking-[0.24em] text-[var(--paper)] transition-all hover:bg-[var(--tenant-primary)] disabled:opacity-50 disabled:cursor-not-allowed"
+          className="group mt-8 flex w-full items-center justify-center gap-3 rounded-full bg-[var(--tenant-primary)] px-6 py-4 font-mono text-[0.72rem] uppercase tracking-[0.24em] text-white transition-all hover:bg-[var(--tenant-primary)]/90 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Lock className="h-3.5 w-3.5" strokeWidth={1.5} />
           {isSubmitting ? "Processando…" : "Finalizar compra"}

@@ -53,7 +53,7 @@ export function OrderCompleteScreen({ orderNumber, email }: Props) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, ease: EASE, delay: 0.55 }}
-          className="mx-auto mt-12 grid max-w-sm grid-cols-1 gap-0 divide-y divide-[var(--mist)] border-y border-[var(--mist)] text-left"
+          className="mx-auto mt-12 grid max-w-sm grid-cols-1 gap-0 divide-y divide-[var(--glass-border)] border-y border-[var(--glass-border)] text-left"
         >
           <DetailRow label="Pedido" value={`#${orderNumber}`} />
           <DetailRow label="Confirmação" value={email} icon={Mail} />

@@ -41,7 +41,7 @@ export function HeaderMobileMenu({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -12 }}
           transition={{ duration: 0.35, ease: [0.19, 1, 0.22, 1] }}
-          className="md:hidden border-t border-[var(--mist)] bg-[var(--paper)]"
+          className="md:hidden border-t border-[var(--glass-border)] bg-[var(--paper)]/95 backdrop-blur-xl"
         >
           <div className="px-6 py-8 space-y-8">
             <HeaderSearch

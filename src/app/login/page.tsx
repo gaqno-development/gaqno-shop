@@ -182,7 +182,7 @@ function LoginForm() {
           transition={{ duration: 0.8, ease: EASE, delay: 0.15 }}
           className="relative flex flex-col justify-center"
         >
-          <div className="rounded-sm bg-[var(--paper)] p-8 ring-1 ring-[var(--mist)] shadow-[0_30px_60px_-40px_rgba(0,0,0,0.2)]">
+          <div className="glass-card p-8">
             <span className="eyebrow">Formulário · 01</span>
 
             <AnimatePresence>
@@ -205,7 +205,7 @@ function LoginForm() {
               onClick={handleGoogleSignIn}
               disabled={isBusy}
               whileTap={{ scale: 0.98 }}
-              className="mt-6 flex w-full items-center justify-center gap-3 rounded-sm border border-[var(--mist)] bg-transparent px-4 py-3 font-mono text-[0.72rem] uppercase tracking-[0.22em] text-[var(--ink)] transition-colors duration-300 hover:border-[var(--ink)] disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-6 flex w-full items-center justify-center gap-3 rounded-sm border border-[var(--glass-border)] bg-transparent px-4 py-3 font-mono text-[0.72rem] uppercase tracking-[0.22em] text-[var(--ink)] transition-colors duration-300 hover:border-[var(--tenant-primary)] hover:bg-[var(--glass-highlight)] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {googleLoading ? (
                 <>
@@ -224,9 +224,9 @@ function LoginForm() {
               aria-hidden
               className="my-8 flex items-center gap-4 font-mono text-[0.64rem] uppercase tracking-[0.28em] text-[var(--muted)]"
             >
-              <span className="h-px flex-1 bg-[var(--mist)]" />
+              <span className="h-px flex-1 bg-[var(--glass-border)]" />
               ou com email
-              <span className="h-px flex-1 bg-[var(--mist)]" />
+              <span className="h-px flex-1 bg-[var(--glass-border)]" />
             </div>
 
             <form onSubmit={handleCredentialsSubmit} noValidate className="space-y-6">
@@ -245,7 +245,7 @@ function LoginForm() {
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
                   placeholder="voce@dominio.com"
-                  className="mt-3 w-full border-0 border-b border-[var(--mist)] bg-transparent pb-3 font-display text-xl italic text-[var(--ink)] outline-none transition-colors duration-300 focus:border-[var(--ink)]"
+                  className="mt-3 w-full border-0 border-b border-[var(--glass-border)] bg-transparent pb-3 font-display text-xl italic text-[var(--ink)] outline-none transition-colors duration-300 focus:border-[var(--tenant-primary)]"
                 />
               </div>
 
@@ -264,7 +264,7 @@ function LoginForm() {
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
                   placeholder="••••••••"
-                  className="mt-3 w-full border-0 border-b border-[var(--mist)] bg-transparent pb-3 font-display text-xl italic text-[var(--ink)] outline-none transition-colors duration-300 focus:border-[var(--ink)]"
+                  className="mt-3 w-full border-0 border-b border-[var(--glass-border)] bg-transparent pb-3 font-display text-xl italic text-[var(--ink)] outline-none transition-colors duration-300 focus:border-[var(--tenant-primary)]"
                 />
               </div>
 

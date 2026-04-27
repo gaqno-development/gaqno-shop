@@ -26,9 +26,9 @@ export function HomeFeatures({ features }: HomeFeaturesProps) {
   }));
 
   return (
-    <section className="border-y border-[var(--mist)] bg-[var(--paper)]">
+    <section className="border-y border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-sm">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        <div className="grid grid-cols-1 divide-y divide-[var(--mist)] md:grid-cols-3 md:divide-x md:divide-y-0">
+        <div className="grid grid-cols-1 divide-y divide-[var(--glass-border)] md:grid-cols-3 md:divide-x md:divide-y-0">
           {resolvedFeatures.map((feature, idx) => (
             <FeatureCell key={feature.title} feature={feature} index={idx} />
           ))}
@@ -55,7 +55,7 @@ function FeatureCell({
       className="group relative flex flex-col gap-6 px-2 py-10 md:px-10 md:py-14"
     >
       <div className="flex items-start justify-between">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full ring-1 ring-[var(--ink)]/15 text-[var(--ink)] transition-all group-hover:-rotate-6 group-hover:ring-[var(--tenant-primary)]">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full ring-1 ring-[var(--glass-border)] text-[var(--tenant-primary)] transition-all group-hover:-rotate-6 group-hover:ring-[var(--tenant-primary)] group-hover:bg-[var(--glass-highlight)]">
           <Icon className="h-[1.15rem] w-[1.15rem]" strokeWidth={1.4} />
         </div>
         <span className="eyebrow">{feature.eyebrow}</span>
@@ -64,7 +64,7 @@ function FeatureCell({
         <h3 className="font-display text-[1.7rem] leading-tight tracking-[-0.02em] text-[var(--ink)]">
           <em className="italic font-[430]">{feature.title}</em>
         </h3>
-        <p className="max-w-sm text-[0.95rem] leading-relaxed text-[var(--ink)]/70">
+        <p className="max-w-sm text-[0.95rem] leading-relaxed text-[var(--ink)]/60">
           {feature.description}
         </p>
       </div>

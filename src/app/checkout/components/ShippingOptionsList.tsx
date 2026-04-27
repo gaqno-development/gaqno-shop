@@ -12,7 +12,7 @@ export function ShippingOptionsList({ options, selected, onSelect }: Props) {
   return (
     <div className="mt-10 space-y-3">
       <span className="eyebrow">Opções de frete</span>
-      <ul className="divide-y divide-[var(--mist)] border-y border-[var(--mist)]">
+      <ul className="divide-y divide-[var(--glass-border)] border-y border-[var(--glass-border)]">
         {options.map((option) => (
           <ShippingRow
             key={option.id}

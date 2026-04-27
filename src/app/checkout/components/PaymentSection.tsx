@@ -42,7 +42,7 @@ export function PaymentSection({ selected, onSelect, availableMethods }: Props) 
     : PAYMENT_OPTIONS;
   return (
     <SectionFrame number="03" title="Pagamento">
-      <ul className="divide-y divide-[var(--mist)] border-y border-[var(--mist)]">
+      <ul className="divide-y divide-[var(--glass-border)] border-y border-[var(--glass-border)]">
         {options.map((option) => (
           <PaymentRow
             key={option.value}

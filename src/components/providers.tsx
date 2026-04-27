@@ -9,13 +9,24 @@ import { Footer } from "@/components/footer";
 import { ShopAnalytics } from "@/components/ShopAnalytics";
 import type { ShopTenantResolveSnapshot } from "@/types/shop-tenant";
 
-const DEFAULT_PRIMARY = "#111111";
-const DEFAULT_SECONDARY = "#f3f4f6";
+const DEFAULT_PRIMARY = "#b91c1c";
+const DEFAULT_SECONDARY = "#1a0a0a";
 
 interface TenantStyle extends CSSProperties {
   "--tenant-primary"?: string;
   "--tenant-secondary"?: string;
   "--tenant-bg"?: string;
+  "--glass-border"?: string;
+  "--glass-surface"?: string;
+  "--glass-highlight"?: string;
+  "--glass-glow"?: string;
+}
+
+function hexToRgba(hex: string, alpha: number): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
 function buildTenantStyle(
@@ -23,10 +34,16 @@ function buildTenantStyle(
   secondary?: string | null,
   bg?: string | null,
 ): TenantStyle {
+  const primaryColor = primary ?? DEFAULT_PRIMARY;
+  const secondaryColor = secondary ?? DEFAULT_SECONDARY;
   return {
-    "--tenant-primary": primary ?? DEFAULT_PRIMARY,
-    "--tenant-secondary": secondary ?? DEFAULT_SECONDARY,
+    "--tenant-primary": primaryColor,
+    "--tenant-secondary": secondaryColor,
     "--tenant-bg": bg ?? "var(--paper)",
+    "--glass-border": hexToRgba(primaryColor, 0.15),
+    "--glass-surface": hexToRgba(primaryColor, 0.06),
+    "--glass-highlight": hexToRgba(primaryColor, 0.1),
+    "--glass-glow": hexToRgba(primaryColor, 0.25),
   };
 }
 

@@ -48,7 +48,7 @@ export default function OrdersPage() {
       {error ? (
         <div
           role="alert"
-          className="rounded-md border border-[var(--mist)] bg-[var(--paper-soft)] px-4 py-3 text-sm text-[var(--muted)]"
+          className="glass-card px-4 py-3 text-sm text-[var(--muted)]"
         >
           {error}
         </div>
@@ -58,7 +58,7 @@ export default function OrdersPage() {
         <EmptyOrders />
       ) : (
         <>
-          <ul className="divide-y divide-[var(--mist)] border-y border-[var(--mist)]">
+          <ul className="divide-y divide-[var(--glass-border)] border-y border-[var(--glass-border)]">
             <AnimatePresence initial={false}>
               {orders.map((order, index) => (
                 <OrderRow key={order.id} order={order} delay={index * 0.04} />
@@ -80,7 +80,7 @@ export default function OrdersPage() {
 
 function OrdersHeader({ total }: { readonly total: number }) {
   return (
-    <header className="border-b border-[var(--mist)] pb-10">
+    <header className="border-b border-[var(--glass-border)] pb-10">
       <div className="flex items-end justify-between gap-6">
         <div>
           <span className="eyebrow">Meus · pedidos</span>
@@ -177,7 +177,7 @@ function Pagination({
   readonly onChange: (next: number) => void;
 }) {
   return (
-    <nav className="flex items-center justify-between border-t border-[var(--mist)] pt-8">
+    <nav className="flex items-center justify-between border-t border-[var(--glass-border)] pt-8">
       <button
         type="button"
         onClick={() => onChange(page - 1)}
@@ -209,8 +209,8 @@ function EmptyOrders() {
       transition={{ duration: 0.7, ease: EASE }}
       className="flex flex-col items-center gap-6 px-6 py-20 text-center"
     >
-      <div className="flex h-16 w-16 items-center justify-center rounded-full ring-1 ring-[var(--mist)]">
-        <Package className="h-6 w-6 text-[var(--muted)]" strokeWidth={1.2} />
+      <div className="flex h-16 w-16 items-center justify-center rounded-full glass-card">
+        <Package className="h-6 w-6 text-[var(--tenant-primary)]" strokeWidth={1.2} />
       </div>
       <h3
         className="font-display text-3xl italic leading-tight tracking-[-0.02em] text-[var(--ink)]"

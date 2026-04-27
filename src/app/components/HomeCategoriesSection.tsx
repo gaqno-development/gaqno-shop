@@ -45,7 +45,7 @@ export function HomeCategoriesSection({ categories, labels }: Props) {
 
 function SectionHeader({ labels }: { readonly labels?: Props["labels"] }) {
   return (
-    <div className="mb-14 flex items-end justify-between gap-8 border-b border-[var(--mist)] pb-8">
+    <div className="mb-14 flex items-end justify-between gap-8 border-b border-[var(--glass-border)] pb-8">
       <div className="space-y-3">
         <span className="eyebrow">{labels?.eyebrow ?? "Coleções · 2026"}</span>
         <h2
@@ -64,7 +64,7 @@ function SectionHeader({ labels }: { readonly labels?: Props["labels"] }) {
         className="link-underline hidden font-mono text-[0.72rem] uppercase tracking-[0.24em] text-[var(--ink)] md:inline-flex"
       >
         Ver tudo
-        <ArrowUpRight className="h-3.5 w-3.5" />
+        <ArrowUpRight className="h-3.5 w-3.5 text-[var(--tenant-primary)]" />
       </Link>
     </div>
   );
@@ -88,7 +88,7 @@ function CategoryTile({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.9, ease: EASE }}
-      className={`group relative overflow-hidden bg-[var(--mist)]/50 ring-1 ring-[var(--mist)] ${className}`}
+      className={`group relative overflow-hidden glass-card ${className}`}
       style={{ minHeight: featured ? undefined : 220 }}
     >
       <Link href={`/produtos?category=${category.slug}`} className="block h-full">

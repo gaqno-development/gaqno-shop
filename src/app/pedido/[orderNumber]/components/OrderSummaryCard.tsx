@@ -9,7 +9,7 @@ interface Props {
 export function OrderSummaryCard({ order }: Props) {
   return (
     <aside className="lg:sticky lg:top-28 lg:self-start">
-      <div className="border border-[var(--mist)] bg-[var(--paper)] p-8">
+      <div className="glass-card p-8">
         <span className="eyebrow">Resumo · recibo</span>
         <h2
           className="mt-4 font-display text-3xl leading-tight tracking-[-0.02em] text-[var(--ink)]"
@@ -55,7 +55,7 @@ export function OrderSummaryCard({ order }: Props) {
           </span>
         </div>
 
-        <div className="mt-10 border-t border-[var(--mist)] pt-6">
+        <div className="mt-10 border-t border-[var(--glass-border)] pt-6">
           <span className="eyebrow">Cliente</span>
           <CustomerInfo customer={order.customer} />
         </div>

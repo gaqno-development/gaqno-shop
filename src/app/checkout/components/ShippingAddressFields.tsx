@@ -51,7 +51,7 @@ export function ShippingAddressFields({ address, onChange }: Props) {
           value={address.province}
           onChange={(e) => onChange({ province: e.target.value })}
           required
-          className="mt-2 w-full appearance-none border-b border-[var(--mist)] bg-transparent px-0 py-3 text-[0.95rem] text-[var(--ink)] transition-colors focus:border-[var(--ink)] focus:outline-none"
+          className="mt-2 w-full appearance-none border-b border-[var(--glass-border)] bg-transparent px-0 py-3 text-[0.95rem] text-[var(--ink)] transition-colors focus:border-[var(--tenant-primary)] focus:outline-none"
           style={{
             backgroundImage:
               "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23111' stroke-width='1.2'/%3E%3C/svg%3E\")",

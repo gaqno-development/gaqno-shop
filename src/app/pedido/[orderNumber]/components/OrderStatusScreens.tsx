@@ -34,7 +34,7 @@ export function OrderError({ message }: Props) {
 export function OrderLoadingSkeleton() {
   return (
     <div className="flex min-h-[60vh] items-center justify-center bg-[var(--paper)]">
-      <Loader2 className="h-6 w-6 animate-spin text-[var(--ink)]" aria-hidden />
+      <Loader2 className="h-6 w-6 animate-spin text-[var(--tenant-primary)]" aria-hidden />
     </div>
   );
 }

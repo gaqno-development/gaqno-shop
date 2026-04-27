@@ -52,12 +52,12 @@ interface ChipProps {
 
 function Chip({ label, onRemove }: ChipProps) {
   return (
-    <span className="group inline-flex items-center gap-2 rounded-full border border-[var(--mist)] bg-[var(--tenant-primary)]/5 px-4 py-1.5 font-mono text-[0.68rem] uppercase tracking-[0.2em] text-[var(--ink)]">
+    <span className="group inline-flex items-center gap-2 rounded-full border border-[var(--glass-border)] bg-[var(--glass-highlight)] px-4 py-1.5 font-mono text-[0.68rem] uppercase tracking-[0.2em] text-[var(--ink)]">
       {label}
       <button
         onClick={onRemove}
         aria-label="Remover filtro"
-        className="flex h-4 w-4 items-center justify-center rounded-full text-[var(--muted)] transition-colors group-hover:bg-[var(--ink)] group-hover:text-[var(--paper)]"
+        className="flex h-4 w-4 items-center justify-center rounded-full text-[var(--muted)] transition-colors group-hover:bg-[var(--tenant-primary)] group-hover:text-white"
       >
         <X className="h-3 w-3" />
       </button>

@@ -9,20 +9,20 @@ interface Props {
 export function OrderItemsList({ items }: Props) {
   return (
     <section>
-      <div className="flex items-baseline justify-between border-b border-[var(--mist)] pb-5">
+      <div className="flex items-baseline justify-between border-b border-[var(--glass-border)] pb-5">
         <span className="eyebrow">Itens · do pedido</span>
         <span className="font-mono tabular text-[0.68rem] uppercase tracking-[0.22em] text-[var(--muted)]">
           {items.length.toString().padStart(2, "0")}
         </span>
       </div>
-      <ul className="divide-y divide-[var(--mist)]">
+      <ul className="divide-y divide-[var(--glass-border)]">
         {items.map((item, index) => (
           <li
             key={index}
             className="grid grid-cols-[80px_1fr_auto] items-center gap-6 py-6 md:grid-cols-[96px_1fr_auto_auto] md:gap-8"
           >
             <div
-              className="overflow-hidden ring-1 ring-[var(--mist)]"
+              className="overflow-hidden glass-card"
               style={{ aspectRatio: "4 / 5" }}
             >
               {item.productImage ? (
@@ -32,9 +32,9 @@ export function OrderItemsList({ items }: Props) {
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center bg-[var(--mist)]/30">
+                <div className="flex h-full w-full items-center justify-center bg-[var(--glass-surface)]">
                   <Package
-                    className="h-6 w-6 text-[var(--muted)]"
+                    className="h-6 w-6 text-[var(--tenant-primary)]"
                     strokeWidth={1.2}
                   />
                 </div>

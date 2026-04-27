@@ -59,7 +59,7 @@ export function SignupForm({
       transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1], delay: 0.15 }}
       onSubmit={onSubmit}
       noValidate
-      className="relative rounded-sm bg-[var(--paper)] p-8 ring-1 ring-[var(--mist)] shadow-[0_30px_60px_-40px_rgba(0,0,0,0.2)]"
+      className="relative glass-card p-8"
     >
       <ProgressHint percent={percent} sections={sections} />
 
@@ -244,12 +244,12 @@ function ProgressHint({
           {percent.toString().padStart(2, "0")}%
         </motion.span>
       </div>
-      <div className="mt-3 h-px w-full bg-[var(--mist)]">
+      <div className="mt-3 h-px w-full bg-[var(--glass-border)]">
         <motion.div
           initial={false}
           animate={{ width: `${percent}%` }}
           transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
-          className="h-px bg-[var(--ink)]"
+          className="h-px bg-[var(--tenant-primary)]"
         />
       </div>
       <ul className="mt-4 grid grid-cols-3 gap-3">
@@ -264,7 +264,7 @@ function ProgressHint({
               <span
                 aria-hidden
                 className={`inline-block h-1.5 w-1.5 rounded-full transition-colors ${
-                  section.completed ? "bg-[var(--ink)]" : "bg-[var(--mist)]"
+                  section.completed ? "bg-[var(--tenant-primary)]" : "bg-[var(--glass-border)]"
                 }`}
               />
               <span className="tabular text-[var(--muted)]">{section.index}</span>

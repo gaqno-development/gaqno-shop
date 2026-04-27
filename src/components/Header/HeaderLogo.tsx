@@ -34,7 +34,7 @@ export function HeaderLogo({ name, logoUrl, compact, isBrandLoading }: HeaderLog
         />
       ) : showSkeleton ? (
         <span
-          className={`block rounded-md bg-[var(--mist)] ${compact ? "h-7 w-28" : "h-9 w-36"} animate-pulse`}
+          className={`block rounded-md bg-[var(--glass-surface)] ${compact ? "h-7 w-28" : "h-9 w-36"} animate-pulse`}
           aria-hidden
         />
       ) : (

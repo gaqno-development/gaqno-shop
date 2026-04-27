@@ -50,7 +50,7 @@ function CheckoutContent() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: EASE }}
-        className="mb-16 border-b border-[var(--mist)] pb-10"
+        className="mb-16 border-b border-[var(--glass-border)] pb-10"
       >
         <span className="eyebrow">Finalizar compra</span>
         <h1
@@ -64,16 +64,16 @@ function CheckoutContent() {
       <div className="grid grid-cols-1 gap-14 lg:grid-cols-[1.6fr_1fr] lg:gap-20">
         <div className="space-y-16">
           {page.paymentState !== "idle" && !page.orderComplete ? (
-            <div className="space-y-6 rounded-md border border-[var(--mist)] px-4 py-3 font-mono text-[0.68rem] uppercase tracking-[0.2em] text-[var(--muted)]">
+            <div className="space-y-6 glass-card px-4 py-3 font-mono text-[0.68rem] uppercase tracking-[0.2em] text-[var(--muted)]">
               <p>{page.paymentMessage || "Processando pagamento"}</p>
               {page.pixCheckout &&
               (page.pixCheckout.qrCodeBase64 || page.pixCheckout.qrCode) ? (
-                <div className="space-y-4 border-t border-[var(--mist)] pt-6 normal-case tracking-normal">
+                <div className="space-y-4 border-t border-[var(--glass-border)] pt-6 normal-case tracking-normal">
                   {page.pixCheckout.qrCodeBase64 ? (
                     <img
                       src={`data:image/png;base64,${page.pixCheckout.qrCodeBase64}`}
                       alt="QR Code PIX"
-                      className="mx-auto max-w-[220px] border border-[var(--mist)] bg-white p-3"
+                      className="mx-auto max-w-[220px] border border-[var(--glass-border)] bg-[var(--paper)] p-3"
                     />
                   ) : null}
                   {page.pixCheckout.qrCode ? (

@@ -15,7 +15,7 @@ export function OrderHeader({ order, email }: Props) {
     ? `/pedidos?email=${encodeURIComponent(email)}`
     : "/";
   return (
-    <header className="border-b border-[var(--mist)] pb-10">
+    <header className="border-b border-[var(--glass-border)] pb-10">
       <Link
         href={backHref}
         className="link-underline inline-flex items-center gap-2 font-mono text-[0.68rem] uppercase tracking-[0.24em] text-[var(--muted)] hover:text-[var(--ink)]"
@@ -46,8 +46,8 @@ export function OrderHeader({ order, email }: Props) {
           </p>
         </div>
 
-        <span className="inline-flex items-center gap-2 border border-[var(--ink)] px-4 py-2 font-mono text-[0.68rem] uppercase tracking-[0.24em] text-[var(--ink)]">
-          <span className="h-1.5 w-1.5 rounded-full bg-[var(--ink)]" aria-hidden />
+        <span className="inline-flex items-center gap-2 border border-[var(--glass-border)] px-4 py-2 font-mono text-[0.68rem] uppercase tracking-[0.24em] text-[var(--ink)]">
+          <span className="h-1.5 w-1.5 rounded-full bg-[var(--tenant-primary)]" aria-hidden />
           {statusLabel}
         </span>
       </div>

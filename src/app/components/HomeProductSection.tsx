@@ -28,7 +28,7 @@ export function HomeProductSection({
   return (
     <section className={`py-24 ${backgroundClassName}`}>
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        <div className="mb-14 flex items-end justify-between gap-8 border-b border-[var(--mist)] pb-8">
+        <div className="mb-14 flex items-end justify-between gap-8 border-b border-[var(--glass-border)] pb-8">
           <div className="space-y-3">
             <span className="eyebrow">{eyebrow}</span>
             <h2
@@ -43,7 +43,7 @@ export function HomeProductSection({
             className="link-underline font-mono text-[0.72rem] uppercase tracking-[0.24em] text-[var(--ink)]"
           >
             Ver todos
-            <ArrowUpRight className="h-3.5 w-3.5" />
+            <ArrowUpRight className="h-3.5 w-3.5 text-[var(--tenant-primary)]" />
           </Link>
         </div>
 

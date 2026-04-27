@@ -45,7 +45,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     >
       <Link
         href={`/produto/${product.slug}`}
-        className="relative block overflow-hidden bg-[var(--mist)]/40 ring-1 ring-[var(--mist)] transition-colors hover:ring-[var(--ink)]/20"
+        className="relative block overflow-hidden glass-card transition-colors hover:ring-[var(--tenant-primary)]/30"
         style={{ aspectRatio: "4 / 5" }}
       >
         <motion.img
@@ -66,7 +66,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         {pricing.hasDiscount && (
           <div className="absolute left-0 top-6 z-10 flex items-center">
             <span
-              className="origin-left -rotate-90 translate-x-5 font-mono text-[0.65rem] uppercase tracking-[0.28em] text-[var(--ink)]"
+              className="origin-left -rotate-90 translate-x-5 font-mono text-[0.65rem] uppercase tracking-[0.28em] text-[var(--tenant-primary)]"
               style={{ writingMode: "horizontal-tb" }}
             >
               − {pricing.discountPercentage}% off
@@ -74,17 +74,17 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
         )}
 
-        <motion.div
-          variants={{
-            rest: { opacity: 0, y: 16 },
-            hover: { opacity: 1, y: 0 },
-          }}
-          transition={{ duration: 0.45, ease: [0.19, 1, 0.22, 1] }}
-          className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--paper)] text-[var(--ink)] ring-1 ring-[var(--mist)]"
-          aria-hidden
-        >
-          <ArrowUpRight className="h-4 w-4" />
-        </motion.div>
+          <motion.div
+            variants={{
+              rest: { opacity: 0, y: 16 },
+              hover: { opacity: 1, y: 0 },
+            }}
+            transition={{ duration: 0.45, ease: [0.19, 1, 0.22, 1] }}
+            className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full glass-card text-[var(--ink)]"
+            aria-hidden
+          >
+            <ArrowUpRight className="h-4 w-4 text-[var(--tenant-primary)]" />
+          </motion.div>
       </Link>
 
       <div className="mt-5 flex items-start justify-between gap-6">
@@ -103,7 +103,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         <button
           onClick={handleAddToCart}
-          className="relative flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[var(--ink)] text-[var(--paper)] transition-transform hover:scale-105 active:scale-95"
+          className="relative flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[var(--tenant-primary)] text-white transition-transform hover:scale-105 active:scale-95 hover:bg-[var(--tenant-primary)]/90"
           aria-label={`Adicionar ${product.name} ao carrinho`}
         >
           <AnimatePresence mode="wait" initial={false}>
