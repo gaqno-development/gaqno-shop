@@ -9,8 +9,8 @@ import { Footer } from "@/components/footer";
 import { ShopAnalytics } from "@/components/ShopAnalytics";
 import type { ShopTenantResolveSnapshot } from "@/types/shop-tenant";
 
-const DEFAULT_PRIMARY = "#6366f1";
-const DEFAULT_SECONDARY = "#1e1b4b";
+const DEFAULT_PRIMARY = "#b91c1c";
+const DEFAULT_SECONDARY = "#1a0a0a";
 
 interface TenantStyle extends CSSProperties {
   "--tenant-primary"?: string;
@@ -22,18 +22,20 @@ interface TenantStyle extends CSSProperties {
   "--glass-glow"?: string;
 }
 
-function hexToRgba(hex: string, alpha: number): string {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
-
-function validColor(value: string | null | undefined, fallback: string): string {
-  if (!value || !value.trim() || !/^#[0-9a-fA-F]{3,8}$/.test(value.trim())) {
-    return fallback;
+function colorToRgba(color: string, alpha: number): string {
+  if (color.startsWith("rgba") || color.startsWith("rgb")) {
+    return color.replace(/[\d.]+\)$/, `${alpha})`);
   }
-  return value.trim();
+  if (color.startsWith("#")) {
+    const hex = color.length === 4
+      ? color.replace(/#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])/, "#$1$1$2$2$3$3")
+      : color;
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }
+  return `rgba(185, 28, 28, ${alpha})`;
 }
 
 function buildTenantStyle(
@@ -41,16 +43,16 @@ function buildTenantStyle(
   secondary?: string | null,
   bg?: string | null,
 ): TenantStyle {
-  const primaryColor = validColor(primary, DEFAULT_PRIMARY);
-  const secondaryColor = validColor(secondary, DEFAULT_SECONDARY);
+  const primaryColor = primary || DEFAULT_PRIMARY;
+  const secondaryColor = secondary || DEFAULT_SECONDARY;
   return {
     "--tenant-primary": primaryColor,
     "--tenant-secondary": secondaryColor,
-    "--tenant-bg": bg ?? "var(--paper)",
-    "--glass-border": hexToRgba(primaryColor, 0.15),
-    "--glass-surface": hexToRgba(primaryColor, 0.06),
-    "--glass-highlight": hexToRgba(primaryColor, 0.1),
-    "--glass-glow": hexToRgba(primaryColor, 0.25),
+    "--tenant-bg": bg || "var(--paper)",
+    "--glass-border": colorToRgba(primaryColor, 0.15),
+    "--glass-surface": colorToRgba(primaryColor, 0.06),
+    "--glass-highlight": colorToRgba(primaryColor, 0.1),
+    "--glass-glow": colorToRgba(primaryColor, 0.25),
   };
 }
 
