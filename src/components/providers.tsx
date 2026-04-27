@@ -9,8 +9,8 @@ import { Footer } from "@/components/footer";
 import { ShopAnalytics } from "@/components/ShopAnalytics";
 import type { ShopTenantResolveSnapshot } from "@/types/shop-tenant";
 
-const DEFAULT_PRIMARY = "#b91c1c";
-const DEFAULT_SECONDARY = "#1a0a0a";
+const DEFAULT_PRIMARY = "#6366f1";
+const DEFAULT_SECONDARY = "#1e1b4b";
 
 interface TenantStyle extends CSSProperties {
   "--tenant-primary"?: string;
@@ -29,13 +29,20 @@ function hexToRgba(hex: string, alpha: number): string {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
+function validColor(value: string | null | undefined, fallback: string): string {
+  if (!value || !value.trim() || !/^#[0-9a-fA-F]{3,8}$/.test(value.trim())) {
+    return fallback;
+  }
+  return value.trim();
+}
+
 function buildTenantStyle(
   primary?: string | null,
   secondary?: string | null,
   bg?: string | null,
 ): TenantStyle {
-  const primaryColor = primary ?? DEFAULT_PRIMARY;
-  const secondaryColor = secondary ?? DEFAULT_SECONDARY;
+  const primaryColor = validColor(primary, DEFAULT_PRIMARY);
+  const secondaryColor = validColor(secondary, DEFAULT_SECONDARY);
   return {
     "--tenant-primary": primaryColor,
     "--tenant-secondary": secondaryColor,
