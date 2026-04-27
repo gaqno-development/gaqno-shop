@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { SessionProvider } from "next-auth/react";
-import { useWhiteLabel } from "@gaqno-development/frontcore/hooks";
+import { useWhiteLabel } from "@gaqno-development/frontcore/hooks/useWhiteLabel";
 import { TenantProvider, useTenant } from "@/contexts/tenant-context";
 import { CartProvider } from "@/contexts/cart-context";
 import { Header } from "@/components/Header";
