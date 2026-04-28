@@ -3,6 +3,7 @@ import { useParams } from "next/navigation";
 import { derivePricing } from "@/lib/pricing";
 import type { Product } from "@/types/catalog";
 import { useTenant } from "@/contexts/tenant-context";
+import { filterBakeryDecorationsForProduct } from "@/lib/filter-bakery-decorations-for-product";
 import { useBakeryDecorations } from "@/hooks/useBakeryDecorations";
 import { useAddToCart } from "./useAddToCart";
 import { useBakeryProductOptions } from "./useBakeryProductOptions";
@@ -36,10 +37,10 @@ export function useProductPage() {
   const isBakery = Boolean(featureFlags?.featureBakery);
   const { data: allDecorations } = useBakeryDecorations();
 
-  const enabledTypeIds = product?.enabledCustomizationTypeIds;
-  const decorations = enabledTypeIds?.length
-    ? allDecorations.filter((d) => d.customizationTypeId && enabledTypeIds.includes(d.customizationTypeId))
-    : allDecorations;
+  const decorations = filterBakeryDecorationsForProduct(
+    allDecorations,
+    product?.enabledCustomizationTypeIds,
+  );
 
   const quantityControls = useQuantity(
     product?.trackInventory ? product.quantity : undefined,
