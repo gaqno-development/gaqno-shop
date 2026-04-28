@@ -146,8 +146,8 @@ main, header, footer, section {
 }
 
 .btn-ink {
-  background: linear-gradient(135deg, var(--tenant-primary-hex), color-mix(in srgb, var(--tenant-primary-hex) 80%, black));
-  color: var(--paper);
+  background: linear-gradient(135deg, var(--primary), color-mix(in srgb, var(--primary) 80%, black));
+  color: var(--primary-foreground);
   border-radius: 9999px;
   padding: 0.875rem 1.75rem;
   font-size: 0.875rem;
@@ -156,13 +156,13 @@ main, header, footer, section {
   align-items: center;
   gap: 0.5rem;
   transition: transform 280ms var(--ease-spring), box-shadow 220ms ease;
-  box-shadow: 0 4px 24px color-mix(in srgb, var(--tenant-primary-hex) 30%, transparent);
+  box-shadow: 0 4px 24px color-mix(in srgb, var(--primary) 30%, transparent);
 }
 
 .btn-ink:hover {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--tenant-primary-hex) 80%, white), var(--tenant-primary-hex));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 80%, white), var(--primary));
   transform: translateY(-1px);
-  box-shadow: 0 8px 32px color-mix(in srgb, var(--tenant-primary-hex) 40%, transparent);
+  box-shadow: 0 8px 32px color-mix(in srgb, var(--primary) 40%, transparent);
 }
 
 .btn-ink:active {

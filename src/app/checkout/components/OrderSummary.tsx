@@ -128,7 +128,7 @@ export function OrderSummary({
           onClick={onSubmit}
           disabled={isSubmitting || !canSubmit}
           whileTap={{ scale: 0.98 }}
-          className="group mt-8 flex w-full items-center justify-center gap-3 rounded-full bg-[var(--tenant-primary)] px-6 py-4 font-mono text-[0.72rem] uppercase tracking-[0.24em] text-white transition-all hover:bg-[var(--tenant-primary)]/90 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="group mt-8 flex w-full items-center justify-center gap-3 rounded-full bg-primary px-6 py-4 font-mono text-[0.72rem] uppercase tracking-[0.24em] text-primary-foreground transition-all hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Lock className="h-3.5 w-3.5" strokeWidth={1.5} />
           {isSubmitting ? "Processando…" : "Finalizar compra"}

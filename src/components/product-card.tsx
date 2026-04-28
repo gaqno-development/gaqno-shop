@@ -45,7 +45,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     >
       <Link
         href={`/produto/${product.slug}`}
-        className="relative block overflow-hidden glass-card transition-colors hover:ring-[var(--tenant-primary)]/30"
+        className="relative block overflow-hidden glass-card transition-colors hover:ring-primary/30"
         style={{ aspectRatio: "4 / 5" }}
       >
         <motion.img
@@ -103,7 +103,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         <button
           onClick={handleAddToCart}
-          className="relative flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[var(--tenant-primary)] text-white transition-transform hover:scale-105 active:scale-95 hover:bg-[var(--tenant-primary)]/90"
+          className="relative flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform hover:scale-105 active:scale-95 hover:bg-primary/90"
           aria-label={`Adicionar ${product.name} ao carrinho`}
         >
           <AnimatePresence mode="wait" initial={false}>

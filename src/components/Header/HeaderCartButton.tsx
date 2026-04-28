@@ -30,7 +30,7 @@ export function HeaderCartButton({ itemCount, onOpen }: HeaderCartButtonProps) {
             animate={{ scale: [0, 1.3, 1], opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
             transition={{ duration: 0.45, ease: [0.34, 1.56, 0.64, 1] }}
-            className="font-mono tabular absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--tenant-primary)] px-1 text-[0.65rem] font-medium text-white"
+            className="font-mono tabular absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[0.65rem] font-medium text-primary-foreground"
           >
             {displayCount}
           </motion.span>

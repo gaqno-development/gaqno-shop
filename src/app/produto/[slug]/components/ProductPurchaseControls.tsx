@@ -50,7 +50,7 @@ export function ProductPurchaseControls({
         onClick={onAddToCart}
         disabled={isOutOfStock || isAddingToCart}
         whileTap={{ scale: 0.98 }}
-        className="group flex-1 inline-flex items-center justify-center gap-3 rounded-full bg-[var(--tenant-primary)] px-8 py-4 text-white font-mono text-[0.72rem] uppercase tracking-[0.24em] transition-all hover:bg-[var(--tenant-primary)]/90 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="group flex-1 inline-flex items-center justify-center gap-3 rounded-full bg-primary px-8 py-4 text-primary-foreground font-mono text-[0.72rem] uppercase tracking-[0.24em] transition-all hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <ShoppingBag className="h-4 w-4 transition-transform group-hover:-rotate-6" />
         {buttonLabel}
