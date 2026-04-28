@@ -40,7 +40,7 @@ export default async function RootLayout({
 }>) {
   const tenantResolve = await getShopTenantResolveForRequest();
   return (
-    <html lang="pt-BR" className={FONT_VARIABLES}>
+    <html lang="pt-BR" className={`dark ${FONT_VARIABLES}`}>
       <body className="font-sans antialiased">
         <Providers initialTenantResolve={tenantResolve}>{children}</Providers>
       </body>

@@ -1,14 +1,18 @@
-@import "tailwindcss";
+@import "@gaqno-development/frontcore/styles/globals.css";
+
+@source "../**/*.{js,ts,jsx,tsx}";
 
 :root {
-  --paper: oklch(14% 0.02 25);
-  --ink: oklch(94% 0.008 90);
-  --mist: oklch(26% 0.03 25);
-  --muted: oklch(58% 0.02 25);
-
-  --tenant-primary-hex: #e11d48;
-  --tenant-secondary-hex: #f9a8d4;
+  --tenant-primary-hex: #171717;
+  --tenant-secondary-hex: #a3a3a3;
+  --tenant-primary: var(--tenant-primary-hex);
+  --tenant-secondary: var(--tenant-secondary-hex);
   --tenant-bg: #ffffff;
+
+  --paper: var(--background);
+  --ink: var(--foreground);
+  --mist: var(--border);
+  --muted: var(--muted-foreground);
 
   --glass-border: color-mix(in srgb, var(--tenant-primary-hex) 15%, var(--mist));
   --glass-surface: color-mix(in srgb, var(--tenant-primary-hex) 6%, var(--paper));
@@ -23,12 +27,9 @@
 }
 
 @theme inline {
-  --color-background: var(--paper);
-  --color-foreground: var(--ink);
   --color-ink: var(--ink);
   --color-paper: var(--paper);
   --color-mist: var(--mist);
-  --color-muted: var(--muted);
   --color-tenant-bg: var(--tenant-bg);
   --color-glass-border: var(--glass-border);
   --color-glass-surface: var(--glass-surface);
