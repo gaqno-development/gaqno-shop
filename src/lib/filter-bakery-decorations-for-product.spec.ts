@@ -30,8 +30,8 @@ describe("filterBakeryDecorationsForProduct", () => {
     expect(filterBakeryDecorationsForProduct(all, null)).toEqual(all);
   });
 
-  it("returns none when enabled list is empty", () => {
-    expect(filterBakeryDecorationsForProduct(all, [])).toEqual([]);
+  it("returns all decorations when enabled ids are an empty legacy default", () => {
+    expect(filterBakeryDecorationsForProduct(all, [])).toEqual(all);
   });
 
   it("returns only decorations whose type id is listed", () => {

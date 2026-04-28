@@ -6,12 +6,10 @@ export function filterBakeryDecorationsForProduct(
 ): readonly BakeryDecoration[] {
   if (
     enabledCustomizationTypeIds === undefined ||
-    enabledCustomizationTypeIds === null
+    enabledCustomizationTypeIds === null ||
+    enabledCustomizationTypeIds.length === 0
   ) {
     return allDecorations;
-  }
-  if (enabledCustomizationTypeIds.length === 0) {
-    return [];
   }
   return allDecorations.filter(
     (d) =>
