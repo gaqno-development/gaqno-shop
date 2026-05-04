@@ -1,3 +1,8 @@
+export interface ShopTenantSettingsKnown {
+  readonly storefrontCopy?: Record<string, unknown>;
+  readonly bakerySizeLabels?: readonly string[];
+}
+
 export interface ShopTenant {
   readonly id: string;
   readonly slug: string;
@@ -12,7 +17,7 @@ export interface ShopTenant {
   readonly isActive: boolean;
   readonly isDropshipping: boolean;
   readonly orderPrefix: string;
-  readonly settings?: Record<string, unknown> | null;
+  readonly settings?: (ShopTenantSettingsKnown & Record<string, unknown>) | null;
 }
 
 export interface ShopFeatureFlags {

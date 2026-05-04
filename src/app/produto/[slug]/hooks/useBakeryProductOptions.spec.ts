@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { act, renderHook } from "@testing-library/react";
 import { useBakeryProductOptions } from "./useBakeryProductOptions";
+import { DEFAULT_BAKERY_SIZE_LABELS } from "@/constants/bakery-size-labels";
 import type { BakeryDecoration } from "@/types/bakery";
 
 vi.mock("@/lib/api", () => ({
@@ -42,6 +43,7 @@ describe("useBakeryProductOptions", () => {
       useBakeryProductOptions({
         allowsReferenceImage: true,
         availableDecorations: decorations,
+        sizeLabels: DEFAULT_BAKERY_SIZE_LABELS,
       }),
     );
 
@@ -62,6 +64,7 @@ describe("useBakeryProductOptions", () => {
       useBakeryProductOptions({
         allowsReferenceImage: false,
         availableDecorations: decorations,
+        sizeLabels: DEFAULT_BAKERY_SIZE_LABELS,
       }),
     );
 
@@ -86,6 +89,7 @@ describe("useBakeryProductOptions", () => {
       useBakeryProductOptions({
         allowsReferenceImage: true,
         availableDecorations: [],
+        sizeLabels: DEFAULT_BAKERY_SIZE_LABELS,
       }),
     );
 

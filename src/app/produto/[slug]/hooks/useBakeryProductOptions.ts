@@ -4,16 +4,16 @@ import { useMemo, useState } from "react";
 import { uploadStorefrontReferenceImage } from "@/lib/api";
 import type { BakeryDecoration, OrderItemBakeryMeta } from "@/types/bakery";
 
-const DEFAULT_SIZES = ["P", "M", "G"] as const;
-
 interface UseBakeryProductOptionsArgs {
   readonly allowsReferenceImage: boolean;
   readonly availableDecorations: readonly BakeryDecoration[];
+  readonly sizeLabels: readonly string[];
 }
 
 export function useBakeryProductOptions({
   allowsReferenceImage,
   availableDecorations,
+  sizeLabels,
 }: UseBakeryProductOptionsArgs) {
   const [size, setSize] = useState<string>("");
   const [notes, setNotes] = useState<string>("");
@@ -78,7 +78,7 @@ export function useBakeryProductOptions({
   });
 
   return {
-    sizes: DEFAULT_SIZES,
+    sizes: sizeLabels,
     size,
     setSize,
     notes,

@@ -2,15 +2,12 @@ import { describe, it, expect } from "vitest";
 import type { BakeryDecoration } from "@/types/bakery";
 import { filterBakeryDecorationsForProduct } from "./filter-bakery-decorations-for-product";
 
-function decoration(
-  id: string,
-  customizationTypeId: string | null,
-): BakeryDecoration {
+function decoration(id: string): BakeryDecoration {
   return {
     id,
     name: id,
     type: "flower",
-    customizationTypeId,
+    customizationTypeId: null,
     description: null,
     priceAdjustment: "0",
     imageUrl: null,
@@ -19,11 +16,7 @@ function decoration(
 }
 
 describe("filterBakeryDecorationsForProduct", () => {
-  const all = [
-    decoration("d1", "ct1"),
-    decoration("d2", "ct2"),
-    decoration("orphan", null),
-  ];
+  const all = [decoration("d1"), decoration("d2"), decoration("d3")];
 
   it("returns all decorations when enabled ids are absent (legacy)", () => {
     expect(filterBakeryDecorationsForProduct(all, undefined)).toEqual(all);
@@ -34,9 +27,16 @@ describe("filterBakeryDecorationsForProduct", () => {
     expect(filterBakeryDecorationsForProduct(all, [])).toEqual([]);
   });
 
-  it("returns only decorations whose type id is listed", () => {
-    expect(filterBakeryDecorationsForProduct(all, ["ct1"])).toEqual([
-      decoration("d1", "ct1"),
+  it("returns only decorations whose id is listed", () => {
+    expect(filterBakeryDecorationsForProduct(all, ["d1"])).toEqual([
+      decoration("d1"),
+    ]);
+  });
+
+  it("returns multiple decorations when multiple ids listed", () => {
+    expect(filterBakeryDecorationsForProduct(all, ["d1", "d3"])).toEqual([
+      decoration("d1"),
+      decoration("d3"),
     ]);
   });
 });

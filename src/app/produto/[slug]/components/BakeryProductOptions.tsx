@@ -85,7 +85,7 @@ function SizeSection({
             key={s}
             type="button"
             onClick={() => onChange(s)}
-            className={`rounded-full border px-4 py-2 font-mono text-xs uppercase tracking-widest transition-colors ${
+            className={`rounded-full border px-4 py-2 font-mono text-xs tracking-wide transition-colors ${
               value === s
                 ? "border-[var(--ink)] bg-[var(--ink)] text-[var(--paper)]"
                 : "border-[var(--mist)] text-[var(--ink)] hover:bg-[var(--mist)]/40"

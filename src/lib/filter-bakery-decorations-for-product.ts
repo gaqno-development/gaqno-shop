@@ -13,9 +13,7 @@ export function filterBakeryDecorationsForProduct(
   if (enabledCustomizationTypeIds.length === 0) {
     return [];
   }
-  return allDecorations.filter(
-    (d) =>
-      d.customizationTypeId !== null &&
-      enabledCustomizationTypeIds.includes(d.customizationTypeId),
+  return allDecorations.filter((d) =>
+    enabledCustomizationTypeIds.includes(d.id),
   );
 }

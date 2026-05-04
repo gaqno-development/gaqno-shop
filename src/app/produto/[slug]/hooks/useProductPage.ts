@@ -3,6 +3,7 @@ import { useParams } from "next/navigation";
 import { derivePricing } from "@/lib/pricing";
 import type { Product } from "@/types/catalog";
 import { useTenant } from "@/contexts/tenant-context";
+import { resolveBakerySizeLabels } from "@/lib/resolve-bakery-size-labels";
 import { filterBakeryDecorationsForProduct } from "@/lib/filter-bakery-decorations-for-product";
 import { useBakeryDecorations } from "@/hooks/useBakeryDecorations";
 import { useAddToCart } from "./useAddToCart";
@@ -33,7 +34,8 @@ export function useProductPage() {
   const slug = params.slug as string;
   const [selectedImage, setSelectedImage] = useState(0);
   const { product, relatedProducts, isLoading } = useProductLoader(slug);
-  const { featureFlags } = useTenant();
+  const { featureFlags, tenant } = useTenant();
+  const bakerySizeLabels = resolveBakerySizeLabels(tenant);
   const isBakery = Boolean(featureFlags?.featureBakery);
   const { data: allDecorations } = useBakeryDecorations();
 
@@ -49,6 +51,7 @@ export function useProductPage() {
   const bakeryOptions = useBakeryProductOptions({
     allowsReferenceImage: Boolean(product?.allowsReferenceImage),
     availableDecorations: decorations,
+    sizeLabels: bakerySizeLabels,
   });
 
   const { isAddingToCart, handleAddToCart } = useAddToCart(
