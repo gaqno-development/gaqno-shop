@@ -33,6 +33,19 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildShopMetadataFromResolve(snapshot);
 }
 
+const FOUC_SCRIPT =
+  "(function(){" +
+  "try{" +
+  "var t=localStorage.getItem('theme');" +
+  "if(t==='light'){document.documentElement.classList.remove('dark');}" +
+  "else if(t==='dark'){document.documentElement.classList.add('dark');}" +
+  "else if(t==='system'){" +
+  "if(window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.classList.add('dark');}" +
+  "else{document.documentElement.classList.remove('dark');}" +
+  "}else{document.documentElement.classList.add('dark');}" +
+  "}catch(e){document.documentElement.classList.add('dark');}" +
+  "})();";
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -40,7 +53,10 @@ export default async function RootLayout({
 }>) {
   const tenantResolve = await getShopTenantResolveForRequest();
   return (
-    <html lang="pt-BR" className={`dark ${FONT_VARIABLES}`}>
+    <html lang="pt-BR" className={FONT_VARIABLES} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: FOUC_SCRIPT }} />
+      </head>
       <body className="font-sans antialiased">
         <Providers initialTenantResolve={tenantResolve}>{children}</Providers>
       </body>
