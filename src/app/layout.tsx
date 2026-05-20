@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Geist, JetBrains_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import {
@@ -40,8 +41,9 @@ export default async function RootLayout({
 }>) {
   const tenantResolve = await getShopTenantResolveForRequest();
   return (
-    <html lang="pt-BR" className={`dark ${FONT_VARIABLES}`}>
+    <html lang="pt-BR" className={FONT_VARIABLES} suppressHydrationWarning>
       <body className="font-sans antialiased">
+        <Script id="theme-init" src="/theme-init.js" strategy="beforeInteractive" />
         <Providers initialTenantResolve={tenantResolve}>{children}</Providers>
       </body>
     </html>

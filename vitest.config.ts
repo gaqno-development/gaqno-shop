@@ -8,6 +8,7 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+    dedupe: ["react", "react-dom"],
   },
   test: {
     globals: true,
@@ -15,5 +16,10 @@ export default defineConfig({
     setupFiles: ["./test/setup.ts"],
     include: ["src/**/*.{test,spec}.{ts,tsx}", "test/**/*.{test,spec}.{ts,tsx}"],
     css: false,
+    server: {
+      deps: {
+        inline: [/@radix-ui\//, /react-remove-scroll/, /react-style-singleton/, /use-sidecar/, /get-nonce/],
+      },
+    },
   },
 });

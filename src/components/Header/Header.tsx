@@ -10,6 +10,7 @@ import { HeaderDesktopNav } from "./HeaderDesktopNav";
 import { HeaderMobileMenu } from "./HeaderMobileMenu";
 import { HeaderCartButton } from "./HeaderCartButton";
 import { HeaderMobileToggle } from "./HeaderMobileToggle";
+import { HeaderThemeToggle } from "./HeaderThemeToggle";
 import { useAuthNav } from "@/hooks/useAuthNav";
 import { useHeaderSearch } from "./hooks/useHeaderSearch";
 import { useHeaderMenus } from "./hooks/useHeaderMenus";
@@ -73,6 +74,7 @@ export function Header() {
                 itemCount={cart?.itemCount ?? 0}
                 onOpen={menus.openCart}
               />
+              <HeaderThemeToggle />
               <HeaderMobileToggle
                 open={menus.isMobileMenuOpen}
                 onToggle={menus.toggleMobileMenu}
