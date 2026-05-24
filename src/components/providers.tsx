@@ -5,7 +5,7 @@ import { SessionProvider } from "next-auth/react";
 import { QueryProvider } from "@/components/query-provider";
 import { useWhiteLabel } from "@gaqno-development/frontcore/hooks/useWhiteLabel";
 import { applyWhiteLabelStyles } from "@gaqno-development/frontcore/utils";
-import { ThemeProvider } from "@gaqno-development/frontcore/components/providers";
+import { ShopThemeProvider } from "@/components/ShopThemeProvider";
 import { useUIStore } from "@gaqno-development/frontcore/store";
 import { TenantProvider, useTenant } from "@/contexts/tenant-context";
 import { CartProvider } from "@/contexts/cart-context";
@@ -76,14 +76,14 @@ export function Providers({
   return (
     <SessionProvider>
       <QueryProvider>
-        <ThemeProvider>
+        <ShopThemeProvider>
           <ThemeSeed />
           <TenantProvider initialResolve={initialTenantResolve ?? null}>
             <CartProvider>
               <TenantShell>{children}</TenantShell>
             </CartProvider>
           </TenantProvider>
-        </ThemeProvider>
+        </ShopThemeProvider>
       </QueryProvider>
     </SessionProvider>
   );
