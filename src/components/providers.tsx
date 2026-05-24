@@ -5,7 +5,7 @@ import { SessionProvider } from "next-auth/react";
 import { QueryProvider } from "@/components/query-provider";
 import { useWhiteLabel } from "@gaqno-development/frontcore/hooks/useWhiteLabel";
 import { applyWhiteLabelStyles } from "@gaqno-development/frontcore/utils";
-import { ThemeProvider } from "@gaqno-development/frontcore/components/providers/theme-provider";
+import { ThemeProvider } from "@gaqno-development/frontcore/components/providers";
 import { useUIStore } from "@gaqno-development/frontcore/store";
 import { TenantProvider, useTenant } from "@/contexts/tenant-context";
 import { CartProvider } from "@/contexts/cart-context";

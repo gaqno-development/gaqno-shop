@@ -6,7 +6,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@gaqno-development/frontcore/components/ui";
+} from "@gaqno-development/frontcore/components/ui/dropdown-menu";
 import { useThemeToggle } from "@/hooks/useThemeToggle";
 
 const THEME_ICON: Record<"light" | "dark" | "system", React.ReactNode> = {
